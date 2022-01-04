@@ -375,6 +375,8 @@ func Import(env *Env) *Env {
 	env.DefineTypeStruct("сервер", &VMServer{})
 	env.DefineTypeStruct("клиент", &VMClient{})
 
+	env.DefineTypeStruct("сервермайнкрафт", &RconClient{})
+
 	env.DefineTypeStruct("таблицазначений", &VMTable{})
 	env.DefineTypeStruct("колонкатаблицызначений", &VMTableColumn{})
 	env.DefineTypeStruct("коллекцияколоноктаблицызначений", &VMTableColumns{})
