@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"reflect"
 
-	"github.com/covrom/gonec/names"
+	"github.com/shinanca/gonec/names"
 )
 
 type VMStringMap map[string]VMValuer

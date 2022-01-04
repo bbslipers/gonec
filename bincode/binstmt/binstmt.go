@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/covrom/gonec/core"
-	"github.com/covrom/gonec/names"
-	"github.com/covrom/gonec/pos"
+	"github.com/shinanca/gonec/core"
+	"github.com/shinanca/gonec/names"
+	"github.com/shinanca/gonec/pos"
 )
 
 type BinStmt interface {

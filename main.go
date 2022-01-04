@@ -12,15 +12,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/covrom/gonec/bincode"
-	"github.com/covrom/gonec/bincode/binstmt"
-	"github.com/covrom/gonec/core"
-	"github.com/covrom/gonec/parser"
-	"github.com/covrom/gonec/services/gonecsvc"
-	"github.com/covrom/gonec/version"
 	"github.com/daviddengcn/go-colortext"
 	"github.com/mattn/go-isatty"
 	uuid "github.com/satori/go.uuid"
+	"github.com/shinanca/gonec/bincode"
+	"github.com/shinanca/gonec/bincode/binstmt"
+	"github.com/shinanca/gonec/core"
+	"github.com/shinanca/gonec/parser"
+	"github.com/shinanca/gonec/services/gonecsvc"
+	"github.com/shinanca/gonec/version"
 
 	_ "net/http/pprof"
 )

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"unicode"
 
-	"github.com/covrom/gonec/ast"
-	"github.com/covrom/gonec/names"
-	posit "github.com/covrom/gonec/pos"
+	"github.com/shinanca/gonec/ast"
+	"github.com/shinanca/gonec/names"
+	posit "github.com/shinanca/gonec/pos"
 )
 
 const (

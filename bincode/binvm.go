@@ -11,11 +11,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/covrom/gonec/ast"
-	"github.com/covrom/gonec/bincode/binstmt"
-	"github.com/covrom/gonec/core"
-	"github.com/covrom/gonec/names"
-	"github.com/covrom/gonec/parser"
+	"github.com/shinanca/gonec/ast"
+	"github.com/shinanca/gonec/bincode/binstmt"
+	"github.com/shinanca/gonec/core"
+	"github.com/shinanca/gonec/names"
+	"github.com/shinanca/gonec/parser"
 )
 
 func Interrupt(env *core.Env) {

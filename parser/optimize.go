@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/covrom/gonec/ast"
+	"github.com/shinanca/gonec/ast"
 )
 
 func ConstFolding(inast ast.Stmts) ast.Stmts {

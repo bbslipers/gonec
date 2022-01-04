@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/covrom/gonec/names"
+	"github.com/shinanca/gonec/names"
 )
 
 // VMChan - канал для передачи любого типа вирт. машины

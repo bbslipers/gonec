@@ -1,11 +1,10 @@
 package gonecsvc
 
 import (
-		"github.com/covrom/gonec/version"
+	"github.com/shinanca/gonec/version"
 )
 
-const indexPage = 
-`<!doctype html>
+const indexPage = `<!doctype html>
 <html lang="ru">
 <head>	
 	<meta charset="utf-8">
@@ -85,7 +84,7 @@ const indexPage =
 </head>
 <body bgcolor=#25282c>
 	<div id="head" itemprop="name">	
-	<a href="https://github.com/covrom/gonec/wiki" style="text-decoration: none">
+	<a href="https://github.com/shinanca/gonec/wiki" style="text-decoration: none">
 	<img id="headimg" alt="ГОНЕЦ" src="data:image/png;base64,
 	iVBORw0KGgoAAAANSUhEUgAAAIYAAAAtCAYAAABrohO8AAAABmJLR0QA/wD/AP+gvaeTAAAACXBI
 	WXMAAAUZAAAFGQEBTwGjAAAAB3RJTUUH4QoODyUZPGcyDwAAIABJREFUeNrtXHl0FFX2/l5t3Z1O
@@ -239,7 +238,7 @@ const indexPage =
 	SUVORK5CYII="/>
 	</a>
 	<input type="button" value="Выполнить" id="run">
-	<span class="header">v`+version.Version+`</span></div>
+	<span class="header">v` + version.Version + `</span></div>
 	<div id="wrap">
 		<div id="code" name="code">Функция бенч1(бд)
 	дтнач = ТекущаяДата()

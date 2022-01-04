@@ -3,10 +3,10 @@ package ast
 import (
 	"reflect"
 
-	"github.com/covrom/gonec/bincode/binstmt"
-	"github.com/covrom/gonec/core"
-	"github.com/covrom/gonec/names"
-	"github.com/covrom/gonec/pos"
+	"github.com/shinanca/gonec/bincode/binstmt"
+	"github.com/shinanca/gonec/core"
+	"github.com/shinanca/gonec/names"
+	"github.com/shinanca/gonec/pos"
 )
 
 // Expr provides all of interfaces for expression.

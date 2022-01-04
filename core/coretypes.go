@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/covrom/decnum"
-	"github.com/covrom/gonec/names"
 	"github.com/dchest/siphash"
+	"github.com/shinanca/gonec/names"
 )
 
 type VMOperation int

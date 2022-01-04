@@ -1,19 +1,19 @@
 package bincode
 
 import (
-	"github.com/covrom/gonec/core"
+	"github.com/shinanca/gonec/core"
 )
 
 // Регистры виртуальной машины
 
 type VMRegs struct {
-	Env          *core.Env
+	Env *core.Env
 	// Reg          []core.VMValuer // регистры значений
-	Labels       []int           // [label]=index в BinCode
-	TryLabel     []int           // последний элемент - это метка на текущий обработчик CATCH
-	TryRegErr    []int           // последний элемент - это регистр с ошибкой текущего обработчика
-	ForBreaks    []int           // последний элемент - это метка для break
-	ForContinues []int           // последний элемент - это метка для continue
+	Labels       []int // [label]=index в BinCode
+	TryLabel     []int // последний элемент - это метка на текущий обработчик CATCH
+	TryRegErr    []int // последний элемент - это регистр с ошибкой текущего обработчика
+	ForBreaks    []int // последний элемент - это метка для break
+	ForContinues []int // последний элемент - это метка для continue
 	// ReturnTo     []int           // стек возвратов по RET
 }
 

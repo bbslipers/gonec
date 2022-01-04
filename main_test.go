@@ -5,9 +5,9 @@ import (
 	"log"
 	"testing"
 
-	"github.com/covrom/gonec/bincode"
-	"github.com/covrom/gonec/core"
-	"github.com/covrom/gonec/parser"
+	"github.com/shinanca/gonec/bincode"
+	"github.com/shinanca/gonec/core"
+	"github.com/shinanca/gonec/parser"
 )
 
 func TestRun(t *testing.T) {

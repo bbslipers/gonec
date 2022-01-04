@@ -11,8 +11,8 @@ import (
 
 	"github.com/covrom/decnum"
 
-	"github.com/covrom/gonec/names"
 	"github.com/satori/go.uuid"
+	"github.com/shinanca/gonec/names"
 )
 
 // LoadAllBuiltins is a convenience function that loads all defineSd builtins.

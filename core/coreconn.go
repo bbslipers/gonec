@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/covrom/gonec/names"
 	uuid "github.com/satori/go.uuid"
+	"github.com/shinanca/gonec/names"
 )
 
 func NewVMConn(data VMValuer) *VMConn {

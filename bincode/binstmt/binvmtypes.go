@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	posit "github.com/covrom/gonec/pos"
+	posit "github.com/shinanca/gonec/pos"
 )
 
 // Error provides a convenient interface for handling runtime error.
@@ -62,4 +62,3 @@ func (e *Error) String() string {
 	// учитываем вставку модуля _ по умолчанию - вычитаем 1 из номера строки
 	return e.Message
 }
-

@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"reflect"
 
-	"github.com/covrom/gonec/names"
+	"github.com/shinanca/gonec/names"
 )
 
 // VMMetaObj корневая структура для системных функциональных структур Го, доступных из языка Гонец

@@ -1,11 +1,11 @@
-[![GitHub issues](https://img.shields.io/github/issues/covrom/gonec.svg)](https://github.com/covrom/gonec/issues) [![Travis](https://travis-ci.org/covrom/gonec.svg?branch=master)](https://github.com/covrom/gonec/releases)
+[![GitHub issues](https://img.shields.io/github/issues/covrom/gonec.svg)](https://github.com/shinanca/gonec/issues) [![Travis](https://travis-ci.org/covrom/gonec.svg?branch=master)](https://github.com/shinanca/gonec/releases)
 
-[![Gonec Logo](/extra/gonec.png)](https://github.com/covrom/gonec/releases)
+[![Gonec Logo](/extra/gonec.png)](https://github.com/shinanca/gonec/releases)
 
 [![Demo site](/extra/button_play.png)](https://gonec.herokuapp.com/)
 
 [![Presentation](/extra/button_ppt.png)](https://gitpitch.com/covrom/gonec)
-[![Docs](/extra/button_doc.png)](https://github.com/covrom/gonec/wiki)
+[![Docs](/extra/button_doc.png)](https://github.com/shinanca/gonec/wiki)
 
 ## Цели
 
@@ -13,11 +13,11 @@
 
 ## Описание синтаксиса языка и примеры использования интерпретатора
 
-[Документация находится здесь](https://github.com/covrom/gonec/wiki)
+[Документация находится здесь](https://github.com/shinanca/gonec/wiki)
 
 Пример приложения "Список задач":
 
-[![Todo application](/extra/TODOApp.png)](https://github.com/covrom/gonec/wiki/%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D1%81%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D0%B7%D0%B0%D0%B4%D0%B0%D1%87)
+[![Todo application](/extra/TODOApp.png)](https://github.com/shinanca/gonec/wiki/%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D1%81%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D0%B7%D0%B0%D0%B4%D0%B0%D1%87)
 
 ## Масштабируемость языка и платформы
 Язык Гонец расширяется путем изменения правил синтаксиса в формате YACC, а так же написания библиотек структур и функций на Го, которые могут быть доступны как объекты метаданных в языке Гонец.

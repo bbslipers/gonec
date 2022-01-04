@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/covrom/gonec/bincode"
-	"github.com/covrom/gonec/bincode/binstmt"
-	"github.com/covrom/gonec/core"
-	"github.com/covrom/gonec/parser"
+	"github.com/shinanca/gonec/bincode"
+	"github.com/shinanca/gonec/bincode/binstmt"
+	"github.com/shinanca/gonec/core"
+	"github.com/shinanca/gonec/parser"
 )
 
 func NewGonecInterpreter(header core.VMServiceHeader, args []string, tmode bool) *VMGonecInterpreterService {

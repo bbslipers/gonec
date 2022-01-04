@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"reflect"
 
-	"github.com/covrom/gonec/names"
+	"github.com/shinanca/gonec/names"
 )
 
 // VMInt для ускорения работы храним целочисленное представление отдельно от decimal

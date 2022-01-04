@@ -69,7 +69,7 @@
 
 ## Описание синтаксиса языка и примеры использования интерпретатора
 
-[Документация находится здесь](https://github.com/covrom/gonec/wiki)
+[Документация находится здесь](https://github.com/shinanca/gonec/wiki)
 
 
 ---
@@ -247,9 +247,9 @@ CALL "сообщить", ARGS r0, ARGS_COUNT 2, VARARG false, GO false, RETURN r
 ---
 ![Gonec Logo](/extra/gonec.png)
 
-* [Скачать](https://github.com/covrom/gonec/releases)
+* [Скачать](https://github.com/shinanca/gonec/releases)
 
-* [Документация](https://github.com/covrom/gonec/wiki)
+* [Документация](https://github.com/shinanca/gonec/wiki)
 
 * [Попробовать онлайн](https://gonec.herokuapp.com)
 

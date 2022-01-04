@@ -8,8 +8,8 @@ import __yyfmt__ "fmt"
 //line parser.y:2
 
 import (
-	"github.com/covrom/gonec/ast"
-	"github.com/covrom/gonec/names"
+	"github.com/shinanca/gonec/ast"
+	"github.com/shinanca/gonec/names"
 )
 
 //line parser.y:30
