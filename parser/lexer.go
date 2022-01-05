@@ -39,6 +39,7 @@ type Scanner struct {
 	canequal bool
 	typecast bool
 	castType string
+	afterNew bool
 }
 
 // opName is correction of operation names.
@@ -125,6 +126,7 @@ func (s *Scanner) Init(src string) {
 
 // Scan analyses token, and decide identify or literals.
 func (s *Scanner) Scan() (tok int, lit string, pos posit.Position, err error) {
+
 	if s.typecast {
 		//вставляем название типа
 		s.typecast = false
@@ -147,9 +149,18 @@ retry:
 		if name, ok := opName[lowlit]; ok {
 			tok = name
 			_, s.canequal = opCanEqual[tok]
-			if tok == TYPECAST {
-				s.typecast = true
-				s.castType = lowlit
+			switch tok {
+			case TYPECAST:
+				if s.afterNew {
+					tok = IDENT
+					s.afterNew = false
+				} else {
+					s.typecast = true
+					s.castType = lowlit
+					pos = s.pos()
+				}
+			case MAKE:
+				s.afterNew = true
 			}
 		} else {
 			tok = IDENT
@@ -179,6 +190,7 @@ retry:
 			return
 		}
 	default:
+		s.afterNew = false
 		switch ch {
 		case EOF:
 			tok = EOF
