@@ -11,7 +11,7 @@ import (
 
 	"github.com/covrom/decnum"
 
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 	"github.com/shinanca/gonec/names"
 )
 
@@ -46,7 +46,6 @@ func LoadAllBuiltins(env *Env) {
 
 // Import общая стандартная бибилиотека
 func Import(env *Env) *Env {
-
 	env.DefineS("длина", VMFuncMustParams(1, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 		*envout = env
 		if rv, ok := args[0].(VMIndexer); ok {
@@ -339,7 +338,6 @@ func Import(env *Env) *Env {
 			return nil
 		}
 		return VMErrorNeedString
-
 	}))
 
 	env.DefineS("обработатьгорутины", VMFuncMustParams(0, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
@@ -376,6 +374,7 @@ func Import(env *Env) *Env {
 	env.DefineTypeStruct("клиент", &VMClient{})
 
 	env.DefineTypeStruct("сервермайнкрафт", &RconClient{})
+	env.DefineTypeStruct("текстовыйдокумент", &TextDocument{})
 
 	env.DefineTypeStruct("таблицазначений", &VMTable{})
 	env.DefineTypeStruct("колонкатаблицызначений", &VMTableColumn{})
