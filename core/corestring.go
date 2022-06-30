@@ -62,7 +62,7 @@ func (x VMString) Float() float64 {
 	return f64
 }
 
-func (x VMString) Decimal() VMDecNum {
+func (x VMString) DecNum() VMDecNum {
 	d, err := decnum.FromString(string(x))
 	if err != nil {
 		panic(err)
@@ -249,7 +249,7 @@ func (x VMString) ConvertToType(nt reflect.Type) (VMValuer, error) {
 	case ReflectVMBool:
 		return VMBool(x.Bool()), nil
 	case ReflectVMDecNum:
-		return x.Decimal(), nil
+		return x.DecNum(), nil
 	case ReflectVMSlice:
 		return VMSliceFromJson(string(x))
 	case ReflectVMStringMap:
@@ -258,7 +258,7 @@ func (x VMString) ConvertToType(nt reflect.Type) (VMValuer, error) {
 
 	// попробуем десериализировать структуру из json
 	if nt.Kind() == reflect.Struct {
-		//парсим json из строки и пытаемся получить указатель на структуру
+		// парсим json из строки и пытаемся получить указатель на структуру
 		rm := reflect.New(nt).Interface()
 		if err := json.Unmarshal([]byte(x), rm); err != nil {
 			return VMNil, err
@@ -270,7 +270,7 @@ func (x VMString) ConvertToType(nt reflect.Type) (VMValuer, error) {
 				return vobj, nil
 			} else {
 				return nil, VMErrorIncorrectStructType
-				//return rv, nil
+				// return rv, nil
 			}
 		}
 		return VMNil, VMErrorIncorrectStructType

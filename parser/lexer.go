@@ -126,9 +126,8 @@ func (s *Scanner) Init(src string) {
 
 // Scan analyses token, and decide identify or literals.
 func (s *Scanner) Scan() (tok int, lit string, pos posit.Position, err error) {
-
 	if s.typecast {
-		//вставляем название типа
+		// вставляем название типа
 		s.typecast = false
 		tok = IDENT
 		lit = s.castType
@@ -365,12 +364,12 @@ retry:
 		case '\n':
 			tok = int(ch)
 			lit = string(ch)
-			//первое равенство в строке - это будет присваивание
-			//нельзя переносить знак равенства в проверке на равенство в выражениях с присваиванием
-			//можно поставить знак равенства в конце строки и только потом перенести строку
+			// первое равенство в строке - это будет присваивание
+			// нельзя переносить знак равенства в проверке на равенство в выражениях с присваиванием
+			// можно поставить знак равенства в конце строки и только потом перенести строку
 			s.canequal = false
 		case ';':
-			//смена оператора - меняем признак возможности сравнения
+			// смена оператора - меняем признак возможности сравнения
 			tok = int(ch)
 			lit = string(ch)
 			s.canequal = false
@@ -390,7 +389,7 @@ retry:
 			case '(':
 				tok = TERNARY
 				lit = "?"
-				s.canequal = true //присваивания внутри тернарного оператора не бывает
+				s.canequal = true // присваивания внутри тернарного оператора не бывает
 			default:
 				s.back()
 				tok = int(ch)
@@ -566,7 +565,6 @@ func (s *Scanner) scanRawString() (string, error) {
 		s.next()
 		if s.peek() == EOF {
 			return "", errors.New("неожиданный EOF")
-			break
 		}
 		if s.peek() == '`' {
 			s.next()

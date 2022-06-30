@@ -15,8 +15,9 @@ import (
 // поля и методы должны отличаться друг от друга без учета регистра
 // например, Set и set - в вирт. машине будут считаться одинаковыми, будет использоваться последнее по индексу
 type VMMetaObj struct {
-	vmMetaCacheM map[int]VMFunc
-	vmMetaCacheF map[int]VMValuer
+	vmMetaCacheM      map[int]VMFunc
+	vmMetaCacheF      map[int]VMValuer
+	vmMetaConstructor VMConstructor
 
 	vmOriginal VMMetaObject
 }
@@ -30,7 +31,7 @@ func (v *VMMetaObj) VMInit(m VMMetaObject) {
 
 func (v *VMMetaObj) Interface() interface{} {
 	// возвращает ссылку на структуру, от которой был вызван метод VMInit
-	//rv:=*(*VMMetaObject)(v.vmOriginal)
+	// rv:=*(*VMMetaObject)(v.vmOriginal)
 	return v.vmOriginal
 }
 
@@ -49,6 +50,10 @@ func (x *VMMetaObj) Hash() VMString {
 	h := make([]byte, 8)
 	binary.LittleEndian.PutUint64(h, HashBytes(b))
 	return VMString(hex.EncodeToString(h))
+}
+
+func (v *VMMetaObj) VMRegisterConstructor(c VMConstructor) {
+	v.vmMetaConstructor = c
 }
 
 func (v *VMMetaObj) VMRegisterMethod(name string, m VMMethod) {
@@ -109,7 +114,6 @@ func (v *VMMetaObj) VMGetField(name int) VMValuer {
 }
 
 func (v *VMMetaObj) VMSetField(name int, val VMValuer) {
-
 	if r, ok := v.vmMetaCacheF[name]; ok {
 		switch rv := r.(type) {
 		case *VMInt:
@@ -148,11 +152,14 @@ func (v *VMMetaObj) VMSetField(name int, val VMValuer) {
 // VMGetMethod генерит функцию,
 // которая возвращает либо одно значение и ошибку, либо массив значений интерпретатора VMSlice
 func (v *VMMetaObj) VMGetMethod(name int) (VMFunc, bool) {
-
 	// fmt.Println(name)
 
 	rv, ok := v.vmMetaCacheM[name]
 	return rv, ok
+}
+
+func (v *VMMetaObj) VMGetConstructor() VMConstructor {
+	return v.vmMetaConstructor
 }
 
 func (v *VMMetaObj) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {

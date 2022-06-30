@@ -182,9 +182,7 @@ func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.En
 		ForContinues: make([]int, 0, 8),
 	}
 
-	var (
-		catcherr error
-	)
+	var catcherr error
 
 	cntInterrupt := 0
 
@@ -345,7 +343,7 @@ func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.En
 
 			var err error
 
-			//функцию на языке Гонец можно вызывать прямо с аргументами из слайса в регистре
+			// функцию на языке Гонец можно вызывать прямо с аргументами из слайса в регистре
 			var fgnc core.VMValuer
 			var argsl core.VMSlice
 			if s.Name == 0 {
@@ -399,7 +397,7 @@ func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.En
 					registers[s.RegRets] = rets[0]
 					core.PutGlobalVMSlice(rets)
 				default:
-					registers[s.RegRets] = rets //не возвращаем в пул
+					registers[s.RegRets] = rets // не возвращаем в пул
 				}
 				break
 			} else {
@@ -866,12 +864,35 @@ func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.En
 				v = reflect.Zero(rt)
 			}
 			if vv, ok := v.Interface().(core.VMValuer); ok {
+				invalidArgs := false
 				if vobj, ok := vv.(core.VMMetaObject); ok {
 					vobj.VMInit(vobj)
 					vobj.VMRegister()
-					registers[s.Reg] = vobj
-				} else {
+
+					constructor := vobj.VMGetConstructor()
+					// если есть аргументы то обязан быть конструктор
+					// если нет аргументов то конструктора может и не быть
+					if (s.NumArgs > 0 && constructor != nil) || (s.NumArgs == 0) {
+						if constructor != nil {
+							err := constructor(registers[s.Reg+1 : s.Reg+1+s.NumArgs])
+							if err != nil {
+								catcherr = binstmt.NewError(stmt, err)
+								break
+							}
+						}
+						registers[s.Reg] = vobj
+					} else {
+						invalidArgs = true
+					}
+				} else if s.NumArgs == 0 {
 					registers[s.Reg] = vv
+				} else {
+					invalidArgs = true
+				}
+
+				if invalidArgs {
+					catcherr = binstmt.NewStringError(stmt, "Переданы аргументы для создания объекта типа, не имеющего конструктора")
+					break
 				}
 			} else {
 				catcherr = binstmt.NewStringError(stmt, "Неизвестный тип")

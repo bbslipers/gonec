@@ -668,6 +668,11 @@ expr :
 		$$ = &ast.MakeExpr{Type: $2.Name}
 		$$.SetPosition($1.Position())
 	}
+	| MAKE typ '(' exprs ')'
+	{
+		$$ = &ast.MakeExpr{Type: $2.Name, SubExprs: $4}
+		$$.SetPosition($1.Position())
+	}
 	| MAKE CHAN
 	{
 		$$ = &ast.MakeChanExpr{SizeExpr: &ast.NoneExpr{}}

@@ -128,7 +128,7 @@ type (
 	// VMChanMaker может создать новый канал
 	VMChanMaker interface {
 		VMInterfacer
-		MakeChan(int) VMChaner //размер
+		MakeChan(int) VMChaner // размер
 	}
 
 	// VMMetaObject реализует поведение системной функциональной структуры (объекта метаданных)
@@ -141,30 +141,34 @@ type (
 		// !!!эта функция должна быть обязательно реализована в конечном объекте!!!
 		VMRegister()
 
+		// выставление конструктора не является обязательным, но если он выставлен при VMRegister,
+		// то будет использован для инстанцирования объекта
+		VMRegisterConstructor(VMConstructor)
 		VMRegisterMethod(string, VMMethod) // реализовано в VMMetaObj
 		VMRegisterField(string, VMValuer)  // реализовано в VMMetaObj
 
-		VMIsField(int) bool             // реализовано в VMMetaObj
-		VMGetField(int) VMValuer        // реализовано в VMMetaObj
-		VMSetField(int, VMValuer)       // реализовано в VMMetaObj
-		VMGetMethod(int) (VMFunc, bool) // реализовано в VMMetaObj
+		VMIsField(int) bool              // реализовано в VMMetaObj
+		VMGetField(int) VMValuer         // реализовано в VMMetaObj
+		VMSetField(int, VMValuer)        // реализовано в VMMetaObj
+		VMGetMethod(int) (VMFunc, bool)  // реализовано в VMMetaObj
+		VMGetConstructor() VMConstructor // реализовано в VMMetaObj
 	}
 
 	// VMMethodImplementer реализует только методы, доступные в языке Гонец
-	VMMethodImplementer interface{
+	VMMethodImplementer interface {
 		VMValuer
-		MethodMember(int) (VMFunc, bool) // возвращает метод в нужном формате		
+		MethodMember(int) (VMFunc, bool) // возвращает метод в нужном формате
 	}
 
 	// VMServicer определяет микросервис, который может регистрироваться в главном менеджере сервисов
-	VMServicer interface{
+	VMServicer interface {
 		VMValuer
 		Header() VMServiceHeader
-		Start() error // запускает горутину, и если не стартовал, возвращает ошибку
+		Start() error       // запускает горутину, и если не стартовал, возвращает ошибку
 		HealthCheck() error // если не живой, то возвращает ошибку
-		Stop() error // последняя ошибка при остановке
+		Stop() error        // последняя ошибка при остановке
 	}
-		
+
 	// VMNullable означает значение null
 	VMNullable interface {
 		VMStringer

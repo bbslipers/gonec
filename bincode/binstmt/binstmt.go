@@ -36,7 +36,7 @@ func (x *BinStmts) Append(bs BinStmt) {
 type BinCode struct {
 	Code   BinStmts
 	MaxReg int
-	Labels []int //индекс - это номер метки, значение = индекс stmt в Code
+	Labels []int // индекс - это номер метки, значение = индекс stmt в Code
 }
 
 func (v BinCode) String() string {
@@ -48,7 +48,7 @@ func (v BinCode) String() string {
 }
 
 func (v *BinCode) MapLabels(lastlabel int) {
-	//собираем мапу переходов
+	// собираем мапу переходов
 	v.Labels = make([]int, lastlabel+1)
 	for i, stmt := range v.Code {
 		if s, ok := stmt.(*BinLABEL); ok {
@@ -88,7 +88,7 @@ func ReadBinCode(r io.Reader) (res BinCode, err error) {
 
 	dec := gob.NewDecoder(zr)
 
-	var gnxNames = names.NewEnvNames()
+	gnxNames := names.NewEnvNames()
 
 	if err := dec.Decode(gnxNames); err != nil {
 		return res, err
@@ -107,7 +107,6 @@ func ReadBinCode(r io.Reader) (res BinCode, err error) {
 	// log.Println(gnxNames)
 
 	for i, v := range gnxNames.Handlow {
-
 		// log.Printf("Проверяем %d, %q", i, v)
 
 		if vv, ok := names.UniqueNames.GetLowerCaseOk(i); ok {
@@ -213,7 +212,6 @@ func init() {
 	gob.Register(&BinINC{})
 	gob.Register(&BinDEC{})
 	gob.Register(&BinFREE{})
-
 }
 
 //////////////////////
@@ -915,6 +913,7 @@ func (v *BinFUNC) SwapId(m map[int]int) {
 		}
 	}
 }
+
 func (v BinFUNC) String() string {
 	s := ""
 	for _, a := range v.Args {
@@ -966,16 +965,18 @@ func NewBinCASTTYPE(reg, regtype int, e pos.Pos) *BinCASTTYPE {
 type BinMAKE struct {
 	BinStmtImpl
 
-	Reg int // здесь id типа, и сюда же пишем новое значение
+	Reg     int // здесь id типа, и сюда же пишем новое значение
+	NumArgs int // число аргументов, которое надо взять для конструктора из массива в Reg+1
 }
 
 func (v BinMAKE) String() string {
 	return fmt.Sprintf("MAKE r%d AS TYPE r%d", v.Reg, v.Reg)
 }
 
-func NewBinMAKE(reg int, e pos.Pos) *BinMAKE {
+func NewBinMAKE(numargs, reg int, e pos.Pos) *BinMAKE {
 	v := &BinMAKE{
-		Reg: reg,
+		Reg:     reg,
+		NumArgs: numargs,
 	}
 	v.SetPosition(e.Position())
 	return v
@@ -1083,7 +1084,7 @@ type BinISSLICE struct {
 	BinStmtImpl
 
 	Reg     int // значение для проверки
-	RegBool int //сюда возвращается bool
+	RegBool int // сюда возвращается bool
 }
 
 func (v BinISSLICE) String() string {
@@ -1373,6 +1374,7 @@ func (v *BinMODULE) SwapId(m map[int]int) {
 		// log.Printf("Замена в %#v %v\n",v, v)
 	}
 }
+
 func (v BinMODULE) String() string {
 	return fmt.Sprintf("MODULE %s\n{\n%v}\n", names.UniqueNames.Get(v.Name), v.Code)
 }

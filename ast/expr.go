@@ -336,7 +336,6 @@ func (x *BinOpExpr) Simplify() Expr {
 }
 
 func (e *BinOpExpr) BinTo(bins *binstmt.BinStmts, reg int, lid *int, inStmt bool, maxreg *int) {
-
 	oper := core.OperMap[e.Operator]
 	// если это равенство в контексте исполнения блока кода, то это присваивание, а не вычисление выражения
 	if inStmt && oper == core.EQL {
@@ -423,7 +422,7 @@ func (e *TernaryOpExpr) BinTo(bins *binstmt.BinStmts, reg int, lid *int, inStmt 
 type CallExpr struct {
 	ExprImpl
 	Func     interface{}
-	Name     int //string
+	Name     int // string
 	SubExprs []Expr
 	VarArg   bool
 	Go       bool
@@ -505,7 +504,7 @@ func (e *AnonCallExpr) BinTo(bins *binstmt.BinStmts, reg int, lid *int, inStmt b
 type MemberExpr struct {
 	ExprImpl
 	Expr Expr
-	Name int //string
+	Name int // string
 }
 
 func (x *MemberExpr) Simplify() Expr {
@@ -557,7 +556,6 @@ func (x *ItemExpr) Simplify() Expr {
 }
 
 func (e *ItemExpr) BinLetTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int) {
-
 	*lid++
 	lend := *lid
 	e.Value.BinTo(bins, reg+1, lid, false, maxreg)
@@ -639,9 +637,9 @@ func (e *SliceExpr) BinTo(bins *binstmt.BinStmts, reg int, lid *int, inStmt bool
 // FuncExpr provide function expression.
 type FuncExpr struct {
 	ExprImpl
-	Name   int //string
+	Name   int // string
 	Stmts  Stmts
-	Args   []int //string
+	Args   []int // string
 	VarArg bool
 }
 
@@ -835,7 +833,7 @@ func (e *ChanExpr) BinTo(bins *binstmt.BinStmts, reg int, lid *int, inStmt bool,
 }
 
 type Type struct {
-	Name int //string
+	Name int // string
 }
 
 type TypeCast struct {
@@ -869,11 +867,15 @@ func (e *TypeCast) BinTo(bins *binstmt.BinStmts, reg int, lid *int, inStmt bool,
 
 type MakeExpr struct {
 	ExprImpl
-	Type     int  //string
-	TypeExpr Expr // должен быть строкой
+	Type     int    // string
+	TypeExpr Expr   // должен быть строкой
+	SubExprs []Expr // параметры конструктора
 }
 
 func (x *MakeExpr) Simplify() Expr {
+	for i := range x.SubExprs {
+		x.SubExprs[i] = x.SubExprs[i].Simplify()
+	}
 	if x.TypeExpr != nil {
 		x.TypeExpr = x.TypeExpr.Simplify()
 	}
@@ -881,13 +883,24 @@ func (x *MakeExpr) Simplify() Expr {
 }
 
 func (e *MakeExpr) BinTo(bins *binstmt.BinStmts, reg int, lid *int, inStmt bool, maxreg *int) {
+	// создаем все параметры в следующих регистрах
+	for i, ee := range e.SubExprs {
+		ri := reg + 1 + i
+		ee.BinTo(bins, ri, lid, false, maxreg)
+		if ri > *maxreg {
+			*maxreg = ri
+		}
+	}
+
+	// сам тип храним в reg
 	if e.TypeExpr == nil {
 		bins.Append(binstmt.NewBinLOAD(reg, core.VMInt(e.Type), true, e))
 	} else {
 		e.TypeExpr.BinTo(bins, reg, lid, false, maxreg)
 		bins.Append(binstmt.NewBinSETNAME(reg, e))
 	}
-	bins.Append(binstmt.NewBinMAKE(reg, e))
+
+	bins.Append(binstmt.NewBinMAKE(len(e.SubExprs), reg, e))
 	if reg > *maxreg {
 		*maxreg = reg
 	}

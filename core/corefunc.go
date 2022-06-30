@@ -27,7 +27,10 @@ func (f VMFunc) Func() VMFunc {
 	return f
 }
 
-type VMMethod = func(VMSlice, *VMSlice, *(*Env)) error
+type (
+	VMMethod      = func(VMSlice, *VMSlice, *(*Env)) error
+	VMConstructor = func(VMSlice) error
+)
 
 func VMFuncMustParams(n int, f VMMethod) VMFunc {
 	return VMFunc(
