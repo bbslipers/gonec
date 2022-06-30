@@ -375,6 +375,7 @@ func Import(env *Env) *Env {
 
 	env.DefineTypeStruct("сервермайнкрафт", &RconClient{})
 	env.DefineTypeStruct("текстовыйдокумент", &TextDocument{})
+	env.DefineTypeStruct("файл", &File{})
 
 	env.DefineTypeStruct("таблицазначений", &VMTable{})
 	env.DefineTypeStruct("колонкатаблицызначений", &VMTableColumn{})
