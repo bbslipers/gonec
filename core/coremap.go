@@ -57,7 +57,6 @@ func (x VMStringMap) Hash() VMString {
 }
 
 func (x VMStringMap) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 
 	switch names.UniqueNames.GetLowerCase(name) {
@@ -75,7 +74,7 @@ func (x VMStringMap) MethodMember(name int) (VMFunc, bool) {
 }
 
 // Ключи возвращаются отсортированными по возрастанию
-func (x VMStringMap) Ключи(args VMSlice, rets *VMSlice, envout *(*Env)) error { //VMSlice {
+func (x VMStringMap) Ключи(args VMSlice, rets *VMSlice, envout *(*Env)) error { // VMSlice {
 	rv := make(VMSlice, len(x))
 	i := 0
 	for k := range x {
@@ -88,7 +87,7 @@ func (x VMStringMap) Ключи(args VMSlice, rets *VMSlice, envout *(*Env)) err
 }
 
 // Значения возвращаются в случайном порядке
-func (x VMStringMap) Значения(args VMSlice, rets *VMSlice, envout *(*Env)) error { //VMSlice {
+func (x VMStringMap) Значения(args VMSlice, rets *VMSlice, envout *(*Env)) error { // VMSlice {
 	rv := make(VMSlice, len(x))
 	i := 0
 	for _, v := range x {
@@ -99,7 +98,7 @@ func (x VMStringMap) Значения(args VMSlice, rets *VMSlice, envout *(*Env
 	return nil
 }
 
-func (x VMStringMap) Удалить(args VMSlice, rets *VMSlice, envout *(*Env)) error { //VMSlice {
+func (x VMStringMap) Удалить(args VMSlice, rets *VMSlice, envout *(*Env)) error { // VMSlice {
 	p, ok := args[0].(VMString)
 	if !ok {
 		return VMErrorNeedString
@@ -268,7 +267,6 @@ func (x VMStringMap) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error
 }
 
 func (x VMStringMap) ConvertToType(nt reflect.Type) (VMValuer, error) {
-
 	// fmt.Println(nt)
 
 	switch nt {
@@ -292,7 +290,7 @@ func (x VMStringMap) ConvertToType(nt reflect.Type) (VMValuer, error) {
 		rv := reflect.ValueOf(x)
 		// для приведения в структурные типы - можно использовать мапу для заполнения полей
 		rs := reflect.New(nt) // указатель на новую структуру
-		//заполняем экспортируемые неанонимные поля, если их находим в мапе
+		// заполняем экспортируемые неанонимные поля, если их находим в мапе
 		for i := 0; i < nt.NumField(); i++ {
 			f := nt.Field(i)
 			if f.PkgPath == "" && !f.Anonymous {
@@ -320,7 +318,7 @@ func (x VMStringMap) ConvertToType(nt reflect.Type) (VMValuer, error) {
 				return vobj, nil
 			} else {
 				return nil, VMErrorIncorrectStructType
-				//return vv, nil
+				// return vv, nil
 			}
 		} else {
 			return nil, VMErrorUnknownType
@@ -333,21 +331,21 @@ func (x VMStringMap) ConvertToType(nt reflect.Type) (VMValuer, error) {
 
 func (x VMStringMap) MarshalBinary() ([]byte, error) {
 	var buf bytes.Buffer
-	binary.Write(&buf, binary.LittleEndian, uint64(len(x))) //количество пар ключ-значение
+	binary.Write(&buf, binary.LittleEndian, uint64(len(x))) // количество пар ключ-значение
 	for i := range x {
 		if v, ok := x[i].(VMBinaryTyper); ok {
 			bb, err := v.MarshalBinary()
 			if err != nil {
 				return nil, err
 			}
-			//ключ
+			// ключ
 			bws := []byte(i)
-			binary.Write(&buf, binary.LittleEndian, uint64(len(bws))) //длина
-			buf.Write(bws)                                            //строка ключа
-			//значение
-			buf.WriteByte(byte(v.BinaryType()))                      //тип
-			binary.Write(&buf, binary.LittleEndian, uint64(len(bb))) //длина в байтах
-			buf.Write(bb)                                            //байты
+			binary.Write(&buf, binary.LittleEndian, uint64(len(bws))) // длина
+			buf.Write(bws)                                            // строка ключа
+			// значение
+			buf.WriteByte(byte(v.BinaryType()))                      // тип
+			binary.Write(&buf, binary.LittleEndian, uint64(len(bb))) // длина в байтах
+			buf.Write(bb)                                            // байты
 		} else {
 			return nil, VMErrorNotBinaryConverted
 		}
@@ -365,22 +363,22 @@ func (x *VMStringMap) UnmarshalBinary(data []byte) error {
 	rv := make(VMStringMap, int(l))
 
 	for i := 0; i < int(l); i++ {
-		//длина ключа
+		// длина ключа
 		if err := binary.Read(buf, binary.LittleEndian, &li); err != nil {
 			return err
 		}
-		//строка ключа
+		// строка ключа
 		bi := buf.Next(int(li))
 
-		//тип
+		// тип
 		if tt, err := buf.ReadByte(); err != nil {
 			return err
 		} else {
-			//длина значения
+			// длина значения
 			if err := binary.Read(buf, binary.LittleEndian, &lv); err != nil {
 				return err
 			}
-			//байты значения
+			// байты значения
 			bb := buf.Next(int(lv))
 
 			vv, err := VMBinaryType(tt).ParseBinary(bb)

@@ -6,7 +6,7 @@ import (
 )
 
 type VMClient struct {
-	VMMetaObj //должен передаваться по ссылке, поэтому это будет объект метаданных
+	VMMetaObj // должен передаваться по ссылке, поэтому это будет объект метаданных
 
 	addr     string  // [addr]:port
 	protocol string  // tcp, json, http
@@ -22,7 +22,6 @@ func (x *VMClient) IsOnline() bool {
 }
 
 func (x *VMClient) Open(proto, addr string, handler VMFunc, data VMValuer, closeOnExitHandler bool) error {
-
 	switch proto {
 	case "tcp", "tcpzip", "tcptls", "http", "https":
 

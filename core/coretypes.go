@@ -155,12 +155,14 @@ func (x VMNilType) ParseGoType(v interface{}) {
 		panic(VMErrorNotDefined)
 	}
 }
+
 func (x VMNilType) Parse(s string) error {
 	if names.FastToLower(s) != "неопределено" {
 		return VMErrorNotDefined
 	}
 	return nil
 }
+
 func (x VMNilType) BinaryType() VMBinaryType {
 	return VMNIL
 }
@@ -465,7 +467,7 @@ func VMValuerFromJSON(s string) (VMValuer, error) {
 }
 
 func VMSliceFromJson(x string) (VMSlice, error) {
-	//парсим json из строки и пытаемся получить массив
+	// парсим json из строки и пытаемся получить массив
 	var rvms VMSlice
 	var rm []json.RawMessage
 	var err error
@@ -483,7 +485,7 @@ func VMSliceFromJson(x string) (VMSlice, error) {
 }
 
 func VMStringMapFromJson(x string) (VMStringMap, error) {
-	//парсим json из строки и пытаемся получить массив
+	// парсим json из строки и пытаемся получить массив
 	var rvms VMStringMap
 	var rm map[string]json.RawMessage
 	var err error

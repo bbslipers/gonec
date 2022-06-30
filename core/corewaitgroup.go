@@ -37,7 +37,6 @@ func (x *VMWaitGroup) Wait() {
 }
 
 func (x *VMWaitGroup) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "добавить":

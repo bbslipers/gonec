@@ -51,7 +51,6 @@ func (x *StmtImpl) stmt() {}
 type Stmts []Stmt
 
 func (x Stmts) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int) {
-
 	for _, st := range x {
 		st.BinTo(bins, reg, lid, maxreg)
 	}
@@ -163,7 +162,6 @@ func (s *IfStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int) {
 	if reg > *maxreg {
 		*maxreg = reg
 	}
-
 }
 
 // TryStmt provide "try/catch/finally" statement.
@@ -221,7 +219,7 @@ func (s *TryStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int) 
 // ForStmt provide "for in" expression statement.
 type ForStmt struct {
 	StmtImpl
-	Var   int //string
+	Var   int // string
 	Value Expr
 	Stmts Stmts
 }
@@ -279,7 +277,7 @@ func (s *ForStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int) 
 // NumForStmt name = expr1 to expr2
 type NumForStmt struct {
 	StmtImpl
-	Name  int //string
+	Name  int // string
 	Expr1 Expr
 	Expr2 Expr
 	Stmts Stmts
@@ -351,7 +349,6 @@ func (s *NumForStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *in
 	if reg+3 > *maxreg {
 		*maxreg = reg + 3
 	}
-
 }
 
 // CForStmt provide C-style "for (;;)" expression statement.
@@ -410,7 +407,6 @@ func (s *LoopStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int)
 	if reg+1 > *maxreg {
 		*maxreg = reg + 1
 	}
-
 }
 
 // BreakStmt provide "break" expression statement.
@@ -454,7 +450,6 @@ func (x *ReturnStmt) Simplify() {
 }
 
 func (s *ReturnStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int) {
-
 	if len(s.Exprs) == 0 {
 		bins.Append(binstmt.NewBinLOAD(reg, core.VMNil, false, s))
 	}
@@ -477,7 +472,6 @@ func (s *ReturnStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *in
 	if reg+1 > *maxreg {
 		*maxreg = reg + 1
 	}
-
 }
 
 // ThrowStmt provide "throw" expression statement.
@@ -501,12 +495,11 @@ func (s *ThrowStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int
 // ModuleStmt provide "module" expression statement.
 type ModuleStmt struct {
 	StmtImpl
-	Name  int //string
+	Name  int // string
 	Stmts Stmts
 }
 
 func (x *ModuleStmt) Simplify() {
-
 	ncpu := runtime.NumCPU()
 	if ncpu > 1 {
 		ch := make(chan Stmt, 20)
@@ -523,7 +516,6 @@ func (x *ModuleStmt) Simplify() {
 			st.Simplify()
 		}
 	}
-
 }
 
 func (s *ModuleStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int) {
@@ -703,7 +695,7 @@ func (x *CaseStmt) Simplify() {
 }
 
 func (s *CaseStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int) {
-	//ничего не делаем, эти блоки обрабатываются в родительских контекстах
+	// ничего не делаем, эти блоки обрабатываются в родительских контекстах
 }
 
 // DefaultStmt provide switch/default statement.
@@ -719,7 +711,7 @@ func (x *DefaultStmt) Simplify() {
 }
 
 func (s *DefaultStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int) {
-	//ничего не делаем, эти блоки обрабатываются в родительских контекстах
+	// ничего не делаем, эти блоки обрабатываются в родительских контекстах
 }
 
 // LetsStmt provide multiple statement of let.
@@ -802,7 +794,7 @@ func (s *LetsStmt) BinTo(bins *binstmt.BinStmts, reg int, lid *int, maxreg *int)
 // VarStmt provide statement to let variables in current scope.
 type VarStmt struct {
 	StmtImpl
-	Names []int //string
+	Names []int // string
 	Exprs []Expr
 }
 

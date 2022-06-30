@@ -1,6 +1,6 @@
 package gonecsvc
 
-const jsAce=`/* ***** BEGIN LICENSE BLOCK *****
+const jsAce = `/* ***** BEGIN LICENSE BLOCK *****
 * Distributed under the BSD license:
 *
 * Copyright (c) 2010, Ajax.org B.V.
@@ -1285,7 +1285,7 @@ var Keys = (function() {
 		  73: 'i',  74: 'j',  75: 'k',  76: 'l',  77: 'm',  78: 'n', 79:  'o',
 		  80: 'p',  81: 'q',  82: 'r',  83: 's',  84: 't',  85: 'u', 86:  'v',
 		  87: 'w',  88: 'x',  89: 'y',  90: 'z', 107: '+', 109: '-', 110: '.',
-		 186: ';', 187: '=', 188: ',', 189: '-', 190: '.', 191: '/', 192: '`+"`"+`',
+		 186: ';', 187: '=', 188: ',', 189: '-', 190: '.', 191: '/', 192: '` + "`" + `',
 		 219: '[', 220: '\\',221: ']', 222: "'", 111: '/', 106: '*'
 	   }
    };
@@ -19560,29 +19560,9 @@ exports.version = "1.2.8";
 			   });
 		   })();
 	   
-`+
+` +
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-`define("ace/snippets",["require","exports","module","ace/lib/oop","ace/lib/event_emitter","ace/lib/lang","ace/range","ace/anchor","ace/keyboard/hash_handler","ace/tokenizer","ace/lib/dom","ace/editor"], function(require, exports, module) {
+	`define("ace/snippets",["require","exports","module","ace/lib/oop","ace/lib/event_emitter","ace/lib/lang","ace/range","ace/anchor","ace/keyboard/hash_handler","ace/tokenizer","ace/lib/dom","ace/editor"], function(require, exports, module) {
 	"use strict";
 	var oop = require("./lib/oop");
 	var EventEmitter = require("./lib/event_emitter").EventEmitter;
@@ -19625,7 +19605,7 @@ exports.version = "1.2.8";
 						var ch = val[1];
 						if (ch == "}" && stack.length) {
 							val = ch;
-						}else if ("`+"`"+`$\\".indexOf(ch) != -1) {
+						}else if ("` + "`" + `$\\".indexOf(ch) != -1) {
 							val = ch;
 						} else if (stack.inFormatString) {
 							if (ch == "n")
@@ -19665,7 +19645,7 @@ exports.version = "1.2.8";
 						ts.flag = val[3];
 						return "";
 					}, next: "start"},
-					{regex: "`+"`"+`" + escape("`+"`"+`") + "*`+"`"+`", onMatch: function(val, state, stack) {
+					{regex: "` + "`" + `" + escape("` + "`" + `") + "*` + "`" + `", onMatch: function(val, state, stack) {
 						stack[0].code = val.splice(1, -1);
 						return "";
 					}, next: "start"},

@@ -39,4 +39,3 @@ func LeftRightBounds(rb, re int, vlen int) (ii, ij int) {
 	}
 	return
 }
-

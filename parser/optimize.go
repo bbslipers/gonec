@@ -5,7 +5,6 @@ import (
 )
 
 func ConstFolding(inast ast.Stmts) ast.Stmts {
-
 	// num := 4
 	// ch := make(chan ast.Stmt, 20)
 	// done := make(chan bool, 20)

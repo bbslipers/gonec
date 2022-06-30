@@ -64,7 +64,6 @@ func (s *Session) CreateNoChecks(se *SessionEntry, q *WriteOptions) (string, *Wr
 		}
 	}
 	return s.create(body, q)
-
 }
 
 // Create makes a new session. Providing a session entry can

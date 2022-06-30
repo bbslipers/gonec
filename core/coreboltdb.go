@@ -32,7 +32,7 @@ func (x *VMBoltDB) String() string {
 func (x *VMBoltDB) Open(filename string) (err error) {
 	x.Lock()
 	defer x.Unlock()
-	x.db, err = bolt.Open(filename, 0600, &bolt.Options{Timeout: 1 * time.Second})
+	x.db, err = bolt.Open(filename, 0o600, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,6 @@ func (x *VMBoltDB) Begin(writable bool) (tr *VMBoltTransaction, err error) {
 }
 
 func (x *VMBoltDB) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "открыть":
@@ -171,11 +170,10 @@ func (x *VMBoltTransaction) BackupDBToFile(name string) error {
 	if x.tx == nil {
 		return VMErrorTransactionNotOpened
 	}
-	return x.tx.CopyFile(name, 0644)
+	return x.tx.CopyFile(name, 0o644)
 }
 
 func (x *VMBoltTransaction) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "зафиксироватьтранзакцию":
@@ -328,7 +326,6 @@ func (x *VMBoltTable) GetAll() (VMStringMap, error) {
 }
 
 func (x *VMBoltTable) SetByMap(m VMStringMap) error {
-
 	mm := make(map[string]VMBinaryTyper)
 	for ks, vs := range m {
 		v, ok := vs.(VMBinaryTyper)
@@ -355,7 +352,6 @@ func (x *VMBoltTable) SetByMap(m VMStringMap) error {
 }
 
 func (x *VMBoltTable) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "получить":

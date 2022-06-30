@@ -219,8 +219,8 @@ WAIT:
 		qOpts.WaitIndex = 0
 		pair, meta, err = kv.Get(l.opts.Key, qOpts)
 		if pair != nil && pair.Session != "" {
-			//If the session is not null, this means that a wait can safely happen
-			//using a long poll
+			// If the session is not null, this means that a wait can safely happen
+			// using a long poll
 			qOpts.WaitIndex = meta.LastIndex
 			goto WAIT
 		} else {

@@ -48,7 +48,6 @@ func (x VMChan) Close() { close(x) }
 func (x VMChan) Size() int { return cap(x) }
 
 func (x VMChan) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "закрыть":

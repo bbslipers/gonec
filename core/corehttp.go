@@ -89,7 +89,6 @@ func (x *VMHttpRequest) Method() VMString {
 //  "Тело":"Строка"
 // }
 func (x *VMHttpRequest) RequestAsVMStringMap() (VMStringMap, error) {
-
 	rmap := make(VMStringMap)
 
 	err := x.r.ParseMultipartForm(32 << 20)
@@ -136,7 +135,6 @@ func (x *VMHttpRequest) RequestAsVMStringMap() (VMStringMap, error) {
 }
 
 func (x *VMHttpRequest) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 
 	switch names.UniqueNames.GetLowerCase(name) {
@@ -295,7 +293,6 @@ func (x *VMHttpResponse) Send(status VMInt, b VMString, h VMStringMap) error {
 }
 
 func (x *VMHttpResponse) RequestAsVMStringMap() (VMStringMap, error) {
-
 	var err error
 	rmap := make(VMStringMap)
 
@@ -319,7 +316,6 @@ func (x *VMHttpResponse) RequestAsVMStringMap() (VMStringMap, error) {
 }
 
 func (x *VMHttpResponse) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 
 	switch names.UniqueNames.GetLowerCase(name) {

@@ -92,7 +92,6 @@ func (x VMSlice) SortDefault() {
 }
 
 func (x VMSlice) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 
 	switch names.UniqueNames.GetLowerCase(name) {
@@ -147,7 +146,7 @@ func (x VMSlice) Найти(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 // иначе будет непредсказуемый ответ
 func (x VMSlice) НайтиСорт(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 	y := args[0]
-	p := sort.Search(len(x), func(i int) bool { return !SortLessVMValues(x[i], y) }) //data[i] >= x
+	p := sort.Search(len(x), func(i int) bool { return !SortLessVMValues(x[i], y) }) // data[i] >= x
 	if p < len(x) && EqualVMValues(x[p], y) {
 		// y is present at x[p]
 		rets.Append(VMInt(p))
@@ -221,7 +220,7 @@ func (x VMSlice) CopyRecursive() VMSlice {
 }
 
 // Скопировать - помимо обычного копирования еще и рекурсивно копирует и слайсы/структуры, находящиеся в элементах
-func (x VMSlice) Скопировать(args VMSlice, rets *VMSlice, envout *(*Env)) error { //VMSlice {
+func (x VMSlice) Скопировать(args VMSlice, rets *VMSlice, envout *(*Env)) error { // VMSlice {
 	rv := make(VMSlice, len(x))
 	copy(rv, x)
 	for i, v := range rv {
@@ -236,7 +235,7 @@ func (x VMSlice) Скопировать(args VMSlice, rets *VMSlice, envout *(*E
 	return nil
 }
 
-func (x VMSlice) СкопироватьУникальные(args VMSlice, rets *VMSlice, envout *(*Env)) error { //VMSlice {
+func (x VMSlice) СкопироватьУникальные(args VMSlice, rets *VMSlice, envout *(*Env)) error { // VMSlice {
 	rv := make(VMSlice, len(x))
 	seen := make(map[VMValuer]bool)
 	for i, v := range x {
@@ -464,7 +463,7 @@ func (x VMSlice) ConvertToType(nt reflect.Type) (VMValuer, error) {
 
 func (x VMSlice) MarshalBinary() ([]byte, error) {
 	var buf bytes.Buffer
-	//количество элементов
+	// количество элементов
 	binary.Write(&buf, binary.LittleEndian, uint64(len(x)))
 	for i := range x {
 		if v, ok := x[i].(VMBinaryTyper); ok {
@@ -472,11 +471,11 @@ func (x VMSlice) MarshalBinary() ([]byte, error) {
 			if err != nil {
 				return nil, err
 			}
-			//тип
+			// тип
 			buf.WriteByte(byte(v.BinaryType()))
-			//длина
+			// длина
 			binary.Write(&buf, binary.LittleEndian, uint64(len(bb)))
-			//байты
+			// байты
 			buf.Write(bb)
 		} else {
 			return nil, VMErrorNotBinaryConverted
@@ -488,7 +487,7 @@ func (x VMSlice) MarshalBinary() ([]byte, error) {
 func (x *VMSlice) UnmarshalBinary(data []byte) error {
 	buf := bytes.NewBuffer(data)
 	var l, lv uint64
-	//количество элементов
+	// количество элементов
 	if err := binary.Read(buf, binary.LittleEndian, &l); err != nil {
 		return err
 	}
@@ -500,15 +499,15 @@ func (x *VMSlice) UnmarshalBinary(data []byte) error {
 	}
 
 	for i := 0; i < int(l); i++ {
-		//тип
+		// тип
 		if tt, err := buf.ReadByte(); err != nil {
 			return err
 		} else {
-			//длина
+			// длина
 			if err := binary.Read(buf, binary.LittleEndian, &lv); err != nil {
 				return err
 			}
-			//байты
+			// байты
 			bb := buf.Next(int(lv))
 			vv, err := VMBinaryType(tt).ParseBinary(bb)
 			if err != nil {

@@ -40,7 +40,7 @@ type VMServiceBus struct {
 	runned bool
 
 	Name     string
-	services map[string]VMServicer //ключ это Id из VMServiceHeader
+	services map[string]VMServicer // ключ это Id из VMServiceHeader
 	done     chan bool
 }
 
@@ -168,7 +168,6 @@ func (x *VMServiceBus) Register(svc VMServicer) error {
 
 // Register апдейтит сервис в менеджере, останавливая и удаляя старую версию
 func (x *VMServiceBus) UpdateRegister(svc VMServicer) error {
-
 	id := svc.Header().ID
 
 	x.RLock()

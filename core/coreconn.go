@@ -113,7 +113,6 @@ func urlValuesFromMap(vals VMStringMap) (url.Values, error) {
 // hdrs - заголовки, которые будут помещены в запрос
 // vals - если это GET, то будут помещены в URL, если POST - помещаются в FormValues тела запроса, иначе - игнорируются
 func (x *VMConn) HttpReq(meth, rurl VMString, body []byte, hdrs, vals VMStringMap) (*VMHttpResponse, error) {
-
 	var req *http.Request
 	var err error
 
@@ -174,7 +173,6 @@ func (x *VMConn) HttpReq(meth, rurl VMString, body []byte, hdrs, vals VMStringMa
 }
 
 func (x *VMConn) Dial(proto, addr string, handler VMFunc, closeOnExitHandler bool) (err error) {
-
 	x.httpcl = nil
 
 	if proto == "tcptls" {
@@ -223,7 +221,6 @@ func (x *VMConn) Dial(proto, addr string, handler VMFunc, closeOnExitHandler boo
 	}
 
 	return nil
-
 }
 
 func (x *VMConn) Handle(f VMFunc, closeOnExitHandler bool) {
@@ -254,13 +251,12 @@ func (x *VMConn) Close() (err error) {
 
 type binTCPHead struct {
 	Signature [8]byte //[8]byte{'g', 'o', 'n', 'e', 'c', 't', 'c', 'p'}
-	Hash      uint64  //хэш зашифрованного тела
-	Len       int64   //длина тела
+	Hash      uint64  // хэш зашифрованного тела
+	Len       int64   // длина тела
 	Gzip      byte    //==0 - без сжатия (зашифрован), иначе сжат и зашифрован
 }
 
 func (x *VMConn) Send(val VMStringMap) error {
-
 	b, err := val.MarshalBinary()
 	if err != nil {
 		return err
@@ -281,7 +277,7 @@ func (x *VMConn) Send(val VMStringMap) error {
 		return err
 	}
 
-	//хэш зашифрованного
+	// хэш зашифрованного
 	hs := HashBytes(be)
 
 	head := binTCPHead{
@@ -315,7 +311,6 @@ func (x *VMConn) Send(val VMStringMap) error {
 }
 
 func (x *VMConn) Receive() (VMStringMap, error) {
-
 	rv := make(VMStringMap)
 	var buf bytes.Buffer
 
@@ -376,7 +371,6 @@ func (x *VMConn) Receive() (VMStringMap, error) {
 }
 
 func (c *VMConn) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 
 	switch names.UniqueNames.GetLowerCase(name) {
@@ -391,7 +385,7 @@ func (c *VMConn) MethodMember(name int) (VMFunc, bool) {
 	case "данные":
 		return VMFuncMustParams(0, c.Данные), true
 	case "запрос":
-		return VMFuncMustParams(1, c.Запрос), true //метод, урл, тело, заголовки, параметры формы
+		return VMFuncMustParams(1, c.Запрос), true // метод, урл, тело, заголовки, параметры формы
 	case "закрыть":
 		return VMFuncMustParams(0, c.Закрыть), true
 	}

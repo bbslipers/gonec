@@ -479,7 +479,6 @@ func NewHttpClient(transport *http.Transport, tlsConf TLSConfig) (*http.Client, 
 
 	if transport.TLSClientConfig == nil {
 		tlsClientConfig, err := SetupTLSConfig(&tlsConf)
-
 		if err != nil {
 			return nil, err
 		}

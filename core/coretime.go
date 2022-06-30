@@ -319,7 +319,7 @@ func (x *VMTimeDuration) UnmarshalJSON(data []byte) error {
 	return x.UnmarshalText(data)
 }
 
-//VMTime дата и время
+// VMTime дата и время
 
 type VMTime time.Time
 
@@ -426,7 +426,6 @@ func (t VMTime) Format(layout string) string {
 }
 
 func (t VMTime) MethodMember(name int) (VMFunc, bool) {
-
 	// только эти методы будут доступны из кода на языке Гонец!
 
 	switch names.UniqueNames.GetLowerCase(name) {
@@ -538,7 +537,7 @@ func (t VMTime) Неделя(args VMSlice, rets *VMSlice, envout *(*Env)) error 
 }
 
 func (t VMTime) ДеньНедели(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	//1=понедельник, 7=воскресенье ...
+	// 1=понедельник, 7=воскресенье ...
 	wd := t.Weekday()
 	if wd == 0 {
 		rets.Append(VMInt(7))
@@ -549,23 +548,23 @@ func (t VMTime) ДеньНедели(args VMSlice, rets *VMSlice, envout *(*Env)
 }
 
 func (t VMTime) Quarter() VMInt {
-	//1-4
+	// 1-4
 	return VMInt(int64(time.Time(t).Month())/4 + 1)
 }
 
 func (t VMTime) Квартал(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	//1-4
+	// 1-4
 	rets.Append(t.Quarter())
 	return nil
 }
 
 func (t VMTime) YearDay() VMInt {
-	//1-366
+	// 1-366
 	return VMInt(time.Time(t).YearDay())
 }
 
 func (t VMTime) ДеньГода(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	//1-366
+	// 1-366
 	rets.Append(t.YearDay())
 	return nil
 }
@@ -643,7 +642,6 @@ func (t VMTime) Юникс(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 }
 
 func (t VMTime) Формат(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-
 	// аргумент - форматная строка
 	fmtstr, ok := args[0].(VMString)
 	if !ok {
@@ -696,7 +694,7 @@ func (t VMTime) Формат(args VMSlice, rets *VMSlice, envout *(*Env)) error 
 	}
 
 	months1 := [...]string{
-		"", //0-го не бывает
+		"", // 0-го не бывает
 		"январь",
 		"февраль",
 		"март",
@@ -712,7 +710,7 @@ func (t VMTime) Формат(args VMSlice, rets *VMSlice, envout *(*Env)) error 
 	}
 
 	months2 := [...]string{
-		"", //0-го не бывает
+		"", // 0-го не бывает
 		"января",
 		"февраля",
 		"марта",

@@ -52,7 +52,6 @@ func colortext(color ct.Color, bright bool, f func()) {
 }
 
 func main() {
-
 	fs.Parse(os.Args[1:])
 	if *v {
 		fmt.Println(version.Version)
@@ -175,7 +174,7 @@ func main() {
 			if *testingMode {
 				log.Printf("--Выполняется код--\n%s\n", code)
 			}
-			//замер производительности
+			// замер производительности
 			_, bins, err = bincode.ParseSrc(code)
 			tsParse = time.Since(tstart)
 
@@ -234,7 +233,7 @@ func main() {
 		following = false
 		code = ""
 
-		//замер производительности
+		// замер производительности
 		tstart = time.Now()
 		if *testingMode {
 			log.Println("--Результат выполнения кода--")
@@ -291,7 +290,6 @@ func main() {
 				// 		}
 				// 	}
 				// })
-
 			} else {
 				break
 			}
@@ -301,7 +299,6 @@ func main() {
 
 // Run запускает микросервис интерпретатора на порту
 func Run(port string, ext string) {
-
 	// создаем сервис
 	svc := gonecsvc.NewGonecInterpreter(
 		core.VMServiceHeader{
@@ -329,5 +326,4 @@ func Run(port string, ext string) {
 	if err != nil {
 		log.Println(err)
 	}
-
 }

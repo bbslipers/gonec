@@ -15,10 +15,12 @@ type VMDecNum struct {
 	num decnum.Quad
 }
 
-var VMDecNumZero = VMDecNum{num: decnum.Zero()}
-var ReflectVMDecNum = reflect.TypeOf(VMDecNumZero)
-var VMDecNumOne = NewVMDecNumFromInt64(1)
-var VMDecNumNegOne = NewVMDecNumFromInt64(-1)
+var (
+	VMDecNumZero    = VMDecNum{num: decnum.Zero()}
+	ReflectVMDecNum = reflect.TypeOf(VMDecNumZero)
+	VMDecNumOne     = NewVMDecNumFromInt64(1)
+	VMDecNumNegOne  = NewVMDecNumFromInt64(-1)
+)
 
 func (x VMDecNum) vmval() {}
 
@@ -72,7 +74,7 @@ func (x VMDecNum) String() string {
 }
 
 func (x VMDecNum) Int() int64 {
-	i, err := x.num.ToInt64(decnum.RoundDown) //целая часть, без округления
+	i, err := x.num.ToInt64(decnum.RoundDown) // целая часть, без округления
 	if err != nil {
 		return 0
 	}
@@ -80,7 +82,7 @@ func (x VMDecNum) Int() int64 {
 }
 
 func (x VMDecNum) RoundHalfUp() int64 {
-	i, err := x.num.ToInt64(decnum.RoundHalfUp) //целая часть, округление вверх, если модуль>0.5
+	i, err := x.num.ToInt64(decnum.RoundHalfUp) // целая часть, округление вверх, если модуль>0.5
 	if err != nil {
 		return 0
 	}

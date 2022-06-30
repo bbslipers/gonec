@@ -126,7 +126,6 @@ func (e *Env) NewEnv() *Env {
 				builtsLoaded: ee.builtsLoaded,
 				Valid:        true,
 			}
-
 		}
 	}
 	panic("Не найден глобальный контекст!")
@@ -148,7 +147,7 @@ func (e *Env) NewSubEnv() *Env {
 
 // Находим или создаем новый модуль в глобальном скоупе
 func (e *Env) NewModule(n string) *Env {
-	//ni := strings.ToLower(n)
+	// ni := strings.ToLower(n)
 	id := names.UniqueNames.Set(n)
 	if v, err := e.Get(id); err == nil {
 		if vv, ok := v.(*Env); ok {
@@ -233,7 +232,6 @@ func (e *Env) GetName() string {
 
 // TypeName определяет имя типа по типу значения
 func (e *Env) TypeName(t reflect.Type) int {
-
 	for ee := e; ee != nil; ee = ee.parent {
 		ee.RLock()
 		for k, v := range ee.typ {
@@ -250,7 +248,6 @@ func (e *Env) TypeName(t reflect.Type) int {
 // Type returns type which specified symbol. It goes to upper scope until
 // found or returns error.
 func (e *Env) Type(k int) (reflect.Type, error) {
-
 	for ee := e; ee != nil; ee = ee.parent {
 		ee.RLock()
 		if v, ok := ee.typ[k]; ok {
@@ -265,7 +262,6 @@ func (e *Env) Type(k int) (reflect.Type, error) {
 // Get returns value which specified symbol. It goes to upper scope until
 // found or returns error.
 func (e *Env) Get(k int) (VMValuer, error) {
-
 	for ee := e; ee != nil; ee = ee.parent {
 		ee.RLock()
 		if ee.lastid == k {
@@ -292,7 +288,6 @@ func (e *Env) Get(k int) (VMValuer, error) {
 // Set modifies value which specified as symbol. It goes to upper scope until
 // found or returns error.
 func (e *Env) Set(k int, v VMValuer) error {
-
 	for ee := e; ee != nil; ee = ee.parent {
 		ee.Lock()
 		if _, ok := ee.env.Get(k); ok {
@@ -410,7 +405,7 @@ func (e *Env) StdOut() reflect.Value {
 
 func (e *Env) SetStdOut(w io.Writer) {
 	// e.Lock()
-	//пренебрегаем возможными коллизиями при установке потока вывода, т.к. это совсем редкая операция
+	// пренебрегаем возможными коллизиями при установке потока вывода, т.к. это совсем редкая операция
 	e.stdout = w
 	// e.Unlock()
 }

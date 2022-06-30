@@ -49,7 +49,6 @@ func (x *VMGonecInterpreterService) Header() core.VMServiceHeader {
 }
 
 func (x *VMGonecInterpreterService) Start() error {
-
 	if x.srv != nil {
 		return core.VMErrorServerAlreadyStarted
 	}
@@ -59,7 +58,7 @@ func (x *VMGonecInterpreterService) Start() error {
 	http.HandleFunc("/"+x.hdr.Path+"/src", x.handlerSource)
 	http.HandleFunc("/"+x.hdr.Path+"/healthcheck", x.handlerHealth) // в таком же формате регистрируется в consul и т.п.
 
-	//добавляем горутину на принудительное закрытие сессий через 10 мин без активности
+	// добавляем горутину на принудительное закрытие сессий через 10 мин без активности
 	go func() {
 		for {
 			time.Sleep(time.Minute)
@@ -130,7 +129,7 @@ func (x *VMGonecInterpreterService) handlerSource(w http.ResponseWriter, r *http
 				w.Header().Set("Content-Type", "text/javascript")
 				_, err := w.Write([]byte(jQuery))
 				if err != nil {
-					time.Sleep(time.Second) //анти-ddos
+					time.Sleep(time.Second) // анти-ddos
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					log.Println(err)
 					return
@@ -139,7 +138,7 @@ func (x *VMGonecInterpreterService) handlerSource(w http.ResponseWriter, r *http
 				w.Header().Set("Content-Type", "text/javascript")
 				_, err := w.Write([]byte(jsAce))
 				if err != nil {
-					time.Sleep(time.Second) //анти-ddos
+					time.Sleep(time.Second) // анти-ddos
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					log.Println(err)
 					return
@@ -148,7 +147,7 @@ func (x *VMGonecInterpreterService) handlerSource(w http.ResponseWriter, r *http
 				w.Header().Set("Content-Type", "text/javascript")
 				_, err := w.Write([]byte(jsAceTheme))
 				if err != nil {
-					time.Sleep(time.Second) //анти-ddos
+					time.Sleep(time.Second) // анти-ddos
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					log.Println(err)
 					return
@@ -157,7 +156,7 @@ func (x *VMGonecInterpreterService) handlerSource(w http.ResponseWriter, r *http
 				w.Header().Set("Content-Type", "text/javascript")
 				_, err := w.Write([]byte(jsAceLang))
 				if err != nil {
-					time.Sleep(time.Second) //анти-ddos
+					time.Sleep(time.Second) // анти-ddos
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					log.Println(err)
 					return
@@ -165,22 +164,20 @@ func (x *VMGonecInterpreterService) handlerSource(w http.ResponseWriter, r *http
 			default:
 				http.Error(w, "Неправильно указано имя", http.StatusBadRequest)
 			}
-
 		} else {
 			http.Error(w, "Не указано имя", http.StatusBadRequest)
 		}
 
 	default:
-		time.Sleep(time.Second) //анти-ddos
+		time.Sleep(time.Second) // анти-ddos
 		http.Error(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
 		return
 	}
 }
 
 func (x *VMGonecInterpreterService) handlerAPI(w http.ResponseWriter, r *http.Request) {
-
 	if r.ContentLength > 1<<26 {
-		time.Sleep(time.Second) //анти-ddos
+		time.Sleep(time.Second) // анти-ddos
 		http.Error(w, "Слишком большой запрос", http.StatusForbidden)
 		return
 	}
@@ -191,7 +188,7 @@ func (x *VMGonecInterpreterService) handlerAPI(w http.ResponseWriter, r *http.Re
 
 		defer r.Body.Close()
 
-		//интерпретируется код и возвращается вывод как простой текст
+		// интерпретируется код и возвращается вывод как простой текст
 		w.Header().Set("Content-Type", "text/plain")
 
 		sid := r.Header.Get("Sid")
@@ -204,7 +201,7 @@ func (x *VMGonecInterpreterService) handlerAPI(w http.ResponseWriter, r *http.Re
 		x.lockSessions.RUnlock()
 		if !ok {
 
-			//создаем новое окружение
+			// создаем новое окружение
 			env = core.NewEnv()
 			env.DefineS("аргументызапуска", core.NewVMSliceFromStrings(x.fsArgs))
 
@@ -222,18 +219,17 @@ func (x *VMGonecInterpreterService) handlerAPI(w http.ResponseWriter, r *http.Re
 		w.Header().Set("Sid", sid)
 
 		env.SetSid(sid)
-		//log.Println("Сессия:",sid)
+		// log.Println("Сессия:",sid)
 
 		err := x.parseAndRun(r.Body, w, env)
-
 		if err != nil {
-			time.Sleep(time.Second) //анти-ddos
+			time.Sleep(time.Second) // анти-ddos
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 	default:
-		time.Sleep(time.Second) //анти-ddos
+		time.Sleep(time.Second) // анти-ddos
 		http.Error(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
 		return
 	}
@@ -256,7 +252,7 @@ func (x *VMGonecInterpreterService) parseAndRun(r io.Reader, w io.Writer, env *c
 		log.Printf("--Выполняется код-- %s\n%s\n", env.GetSid(), sb)
 	}
 
-	//замер производительности
+	// замер производительности
 	tstart := time.Now()
 	_, bins, err := bincode.ParseSrc(sb)
 	tsParse := time.Since(tstart)

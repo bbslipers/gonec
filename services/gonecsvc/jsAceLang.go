@@ -1,6 +1,6 @@
 package gonecsvc
 
-const jsAceLang=`ace.define("ace/mode/gonec_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+const jsAceLang = `ace.define("ace/mode/gonec_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
 	"use strict";
 	
 	var oop = require("../lib/oop");
@@ -52,7 +52,7 @@ const jsAceLang=`ace.define("ace/mode/gonec_highlight_rules",["require","exports
 				regex : /"(?:[^"\\]|\\.)*?"/
 			}, {
 				token : "string", // raw
-				regex : '`+"`"+`',
+				regex : '` + "`" + `',
 				next : "bqstring"
 			}, {
 				token : "constant.numeric", // hex
@@ -82,7 +82,7 @@ const jsAceLang=`ace.define("ace/mode/gonec_highlight_rules",["require","exports
 			"bqstring" : [
                 {
                     token : "string",
-                    regex : '`+"`"+`',
+                    regex : '` + "`" + `',
                     next : "start"
                 }, {
                     defaultToken : "string"
