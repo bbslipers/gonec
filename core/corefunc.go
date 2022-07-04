@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"reflect"
 )
 
 // VMFunc вызывается как обертка метода объекта метаданных или обертка функции библиотеки
@@ -12,6 +13,8 @@ import (
 // при возврате так же возвращается окружение в envout, в котором выполнялась функция
 // это нужно для обработки callback-вызова из Го, например, отправки ее сообщения об ошибке в ее же окружение
 type VMFunc func(args VMSlice, rets *VMSlice, envout *(*Env)) error
+
+var ReflectVMFunc = reflect.TypeOf(VMFunc(nil))
 
 func (f VMFunc) vmval() {}
 

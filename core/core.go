@@ -2,6 +2,7 @@
 package core
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -71,7 +72,15 @@ func Import(env *Env) *Env {
 			if !ok {
 				return VMErrorNeedInt
 			}
-			max = maxvm.Int() - 1
+
+			max = maxvm.Int()
+			if max == 0 {
+				rets.Append(make(VMSlice, 0))
+				return nil
+			} else if max < 0 {
+				return errors.New("Диапазон не может быть до отрицательного числа")
+			}
+			max--
 		} else {
 			minvm, ok := args[0].(VMInt)
 			if !ok {
@@ -366,6 +375,7 @@ func Import(env *Env) *Env {
 	env.DefineTypeS("структура", ReflectVMStringMap)
 	env.DefineTypeS("дата", ReflectVMTime)
 	env.DefineTypeS("длительность", ReflectVMTimeDuration)
+	env.DefineTypeS("функция", ReflectVMFunc)
 
 	env.DefineTypeS("группаожидания", ReflectVMWaitGroup)
 	env.DefineTypeS("файловаябазаданных", ReflectVMBoltDB)

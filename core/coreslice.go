@@ -252,6 +252,7 @@ func (x VMSlice) СкопироватьУникальные(args VMSlice, rets *
 		}
 		seen[v] = true
 	}
+	rv = rv[0:len(seen)]
 	rets.Append(rv)
 	return nil
 }
@@ -353,10 +354,8 @@ func (x VMSlice) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
 				return VMBool(false), nil
 			}
 			for i := range x {
-				for j := range yy {
-					if !EqualVMValues(x[i], yy[j]) {
-						return VMBool(false), nil
-					}
+				if !EqualVMValues(x[i], yy[i]) {
+					return VMBool(false), nil
 				}
 			}
 			return VMBool(true), nil
@@ -369,10 +368,8 @@ func (x VMSlice) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
 				return VMBool(true), nil
 			}
 			for i := range x {
-				for j := range yy {
-					if !EqualVMValues(x[i], yy[j]) {
-						return VMBool(true), nil
-					}
+				if !EqualVMValues(x[i], yy[i]) {
+					return VMBool(true), nil
 				}
 			}
 			return VMBool(false), nil

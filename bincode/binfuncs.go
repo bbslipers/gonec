@@ -15,7 +15,7 @@ func LeftRightBounds(rb, re int, vlen int) (ii, ij int) {
 	switch {
 	case ii > 0:
 		if ii >= vlen {
-			ii = vlen - 1
+			ii = vlen
 		}
 	case ii < 0:
 		ii += vlen

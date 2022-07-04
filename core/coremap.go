@@ -187,7 +187,7 @@ func (x VMStringMap) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error
 			}
 			for k, v := range x {
 				if yv, ok := yy[k]; ok {
-					if EqualVMValues(v, yv) {
+					if !EqualVMValues(v, yv) {
 						return VMBool(false), nil
 					}
 				} else {
@@ -205,7 +205,7 @@ func (x VMStringMap) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error
 			}
 			for k, v := range x {
 				if yv, ok := yy[k]; ok {
-					if EqualVMValues(v, yv) {
+					if !EqualVMValues(v, yv) {
 						return VMBool(true), nil
 					}
 				} else {
