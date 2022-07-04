@@ -1,6 +1,0 @@
-language: go
-go:
-  - 1.11.2
-before_install:
-    - go get github.com/daviddengcn/go-colortext
-    - go get github.com/mattn/go-isatty

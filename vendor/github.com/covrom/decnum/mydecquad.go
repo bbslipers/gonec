@@ -848,6 +848,14 @@ func FromInt64(value int64) Quad {
 	return Quad(C.mdq_from_int64(C.int64_t(value)))
 }
 
+func FromUint64(value uint64) Quad {
+	q, err := FromString(strconv.FormatUint(value, 10))
+	if err != nil {
+		panic(err)
+	}
+	return q
+}
+
 func FromFloat(value float64) Quad {
 	q, err := FromString(strconv.FormatFloat(value, 'f', -1, 64))
 	if err != nil {
@@ -1096,6 +1104,23 @@ func (a Quad) ToFloat64() (float64, error) {
 
 	if val, err = strconv.ParseFloat(a.String(), 64); err != nil {
 		return math.NaN(), QuadError(InvalidOperation)
+	}
+
+	return val, nil
+}
+
+func (a Quad) ToUint64() (uint64, error) {
+	var (
+		err error
+		val uint64
+	)
+
+	if a.IsNaN() { // because strconv.ParseFloat doesn't parse signaling sNaN
+		return 0, QuadError(InvalidOperation)
+	}
+
+	if val, err = strconv.ParseUint(a.String(), 10, 64); err != nil {
+		return 0, QuadError(InvalidOperation)
 	}
 
 	return val, nil
