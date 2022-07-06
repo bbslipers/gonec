@@ -7,8 +7,6 @@ import (
 )
 
 var (
-	VMErrorNeedSinglePacketName = errors.New("Должно быть одно название пакета")
-	VMErrorNeedLength           = errors.New("Значение должно иметь длину")
 	VMErrorNeedLess             = errors.New("Первое значение должно быть меньше второго")
 	VMErrorNeedLengthOrBoundary = errors.New("Должна быть длина диапазона или начало и конец")
 	VMErrorNeedFormatAndArgs    = errors.New("Должны быть форматная строка и хотя бы один параметр")
@@ -22,7 +20,6 @@ var (
 	VMErrorNeedMap         = errors.New("Требуется значение типа Структура")
 	VMErrorNeedSlice       = errors.New("Требуется значение типа Массив")
 	VMErrorNeedDuration    = errors.New("Требуется значение типа Длительность")
-	VMErrorNeedSeconds     = errors.New("Должно быть число секунд (допустимо с дробной частью)")
 	VMErrorNeedHash        = errors.New("Параметр не может быть хэширован")
 	VMErrorNeedBinaryTyper = errors.New("Требуется значение, которое может быть сериализовано в бинарное")
 

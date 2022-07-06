@@ -175,7 +175,7 @@ func Import(env *Env) *Env {
 		args VMSlice, rets *VMSlice, envout *(*Env),
 	) error {
 		*envout = env
-		rets.Append(VMString(strings.ToLower(string(args[0].(VMStringer).String()))))
+		rets.Append(VMString(strings.ToLower(args[0].(VMStringer).String())))
 		return nil
 	}))
 
@@ -183,7 +183,7 @@ func Import(env *Env) *Env {
 		args VMSlice, rets *VMSlice, envout *(*Env),
 	) error {
 		*envout = env
-		rets.Append(VMString(strings.ToUpper(string(args[0].(VMStringer).String()))))
+		rets.Append(VMString(strings.ToUpper(args[0].(VMStringer).String())))
 		return nil
 	}))
 
@@ -192,8 +192,8 @@ func Import(env *Env) *Env {
 	) error {
 		*envout = env
 		rets.Append(VMBool(strings.Contains(
-			string(args[0].(VMStringer).String()),
-			string(args[1].(VMStringer).String()))))
+			args[0].(VMStringer).String(),
+			args[1].(VMStringer).String())))
 		return nil
 	}))
 
@@ -202,8 +202,8 @@ func Import(env *Env) *Env {
 	) error {
 		*envout = env
 		rets.Append(VMBool(strings.ContainsAny(
-			string(args[0].(VMStringer).String()),
-			string(args[1].(VMStringer).String()))))
+			args[0].(VMStringer).String(),
+			args[1].(VMStringer).String())))
 		return nil
 	}))
 
@@ -212,8 +212,8 @@ func Import(env *Env) *Env {
 	) error {
 		*envout = env
 		rets.Append(VMInt(strings.Count(
-			string(args[0].(VMStringer).String()),
-			string(args[1].(VMStringer).String()))))
+			args[0].(VMStringer).String(),
+			args[1].(VMStringer).String())))
 		return nil
 	}))
 
@@ -222,8 +222,8 @@ func Import(env *Env) *Env {
 	) error {
 		*envout = env
 		rets.Append(VMInt(strings.Index(
-			string(args[0].(VMStringer).String()),
-			string(args[1].(VMStringer).String()))))
+			args[0].(VMStringer).String(),
+			args[1].(VMStringer).String())))
 		return nil
 	}))
 
@@ -232,8 +232,8 @@ func Import(env *Env) *Env {
 	) error {
 		*envout = env
 		rets.Append(VMInt(strings.IndexAny(
-			string(args[0].(VMStringer).String()),
-			string(args[1].(VMStringer).String()))))
+			args[0].(VMStringer).String(),
+			args[1].(VMStringer).String())))
 		return nil
 	}))
 
@@ -242,8 +242,8 @@ func Import(env *Env) *Env {
 	) error {
 		*envout = env
 		rets.Append(VMInt(strings.LastIndex(
-			string(args[0].(VMStringer).String()),
-			string(args[1].(VMStringer).String()))))
+			args[0].(VMStringer).String(),
+			args[1].(VMStringer).String())))
 		return nil
 	}))
 
@@ -252,9 +252,9 @@ func Import(env *Env) *Env {
 	) error {
 		*envout = env
 		rets.Append(VMString(strings.Replace(
-			string(args[0].(VMStringer).String()),
-			string(args[1].(VMStringer).String()),
-			string(args[2].(VMStringer).String()), -1)))
+			args[0].(VMStringer).String(),
+			args[1].(VMStringer).String(),
+			args[2].(VMStringer).String(), -1)))
 		return nil
 	}))
 
