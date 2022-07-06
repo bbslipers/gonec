@@ -139,25 +139,25 @@ func (x *VMHttpRequest) MethodMember(name int) (VMFunc, bool) {
 
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "метод":
-		return VMFuncMustParams(0, x.Метод), true
+		return VMFuncZeroParams(x.Метод), true
 	case "заголовок":
-		return VMFuncMustParams(1, x.Заголовок), true
+		return VMFuncOneParam[VMString](x.Заголовок), true
 	case "установитьзаголовок":
-		return VMFuncMustParams(2, x.УстановитьЗаголовок), true
+		return VMFuncTwoParams[VMString, VMString](x.УстановитьЗаголовок), true
 	case "тело":
-		return VMFuncMustParams(0, x.Тело), true
+		return VMFuncZeroParams(x.Тело), true
 	case "путь":
-		return VMFuncMustParams(0, x.Путь), true
+		return VMFuncZeroParams(x.Путь), true
 	case "адрес":
-		return VMFuncMustParams(0, x.Адрес), true
+		return VMFuncZeroParams(x.Адрес), true
 	case "фрагмент":
-		return VMFuncMustParams(0, x.Фрагмент), true
+		return VMFuncZeroParams(x.Фрагмент), true
 	case "параметр":
-		return VMFuncMustParams(1, x.Параметр), true
+		return VMFuncOneParam[VMString](x.Параметр), true
 	case "данные":
-		return VMFuncMustParams(0, x.Данные), true
+		return VMFuncZeroParams(x.Данные), true
 	case "сообщение":
-		return VMFuncMustParams(0, x.Сообщение), true
+		return VMFuncZeroParams(x.Сообщение), true
 	}
 
 	return nil, false
@@ -169,24 +169,12 @@ func (x *VMHttpRequest) Метод(args VMSlice, rets *VMSlice, envout *(*Env)) 
 }
 
 func (x *VMHttpRequest) Заголовок(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	s, ok := args[0].(VMString)
-	if !ok {
-		return VMErrorNeedString
-	}
-	rets.Append(x.GetHeader(s))
+	rets.Append(x.GetHeader(args[0].(VMString)))
 	return nil
 }
 
 func (x *VMHttpRequest) УстановитьЗаголовок(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	k, ok := args[0].(VMString)
-	if !ok {
-		return VMErrorNeedString
-	}
-	v, ok := args[1].(VMString)
-	if !ok {
-		return VMErrorNeedString
-	}
-	x.SetHeader(k, v)
+	x.SetHeader(args[0].(VMString), args[1].(VMString))
 	return nil
 }
 
@@ -212,11 +200,7 @@ func (x *VMHttpRequest) Фрагмент(args VMSlice, rets *VMSlice, envout *(*
 }
 
 func (x *VMHttpRequest) Параметр(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	s, ok := args[0].(VMString)
-	if !ok {
-		return VMErrorNeedString
-	}
-	rets.Append(x.GetParam(s))
+	rets.Append(x.GetParam(args[0].(VMString)))
 	return nil
 }
 
@@ -320,9 +304,9 @@ func (x *VMHttpResponse) MethodMember(name int) (VMFunc, bool) {
 
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "отправить":
-		return VMFuncMustParams(1, x.Отправить), true
+		return VMFuncOneParam[VMStringMap](x.Отправить), true
 	case "сообщение":
-		return VMFuncMustParams(0, x.Сообщение), true
+		return VMFuncZeroParams(x.Сообщение), true
 	}
 
 	return nil, false
@@ -333,11 +317,7 @@ func (x *VMHttpResponse) Отправить(args VMSlice, rets *VMSlice, envout 
 		return VMErrorHTTPResponseMethod
 	}
 
-	vsm, ok := args[0].(VMStringMap)
-	if !ok {
-		return VMErrorNeedMap
-	}
-
+	vsm := args[0].(VMStringMap)
 	var h VMStringMap
 	if v, ok := vsm["Заголовки"]; ok {
 		if h, ok = v.(VMStringMap); !ok {

@@ -430,59 +430,59 @@ func (t VMTime) MethodMember(name int) (VMFunc, bool) {
 
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "год":
-		return VMFuncMustParams(0, t.Год), true
+		return VMFuncZeroParams(t.Год), true
 	case "месяц":
-		return VMFuncMustParams(0, t.Месяц), true
+		return VMFuncZeroParams(t.Месяц), true
 	case "день":
-		return VMFuncMustParams(0, t.День), true
+		return VMFuncZeroParams(t.День), true
 	case "неделя":
-		return VMFuncMustParams(0, t.Неделя), true
+		return VMFuncZeroParams(t.Неделя), true
 	case "деньнедели":
-		return VMFuncMustParams(0, t.ДеньНедели), true
+		return VMFuncZeroParams(t.ДеньНедели), true
 	case "квартал":
-		return VMFuncMustParams(0, t.Квартал), true
+		return VMFuncZeroParams(t.Квартал), true
 	case "деньгода":
-		return VMFuncMustParams(0, t.ДеньГода), true
+		return VMFuncZeroParams(t.ДеньГода), true
 	case "час":
-		return VMFuncMustParams(0, t.Час), true
+		return VMFuncZeroParams(t.Час), true
 	case "минута":
-		return VMFuncMustParams(0, t.Минута), true
+		return VMFuncZeroParams(t.Минута), true
 	case "секунда":
-		return VMFuncMustParams(0, t.Секунда), true
+		return VMFuncZeroParams(t.Секунда), true
 	case "миллисекунда":
-		return VMFuncMustParams(0, t.Миллисекунда), true
+		return VMFuncZeroParams(t.Миллисекунда), true
 	case "микросекунда":
-		return VMFuncMustParams(0, t.Микросекунда), true
+		return VMFuncZeroParams(t.Микросекунда), true
 	case "наносекунда":
-		return VMFuncMustParams(0, t.Наносекунда), true
+		return VMFuncZeroParams(t.Наносекунда), true
 	case "unixnano":
-		return VMFuncMustParams(0, t.ЮниксНано), true
+		return VMFuncZeroParams(t.ЮниксНано), true
 	case "unix":
-		return VMFuncMustParams(0, t.Юникс), true
+		return VMFuncZeroParams(t.Юникс), true
 	case "формат":
-		return VMFuncMustParams(1, t.Формат), true
+		return VMFuncOneParam[VMString](t.Формат), true
 	case "вычесть":
-		return VMFuncMustParams(1, t.Вычесть), true
+		return VMFuncOneParam[VMTime](t.Вычесть), true
 	case "добавить":
-		return VMFuncMustParams(1, t.Добавить), true
+		return VMFuncOneParam[VMTimeDuration](t.Добавить), true
 	case "добавитьпериод":
-		return VMFuncMustParams(3, t.ДобавитьПериод), true
+		return VMFuncThreeParams[VMInt, VMInt, VMInt](t.ДобавитьПериод), true
 	case "раньше":
-		return VMFuncMustParams(1, t.Раньше), true
+		return VMFuncOneParam[VMTime](t.Раньше), true
 	case "позже":
-		return VMFuncMustParams(1, t.Позже), true
+		return VMFuncOneParam[VMTime](t.Позже), true
 	case "равно":
-		return VMFuncMustParams(1, t.Равно), true
+		return VMFuncOneParam[VMTime](t.Равно), true
 	case "пустая":
-		return VMFuncMustParams(0, t.Пустая), true
+		return VMFuncZeroParams(t.Пустая), true
 	case "местное":
-		return VMFuncMustParams(0, t.Местное), true
+		return VMFuncZeroParams(t.Местное), true
 	case "utc":
-		return VMFuncMustParams(0, t.ВремяUTC), true
+		return VMFuncZeroParams(t.ВремяUTC), true
 	case "локация":
-		return VMFuncMustParams(0, t.Локация), true
+		return VMFuncZeroParams(t.Локация), true
 	case "влокации":
-		return VMFuncMustParams(1, t.ВЛокации), true
+		return VMFuncOneParam[VMString](t.ВЛокации), true
 	}
 
 	return nil, false
@@ -643,10 +643,7 @@ func (t VMTime) Юникс(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 
 func (t VMTime) Формат(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 	// аргумент - форматная строка
-	fmtstr, ok := args[0].(VMString)
-	if !ok {
-		return VMErrorNeedString
-	}
+	fmtstr := args[0].(VMString)
 
 	// д (d) - день месяца (цифрами) без лидирующего нуля;
 	// дд (dd) - день месяца (цифрами) с лидирующим нулем;
@@ -891,11 +888,7 @@ func (t VMTime) Sub(t2 VMTime) VMTimeDuration {
 }
 
 func (t VMTime) Вычесть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	t2, ok := args[0].(VMTime)
-	if !ok {
-		return VMErrorNeedDate
-	}
-	rets.Append(t.Sub(t2))
+	rets.Append(t.Sub(args[0].(VMTime)))
 	return nil
 }
 
@@ -904,28 +897,15 @@ func (t VMTime) Add(d VMTimeDuration) VMTime {
 }
 
 func (t VMTime) Добавить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	d, ok := args[0].(VMTimeDuration)
-	if !ok {
-		return VMErrorNeedDuration
-	}
-	rets.Append(t.Add(d))
+	rets.Append(t.Add(args[0].(VMTimeDuration)))
 	return nil
 }
 
 func (t VMTime) ДобавитьПериод(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(dy, dm, dd int) VMTime {
-	dy, ok := args[0].(VMInt)
-	if !ok {
-		return VMErrorNeedInt
-	}
-	dm, ok := args[1].(VMInt)
-	if !ok {
-		return VMErrorNeedInt
-	}
-	dd, ok := args[2].(VMInt)
-	if !ok {
-		return VMErrorNeedInt
-	}
-	rets.Append(VMTime(time.Time(t).AddDate(int(dy), int(dm), int(dd))))
+	rets.Append(VMTime(time.Time(t).AddDate(
+		int(args[0].(VMInt)),
+		int(args[1].(VMInt)),
+		int(args[2].(VMInt)))))
 	return nil
 }
 
@@ -934,11 +914,7 @@ func (t VMTime) Before(d VMTime) bool {
 }
 
 func (t VMTime) Раньше(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(d VMTime) bool {
-	t2, ok := args[0].(VMTime)
-	if !ok {
-		return VMErrorNeedDate
-	}
-	rets.Append(VMBool(t.Before(t2)))
+	rets.Append(VMBool(t.Before(args[0].(VMTime))))
 	return nil
 }
 
@@ -947,11 +923,7 @@ func (t VMTime) After(d VMTime) bool {
 }
 
 func (t VMTime) Позже(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(d VMTime) bool {
-	t2, ok := args[0].(VMTime)
-	if !ok {
-		return VMErrorNeedDate
-	}
-	rets.Append(VMBool(t.After(t2)))
+	rets.Append(VMBool(t.After(args[0].(VMTime))))
 	return nil
 }
 
@@ -962,11 +934,7 @@ func (t VMTime) Equal(d VMTime) bool {
 
 func (t VMTime) Равно(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(d VMTime) bool {
 	// для разных локаций тоже работает, в отличие от =
-	t2, ok := args[0].(VMTime)
-	if !ok {
-		return VMErrorNeedDate
-	}
-	rets.Append(VMBool(t.Equal(t2)))
+	rets.Append(VMBool(t.Equal(args[0].(VMTime))))
 	return nil
 }
 
@@ -1015,11 +983,7 @@ func (t VMTime) InLocation(name string) VMTime {
 }
 
 func (t VMTime) ВЛокации(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(name string) VMTime {
-	name, ok := args[0].(VMString)
-	if !ok {
-		return VMErrorNeedString
-	}
-	loc, err := time.LoadLocation(string(name))
+	loc, err := time.LoadLocation(string(args[0].(VMString)))
 	if err != nil {
 		return err
 	}

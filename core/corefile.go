@@ -1,7 +1,6 @@
 package core
 
 import (
-	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -107,12 +106,13 @@ func (f *File) VMRegister() {
 		return nil
 	})
 
-	f.VMRegisterMethod("Существует", VMFuncMustParams(0, f.Существует))
-	f.VMRegisterMethod("Размер", VMFuncMustParams(0, f.Размер))
-	f.VMRegisterMethod("ПолучитьТолькоЧтение", VMFuncMustParams(0, f.ПолучитьТолькоЧтение))
-	f.VMRegisterMethod("ПолучитьВремяИзменения", VMFuncMustParams(1, f.ПолучитьВремяИзменения))
-	f.VMRegisterMethod("УстановитьТолькоЧтение", VMFuncMustParams(1, f.УстановитьТолькоЧтение))
-	f.VMRegisterMethod("УстановитьВремяИзменения", VMFuncMustParams(2, f.УстановитьВремяИзменения))
+	f.VMRegisterMethod("Существует", VMFuncZeroParams(f.Существует))
+	f.VMRegisterMethod("Размер", VMFuncZeroParams(f.Размер))
+	f.VMRegisterMethod("ПолучитьТолькоЧтение", VMFuncZeroParams(f.ПолучитьТолькоЧтение))
+	f.VMRegisterMethod("ПолучитьВремяИзменения", VMFuncOneParam[VMBool](f.ПолучитьВремяИзменения))
+	f.VMRegisterMethod("УстановитьТолькоЧтение", VMFuncOneParam[VMBool](f.УстановитьТолькоЧтение))
+	f.VMRegisterMethod("УстановитьВремяИзменения", VMFuncOneParam[VMDateTimer](
+		f.УстановитьВремяИзменения))
 }
 
 func (f *File) Существует(args VMSlice, rets *VMSlice, envout *(*Env)) error {
@@ -140,14 +140,9 @@ func (f *File) ПолучитьТолькоЧтение(args VMSlice, rets *VMSl
 }
 
 func (f *File) ПолучитьВремяИзменения(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	asString, ok := args[0].(VMBool)
-	if !ok {
-		return VMErrorNeedBool
-	}
-
 	modtime, err := f.ModificationTime()
 	if err == nil {
-		if asString {
+		if args[0].(VMBool) {
 			rets.Append(VMString(VMTime(modtime).String()))
 		} else {
 			rets.Append(VMTime(modtime))
@@ -157,34 +152,9 @@ func (f *File) ПолучитьВремяИзменения(args VMSlice, rets *
 }
 
 func (f *File) УстановитьТолькоЧтение(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	readonly, ok := args[0].(VMBool)
-	if !ok {
-		return VMErrorNeedBool
-	}
-
-	return f.SetReadOnly(readonly.Bool())
+	return f.SetReadOnly(args[0].(VMBool).Bool())
 }
 
 func (f *File) УстановитьВремяИзменения(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	asString, ok := args[1].(VMBool)
-	if !ok {
-		return errors.New("Вторым аргументом должно передаваться значение типа Булево")
-	}
-
-	var modtime time.Time
-	if asString {
-		vmTime, ok := args[0].(VMString)
-		if !ok {
-			return errors.New("Первым аргументом должно передаваться значение типа Строка")
-		}
-		modtime = vmTime.Time().GolangTime()
-	} else {
-		vmTime, ok := args[0].(VMTime)
-		if !ok {
-			return errors.New("Первым аргументом должно передаваться значение типа Дата")
-		}
-		modtime = vmTime.GolangTime()
-	}
-
-	return f.SetModificationTime(modtime)
+	return f.SetModificationTime(args[0].(VMDateTimer).Time().GolangTime())
 }

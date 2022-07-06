@@ -95,23 +95,23 @@ func (x VMSlice) MethodMember(name int) (VMFunc, bool) {
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "сортировать":
-		return VMFuncMustParams(0, x.Сортировать), true
+		return VMFuncZeroParams(x.Сортировать), true
 	case "сортироватьубыв":
-		return VMFuncMustParams(0, x.СортироватьУбыв), true
+		return VMFuncZeroParams(x.СортироватьУбыв), true
 	case "обратить":
-		return VMFuncMustParams(0, x.Обратить), true
+		return VMFuncZeroParams(x.Обратить), true
 	case "скопировать":
-		return VMFuncMustParams(0, x.Скопировать), true
+		return VMFuncZeroParams(x.Скопировать), true
 	case "найти":
-		return VMFuncMustParams(1, x.Найти), true
+		return VMFuncNParams(1, x.Найти), true
 	case "найтисорт":
-		return VMFuncMustParams(1, x.НайтиСорт), true
+		return VMFuncNParams(1, x.НайтиСорт), true
 	// case "вставить":
 	// 	return VMFuncTwoParams[VMInt, VMValue](x.Вставить), true
 	// case "удалить":
 	// 	return VMFuncOneParam[VMInt](x.Удалить), true
 	case "скопироватьуникальные":
-		return VMFuncMustParams(0, x.СкопироватьУникальные), true
+		return VMFuncZeroParams(x.СкопироватьУникальные), true
 	}
 
 	return nil, false

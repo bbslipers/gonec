@@ -375,19 +375,20 @@ func (c *VMConn) MethodMember(name int) (VMFunc, bool) {
 
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "получить":
-		return VMFuncMustParams(0, c.Получить), true
+		return VMFuncZeroParams(c.Получить), true
 	case "отправить":
-		return VMFuncMustParams(1, c.Отправить), true
+		return VMFuncOneParam[VMStringMap](c.Отправить), true
 	case "закрыто":
-		return VMFuncMustParams(0, c.Закрыто), true
+		return VMFuncZeroParams(c.Закрыто), true
 	case "идентификатор":
-		return VMFuncMustParams(0, c.Идентификатор), true
+		return VMFuncZeroParams(c.Идентификатор), true
 	case "данные":
-		return VMFuncMustParams(0, c.Данные), true
+		return VMFuncZeroParams(c.Данные), true
 	case "запрос":
-		return VMFuncMustParams(1, c.Запрос), true // метод, урл, тело, заголовки, параметры формы
+		// метод, урл, тело, заголовки, параметры формы
+		return VMFuncOneParam[VMStringMap](c.Запрос), true
 	case "закрыть":
-		return VMFuncMustParams(0, c.Закрыть), true
+		return VMFuncZeroParams(c.Закрыть), true
 	}
 
 	return nil, false
@@ -412,11 +413,8 @@ func (x *VMConn) Отправить(args VMSlice, rets *VMSlice, envout *(*Env))
 	if x.httpcl != nil {
 		return VMErrorWrongHTTPMethod
 	}
-	v, ok := args[0].(VMStringMap)
-	if !ok {
-		return VMErrorNeedMap
-	}
-	return x.Send(v) // при ошибке вызовет исключение, нужно обрабатывать в попытке
+	// при ошибке вызовет исключение, нужно обрабатывать в попытке
+	return x.Send(args[0].(VMStringMap))
 }
 
 func (x *VMConn) Закрыто(args VMSlice, rets *VMSlice, envout *(*Env)) error {
@@ -438,10 +436,7 @@ func (x *VMConn) Запрос(args VMSlice, rets *VMSlice, envout *(*Env)) error
 	if x.httpcl == nil {
 		return VMErrorNonHTTPMethod
 	}
-	vsm, ok := args[0].(VMStringMap)
-	if !ok {
-		return VMErrorNeedMap
-	}
+	vsm := args[0].(VMStringMap)
 
 	var m, p, b VMString
 	var h, vals VMStringMap

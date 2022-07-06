@@ -51,9 +51,9 @@ func (x VMChan) MethodMember(name int) (VMFunc, bool) {
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "закрыть":
-		return VMFuncMustParams(0, x.Закрыть), true
+		return VMFuncZeroParams(x.Закрыть), true
 	case "размер":
-		return VMFuncMustParams(0, x.Размер), true
+		return VMFuncZeroParams(x.Размер), true
 		// TODO: подключить соединение
 	}
 	return nil, false

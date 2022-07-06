@@ -35,20 +35,11 @@ type (
 	VMConstructor = func(VMSlice) error
 )
 
-func VMFuncMustParams(n int, f VMMethod) VMFunc {
-	needArgsErr := VMErrorNeedArgs(n)
-	return VMFunc(
-		func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-			if len(args) != n {
-				switch n {
-				case 0:
-					return VMErrorNoNeedArgs
-				default:
-					return needArgsErr
-				}
-			}
-			return f(args, rets, envout)
-		})
+func VMFuncMustParamType[V VMValue](args VMSlice, i, n int) error {
+	if _, ok := args[i].(V); !ok {
+		return VMErrorNeedArgType[V](i, n)
+	}
+	return nil
 }
 
 func paramCheckHelper[V VMValue](args VMSlice, i, n int, errs []error) error {
@@ -58,9 +49,18 @@ func paramCheckHelper[V VMValue](args VMSlice, i, n int, errs []error) error {
 	return nil
 }
 
+func VMFuncZeroParams(f VMMethod) VMFunc {
+	return VMFunc(func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+		if len(args) != 0 {
+			return VMErrorNoNeedArgs
+		}
+		return f(args, rets, envout)
+	})
+}
+
 func VMFuncOneParam[V1 VMValue](f VMMethod) VMFunc {
 	errs := []error{VMErrorNeedArgType[V1](0, 1)}
-	return VMFuncMustParams(1, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	return VMFuncNParams(1, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 		if err := paramCheckHelper[V1](args, 0, 1, errs); err != nil {
 			return err
 		}
@@ -73,7 +73,7 @@ func VMFuncTwoParams[V1, V2 VMValue](f VMMethod) VMFunc {
 		VMErrorNeedArgType[V1](0, 2),
 		VMErrorNeedArgType[V2](1, 2),
 	}
-	return VMFuncMustParams(2, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	return VMFuncNParams(2, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 		if err := paramCheckHelper[V1](args, 0, 2, errs); err != nil {
 			return err
 		} else if err := paramCheckHelper[V2](args, 1, 2, errs); err != nil {
@@ -89,13 +89,28 @@ func VMFuncThreeParams[V1, V2, V3 VMValue](f VMMethod) VMFunc {
 		VMErrorNeedArgType[V2](1, 3),
 		VMErrorNeedArgType[V3](2, 3),
 	}
-	return VMFuncMustParams(3, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	return VMFuncNParams(3, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 		if err := paramCheckHelper[V1](args, 0, 3, errs); err != nil {
 			return err
 		} else if err := paramCheckHelper[V2](args, 1, 3, errs); err != nil {
 			return err
 		} else if err := paramCheckHelper[V3](args, 2, 3, errs); err != nil {
 			return err
+		}
+		return f(args, rets, envout)
+	})
+}
+
+func VMFuncNParams(n int, f VMMethod) VMFunc {
+	needArgsErr := VMErrorNeedArgs(n)
+	return VMFunc(func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+		if len(args) != n {
+			switch n {
+			case 0:
+				return VMErrorNoNeedArgs
+			default:
+				return needArgsErr
+			}
 		}
 		return f(args, rets, envout)
 	})

@@ -25,20 +25,16 @@ func LoadAllBuiltins(env *Env) {
 		// "strings":       gonec_strings.Import,
 	}
 
-	env.DefineS("импорт", VMFunc(func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	env.DefineS("импорт", VMFuncOneParam[VMString](func(
+		args VMSlice, rets *VMSlice, envout *(*Env),
+	) error {
 		*envout = env
-		if len(args) != 1 {
-			return VMErrorNeedSinglePacketName
+		s := args[0].(VMString)
+		if loader, ok := pkgs[strings.ToLower(string(s))]; ok {
+			rets.Append(loader(env)) // возвращает окружение, инициализированное пакетом
+			return nil
 		}
-		if s, ok := args[0].(VMString); ok {
-			if loader, ok := pkgs[strings.ToLower(string(s))]; ok {
-				rets.Append(loader(env)) // возвращает окружение, инициализированное пакетом
-				return nil
-			}
-			return fmt.Errorf("Пакет '%s' не найден", s)
-		} else {
-			return VMErrorNeedString
-		}
+		return fmt.Errorf("Пакет '%s' не найден", s)
 	}))
 
 	// успешно загружен глобальный контекст
@@ -102,19 +98,25 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
-	env.DefineS("текущаядата", VMFuncMustParams(0, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	env.DefineS("текущаядата", VMFuncZeroParams(func(
+		args VMSlice, rets *VMSlice, envout *(*Env),
+	) error {
 		*envout = env
 		rets.Append(Now())
 		return nil
 	}))
 
-	env.DefineS("прошловременис", VMFuncOneParam[VMDateTimer](func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	env.DefineS("прошловременис", VMFuncOneParam[VMDateTimer](func(
+		args VMSlice, rets *VMSlice, envout *(*Env),
+	) error {
 		*envout = env
 		rets.Append(Now().Sub(args[0].(VMDateTimer).Time()))
 		return nil
 	}))
 
-	env.DefineS("пауза", VMFuncOneParam[VMNumberer](func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	env.DefineS("пауза", VMFuncOneParam[VMNumberer](func(
+		args VMSlice, rets *VMSlice, envout *(*Env),
+	) error {
 		*envout = env
 		sec1 := NewVMDecNumFromInt64(int64(VMSecond))
 		time.Sleep(time.Duration(args[0].(VMNumberer).DecNum().Mul(sec1).Int()))
@@ -137,7 +139,7 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
-	env.DefineS("уникальныйидентификатор", VMFuncMustParams(0, func(
+	env.DefineS("уникальныйидентификатор", VMFuncZeroParams(func(
 		args VMSlice, rets *VMSlice, envout *(*Env),
 	) error {
 		*envout = env
@@ -145,7 +147,7 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
-	env.DefineS("получитьмассивизпула", VMFuncMustParams(0, func(
+	env.DefineS("получитьмассивизпула", VMFuncZeroParams(func(
 		args VMSlice, rets *VMSlice, envout *(*Env),
 	) error {
 		*envout = env
@@ -289,7 +291,7 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
-	env.DefineS("типзнч", VMFuncMustParams(1, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	env.DefineS("типзнч", VMFuncNParams(1, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 		*envout = env
 		if args[0] == nil || args[0] == VMNil {
 			rets.Append(VMString("Неопределено"))
@@ -323,13 +325,17 @@ func Import(env *Env) *Env {
 		return VMErrorNeedString
 	}))
 
-	env.DefineS("обработатьгорутины", VMFuncMustParams(0, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	env.DefineS("обработатьгорутины", VMFuncZeroParams(func(
+		args VMSlice, rets *VMSlice, envout *(*Env),
+	) error {
 		*envout = env
 		runtime.Gosched()
 		return nil
 	}))
 
-	env.DefineS("переменнаяокружения", VMFuncOneParam[VMString](func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	env.DefineS("переменнаяокружения", VMFuncOneParam[VMString](func(
+		args VMSlice, rets *VMSlice, envout *(*Env),
+	) error {
 		*envout = env
 		val, ok := os.LookupEnv(string(args[0].(VMString)))
 		rets.Append(VMString(val))

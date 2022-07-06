@@ -86,6 +86,8 @@ func typeString[V VMValue]() string {
 			return "значение, имеющее длину"
 		} else if vtype.Implements(interfaceType[VMHasher]()) {
 			return "хешируемое значение"
+		} else if vtype.Implements(interfaceType[VMBinaryTyper]()) {
+			return "значение, сериализуемое в бинарное"
 		} else if vtype.Implements(interfaceType[VMValue]()) {
 			return "значение любого типа Гонца"
 		}

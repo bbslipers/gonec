@@ -40,21 +40,17 @@ func (x *VMWaitGroup) MethodMember(name int) (VMFunc, bool) {
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "добавить":
-		return VMFuncMustParams(1, x.Добавить), true
+		return VMFuncOneParam[VMInt](x.Добавить), true
 	case "завершить":
-		return VMFuncMustParams(0, x.Завершить), true
+		return VMFuncZeroParams(x.Завершить), true
 	case "ожидать":
-		return VMFuncMustParams(0, x.Ожидать), true
+		return VMFuncZeroParams(x.Ожидать), true
 	}
 	return nil, false
 }
 
 func (x *VMWaitGroup) Добавить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	v, ok := args[0].(VMInt)
-	if !ok {
-		return VMErrorNeedInt
-	}
-	x.Add(int(v))
+	x.Add(int(args[0].(VMInt)))
 	return nil
 }
 

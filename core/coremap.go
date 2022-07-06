@@ -61,13 +61,13 @@ func (x VMStringMap) MethodMember(name int) (VMFunc, bool) {
 
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "скопировать":
-		return VMFuncMustParams(0, x.Скопировать), true
+		return VMFuncZeroParams(x.Скопировать), true
 	case "ключи":
-		return VMFuncMustParams(0, x.Ключи), true
+		return VMFuncZeroParams(x.Ключи), true
 	case "значения":
-		return VMFuncMustParams(0, x.Значения), true
+		return VMFuncZeroParams(x.Значения), true
 	case "удалить":
-		return VMFuncMustParams(1, x.Удалить), true
+		return VMFuncOneParam[VMString](x.Удалить), true
 	}
 
 	return nil, false
@@ -99,11 +99,7 @@ func (x VMStringMap) Значения(args VMSlice, rets *VMSlice, envout *(*Env
 }
 
 func (x VMStringMap) Удалить(args VMSlice, rets *VMSlice, envout *(*Env)) error { // VMSlice {
-	p, ok := args[0].(VMString)
-	if !ok {
-		return VMErrorNeedString
-	}
-	delete(x, string(p))
+	delete(x, string(args[0].(VMString)))
 	return nil
 }
 
