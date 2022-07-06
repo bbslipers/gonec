@@ -109,13 +109,12 @@ func (f *File) VMRegister() {
 	f.VMRegisterMethod("Существует", VMFuncZeroParams(f.Существует))
 	f.VMRegisterMethod("Размер", VMFuncZeroParams(f.Размер))
 	f.VMRegisterMethod("ПолучитьТолькоЧтение", VMFuncZeroParams(f.ПолучитьТолькоЧтение))
-	f.VMRegisterMethod("ПолучитьВремяИзменения", VMFuncOneParam[VMBool](f.ПолучитьВремяИзменения))
-	f.VMRegisterMethod("УстановитьТолькоЧтение", VMFuncOneParam[VMBool](f.УстановитьТолькоЧтение))
-	f.VMRegisterMethod("УстановитьВремяИзменения", VMFuncOneParam[VMDateTimer](
-		f.УстановитьВремяИзменения))
+	f.VMRegisterMethod("ПолучитьВремяИзменения", VMFuncOneParam(f.ПолучитьВремяИзменения))
+	f.VMRegisterMethod("УстановитьТолькоЧтение", VMFuncOneParam(f.УстановитьТолькоЧтение))
+	f.VMRegisterMethod("УстановитьВремяИзменения", VMFuncOneParam(f.УстановитьВремяИзменения))
 }
 
-func (f *File) Существует(args VMSlice, rets *VMSlice) error {
+func (f *File) Существует(rets *VMSlice) error {
 	exists, err := f.Exists()
 	if err == nil {
 		rets.Append(VMBool(exists))
@@ -123,7 +122,7 @@ func (f *File) Существует(args VMSlice, rets *VMSlice) error {
 	return err
 }
 
-func (f *File) Размер(args VMSlice, rets *VMSlice) error {
+func (f *File) Размер(rets *VMSlice) error {
 	size, err := f.Size()
 	if err == nil {
 		rets.Append(VMInt(size))
@@ -131,7 +130,7 @@ func (f *File) Размер(args VMSlice, rets *VMSlice) error {
 	return err
 }
 
-func (f *File) ПолучитьТолькоЧтение(args VMSlice, rets *VMSlice) error {
+func (f *File) ПолучитьТолькоЧтение(rets *VMSlice) error {
 	readonly, err := f.IsReadOnly()
 	if err == nil {
 		rets.Append(VMBool(readonly))
@@ -139,10 +138,10 @@ func (f *File) ПолучитьТолькоЧтение(args VMSlice, rets *VMSl
 	return err
 }
 
-func (f *File) ПолучитьВремяИзменения(args VMSlice, rets *VMSlice) error {
+func (f *File) ПолучитьВремяИзменения(asstr VMBool, rets *VMSlice) error {
 	modtime, err := f.ModificationTime()
 	if err == nil {
-		if args[0].(VMBool) {
+		if asstr {
 			rets.Append(VMString(VMTime(modtime).String()))
 		} else {
 			rets.Append(VMTime(modtime))
@@ -151,10 +150,10 @@ func (f *File) ПолучитьВремяИзменения(args VMSlice, rets *
 	return err
 }
 
-func (f *File) УстановитьТолькоЧтение(args VMSlice, rets *VMSlice) error {
-	return f.SetReadOnly(args[0].(VMBool).Bool())
+func (f *File) УстановитьТолькоЧтение(readonly VMBool, rets *VMSlice) error {
+	return f.SetReadOnly(readonly.Bool())
 }
 
-func (f *File) УстановитьВремяИзменения(args VMSlice, rets *VMSlice) error {
-	return f.SetModificationTime(args[0].(VMDateTimer).Time().GolangTime())
+func (f *File) УстановитьВремяИзменения(time VMDateTimer, rets *VMSlice) error {
+	return f.SetModificationTime(time.Time().GolangTime())
 }

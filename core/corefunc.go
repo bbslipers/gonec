@@ -47,26 +47,28 @@ func paramCheckHelper[V VMValue](args VMSlice, i, n int, errs []error) error {
 	return nil
 }
 
-func VMFuncZeroParams(f VMMethod) VMFunc {
+func VMFuncZeroParams(f func(rets *VMSlice) error) VMFunc {
 	return VMFunc(func(args VMSlice, rets *VMSlice) error {
 		if len(args) != 0 {
 			return VMErrorNoNeedArgs
 		}
-		return f(args, rets)
+		return f(rets)
 	})
 }
 
-func VMFuncOneParam[V1 VMValue](f VMMethod) VMFunc {
+func VMFuncOneParam[V1 VMValue](f func(arg1 V1, rets *VMSlice) error) VMFunc {
 	errs := []error{VMErrorNeedArgType[V1](0, 1)}
 	return VMFuncNParams(1, func(args VMSlice, rets *VMSlice) error {
 		if err := paramCheckHelper[V1](args, 0, 1, errs); err != nil {
 			return err
 		}
-		return f(args, rets)
+		return f(args[0].(V1), rets)
 	})
 }
 
-func VMFuncTwoParams[V1, V2 VMValue](f VMMethod) VMFunc {
+func VMFuncTwoParams[V1, V2 VMValue](f func(
+	arg1 V1, arg2 V2, rets *VMSlice) error,
+) VMFunc {
 	errs := []error{
 		VMErrorNeedArgType[V1](0, 2),
 		VMErrorNeedArgType[V2](1, 2),
@@ -77,11 +79,13 @@ func VMFuncTwoParams[V1, V2 VMValue](f VMMethod) VMFunc {
 		} else if err := paramCheckHelper[V2](args, 1, 2, errs); err != nil {
 			return err
 		}
-		return f(args, rets)
+		return f(args[0].(V1), args[1].(V2), rets)
 	})
 }
 
-func VMFuncThreeParams[V1, V2, V3 VMValue](f VMMethod) VMFunc {
+func VMFuncThreeParams[V1, V2, V3 VMValue](f func(
+	arg1 V1, arg2 V2, arg3 V3, rets *VMSlice) error,
+) VMFunc {
 	errs := []error{
 		VMErrorNeedArgType[V1](0, 3),
 		VMErrorNeedArgType[V2](1, 3),
@@ -95,7 +99,7 @@ func VMFuncThreeParams[V1, V2, V3 VMValue](f VMMethod) VMFunc {
 		} else if err := paramCheckHelper[V3](args, 2, 3, errs); err != nil {
 			return err
 		}
-		return f(args, rets)
+		return f(args[0].(V1), args[1].(V2), args[2].(V3), rets)
 	})
 }
 

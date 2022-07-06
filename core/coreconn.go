@@ -376,7 +376,7 @@ func (c *VMConn) MethodMember(name int) (VMFunc, bool) {
 	case "получить":
 		return VMFuncZeroParams(c.Получить), true
 	case "отправить":
-		return VMFuncOneParam[VMStringMap](c.Отправить), true
+		return VMFuncOneParam(c.Отправить), true
 	case "закрыто":
 		return VMFuncZeroParams(c.Закрыто), true
 	case "идентификатор":
@@ -385,7 +385,7 @@ func (c *VMConn) MethodMember(name int) (VMFunc, bool) {
 		return VMFuncZeroParams(c.Данные), true
 	case "запрос":
 		// метод, урл, тело, заголовки, параметры формы
-		return VMFuncOneParam[VMStringMap](c.Запрос), true
+		return VMFuncOneParam(c.Запрос), true
 	case "закрыть":
 		return VMFuncZeroParams(c.Закрыть), true
 	}
@@ -393,12 +393,12 @@ func (c *VMConn) MethodMember(name int) (VMFunc, bool) {
 	return nil, false
 }
 
-func (x *VMConn) Идентификатор(args VMSlice, rets *VMSlice) error {
+func (x *VMConn) Идентификатор(rets *VMSlice) error {
 	rets.Append(VMString(x.uid))
 	return nil
 }
 
-func (x *VMConn) Получить(args VMSlice, rets *VMSlice) error {
+func (x *VMConn) Получить(rets *VMSlice) error {
 	if x.httpcl != nil {
 		return VMErrorWrongHTTPMethod
 	}
@@ -408,34 +408,33 @@ func (x *VMConn) Получить(args VMSlice, rets *VMSlice) error {
 	return err // при ошибке вызовет исключение, нужно обрабатывать в попытке
 }
 
-func (x *VMConn) Отправить(args VMSlice, rets *VMSlice) error {
+func (x *VMConn) Отправить(m VMStringMap, rets *VMSlice) error {
 	if x.httpcl != nil {
 		return VMErrorWrongHTTPMethod
 	}
 	// при ошибке вызовет исключение, нужно обрабатывать в попытке
-	return x.Send(args[0].(VMStringMap))
+	return x.Send(m)
 }
 
-func (x *VMConn) Закрыто(args VMSlice, rets *VMSlice) error {
+func (x *VMConn) Закрыто(rets *VMSlice) error {
 	rets.Append(VMBool(x.closed))
 	return nil
 }
 
-func (x *VMConn) Данные(args VMSlice, rets *VMSlice) error {
+func (x *VMConn) Данные(rets *VMSlice) error {
 	rets.Append(x.data)
 	return nil
 }
 
-func (x *VMConn) Закрыть(args VMSlice, rets *VMSlice) error {
+func (x *VMConn) Закрыть(rets *VMSlice) error {
 	x.Close()
 	return nil
 }
 
-func (x *VMConn) Запрос(args VMSlice, rets *VMSlice) error {
+func (x *VMConn) Запрос(vsm VMStringMap, rets *VMSlice) error {
 	if x.httpcl == nil {
 		return VMErrorNonHTTPMethod
 	}
-	vsm := args[0].(VMStringMap)
 
 	var m, p, b VMString
 	var h, vals VMStringMap

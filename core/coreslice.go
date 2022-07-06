@@ -117,7 +117,7 @@ func (x VMSlice) MethodMember(name int) (VMFunc, bool) {
 	return nil, false
 }
 
-func (x VMSlice) Сортировать(args VMSlice, rets *VMSlice) error {
+func (x VMSlice) Сортировать(rets *VMSlice) error {
 	x.SortDefault()
 	return nil
 }
@@ -187,12 +187,12 @@ func (x VMSlice) НайтиСорт(args VMSlice, rets *VMSlice) error {
 // 	return nil
 // }
 
-func (x VMSlice) СортироватьУбыв(args VMSlice, rets *VMSlice) error {
+func (x VMSlice) СортироватьУбыв(rets *VMSlice) error {
 	sort.Sort(sort.Reverse(VMSliceUpSort(x)))
 	return nil
 }
 
-func (x VMSlice) Обратить(args VMSlice, rets *VMSlice) error {
+func (x VMSlice) Обратить(rets *VMSlice) error {
 	for left, right := 0, len(x)-1; left < right; left, right = left+1, right-1 {
 		x[left], x[right] = x[right], x[left]
 	}
@@ -215,7 +215,7 @@ func (x VMSlice) CopyRecursive() VMSlice {
 }
 
 // Скопировать - помимо обычного копирования еще и рекурсивно копирует и слайсы/структуры, находящиеся в элементах
-func (x VMSlice) Скопировать(args VMSlice, rets *VMSlice) error { // VMSlice {
+func (x VMSlice) Скопировать(rets *VMSlice) error { // VMSlice {
 	rv := make(VMSlice, len(x))
 	copy(rv, x)
 	for i, v := range rv {
@@ -230,7 +230,7 @@ func (x VMSlice) Скопировать(args VMSlice, rets *VMSlice) error { // 
 	return nil
 }
 
-func (x VMSlice) СкопироватьУникальные(args VMSlice, rets *VMSlice) error { // VMSlice {
+func (x VMSlice) СкопироватьУникальные(rets *VMSlice) error { // VMSlice {
 	rv := make(VMSlice, len(x))
 	seen := make(map[VMValue]bool)
 	for i, v := range x {

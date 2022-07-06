@@ -90,34 +90,34 @@ func (t *TextDocument) Write(filename string) error {
 }
 
 func (t *TextDocument) VMRegister() {
-	t.VMRegisterMethod("Прочитать", VMFuncOneParam[VMString](t.Прочитать))
-	t.VMRegisterMethod("Записать", VMFuncOneParam[VMString](t.Записать))
+	t.VMRegisterMethod("Прочитать", VMFuncOneParam(t.Прочитать))
+	t.VMRegisterMethod("Записать", VMFuncOneParam(t.Записать))
 	t.VMRegisterMethod("ПолучитьТекст", VMFuncZeroParams(t.ПолучитьТекст))
-	t.VMRegisterMethod("УстановитьТекст", VMFuncOneParam[VMString](t.УстановитьТекст))
+	t.VMRegisterMethod("УстановитьТекст", VMFuncOneParam(t.УстановитьТекст))
 	t.VMRegisterMethod("КоличествоСтрок", VMFuncZeroParams(t.КоличествоСтрок))
-	t.VMRegisterMethod("ДобавитьСтроку", VMFuncOneParam[VMString](t.ДобавитьСтроку))
-	t.VMRegisterMethod("УдалитьСтроку", VMFuncOneParam[VMInt](t.УдалитьСтроку))
-	t.VMRegisterMethod("ЗаменитьСтроку", VMFuncTwoParams[VMInt, VMString](t.ЗаменитьСтроку))
+	t.VMRegisterMethod("ДобавитьСтроку", VMFuncOneParam(t.ДобавитьСтроку))
+	t.VMRegisterMethod("УдалитьСтроку", VMFuncOneParam(t.УдалитьСтроку))
+	t.VMRegisterMethod("ЗаменитьСтроку", VMFuncTwoParams(t.ЗаменитьСтроку))
 }
 
-func (t *TextDocument) Прочитать(args VMSlice, rets *VMSlice) error {
-	return t.Read(string(args[0].(VMString)))
+func (t *TextDocument) Прочитать(name VMString, rets *VMSlice) error {
+	return t.Read(string(name))
 }
 
-func (t *TextDocument) Записать(args VMSlice, rets *VMSlice) error {
-	return t.Write(string(args[0].(VMString)))
+func (t *TextDocument) Записать(name VMString, rets *VMSlice) error {
+	return t.Write(string(name))
 }
 
-func (t *TextDocument) ПолучитьТекст(args VMSlice, rets *VMSlice) error {
+func (t *TextDocument) ПолучитьТекст(rets *VMSlice) error {
 	rets.Append(VMString(t.String()))
 	return nil
 }
 
-func (t *TextDocument) УстановитьТекст(args VMSlice, rets *VMSlice) error {
-	return t.fromText(string(args[0].(VMString)))
+func (t *TextDocument) УстановитьТекст(text VMString, rets *VMSlice) error {
+	return t.fromText(string(text))
 }
 
-func (t *TextDocument) КоличествоСтрок(args VMSlice, rets *VMSlice) error {
+func (t *TextDocument) КоличествоСтрок(rets *VMSlice) error {
 	rets.Append(VMInt(len(t.lines)))
 	return nil
 }
@@ -131,8 +131,8 @@ func (t *TextDocument) isSingleLine(line string) bool {
 }
 
 // O(1)
-func (t *TextDocument) ДобавитьСтроку(args VMSlice, rets *VMSlice) error {
-	line := string(args[0].(VMString))
+func (t *TextDocument) ДобавитьСтроку(vmline VMString, rets *VMSlice) error {
+	line := string(vmline)
 
 	// Добавляем строку только если она действительно является ОДНОЙ строкой
 	if !t.isSingleLine(line) {
@@ -143,8 +143,7 @@ func (t *TextDocument) ДобавитьСтроку(args VMSlice, rets *VMSlice)
 	return nil
 }
 
-func (t *TextDocument) parseLineNumberArg(args VMSlice) (int, error) {
-	n := int(args[0].(VMInt))
+func (t *TextDocument) validateLineNumber(n int) (int, error) {
 	if n < 1 || n > len(t.lines) {
 		return 0, fmt.Errorf("Строки с номером %d не существует", n)
 	}
@@ -152,8 +151,8 @@ func (t *TextDocument) parseLineNumberArg(args VMSlice) (int, error) {
 }
 
 // O(n)
-func (t *TextDocument) УдалитьСтроку(args VMSlice, rets *VMSlice) error {
-	n, err := t.parseLineNumberArg(args)
+func (t *TextDocument) УдалитьСтроку(vmn VMInt, rets *VMSlice) error {
+	n, err := t.validateLineNumber(int(vmn))
 	if err != nil {
 		return err
 	}
@@ -162,13 +161,13 @@ func (t *TextDocument) УдалитьСтроку(args VMSlice, rets *VMSlice) e
 	return nil
 }
 
-func (t *TextDocument) ЗаменитьСтроку(args VMSlice, rets *VMSlice) error {
-	n, err := t.parseLineNumberArg(args)
+func (t *TextDocument) ЗаменитьСтроку(vmn VMInt, vmline VMString, rets *VMSlice) error {
+	n, err := t.validateLineNumber(int(vmn))
 	if err != nil {
 		return err
 	}
 
-	line := string(args[1].(VMString))
+	line := string(vmline)
 	// Изменяем только если новая строка действительно является ОДНОЙ строкой
 	if !t.isSingleLine(line) {
 		return errors.New("Новая строка должна состоять ровно из одной строки")

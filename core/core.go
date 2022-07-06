@@ -25,10 +25,7 @@ func LoadAllBuiltins(env *Env) {
 		// "strings":       gonec_strings.Import,
 	}
 
-	env.DefineS("импорт", VMFuncOneParam[VMString](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		s := args[0].(VMString)
+	env.DefineS("импорт", VMFuncOneParam(func(s VMString, rets *VMSlice) error {
 		if loader, ok := pkgs[strings.ToLower(string(s))]; ok {
 			rets.Append(loader(env)) // возвращает окружение, инициализированное пакетом
 			return nil
@@ -42,8 +39,8 @@ func LoadAllBuiltins(env *Env) {
 
 // Import общая стандартная бибилиотека
 func Import(env *Env) *Env {
-	env.DefineS("длина", VMFuncOneParam[VMIndexer](func(args VMSlice, rets *VMSlice) error {
-		rets.Append(args[0].(VMIndexer).Length())
+	env.DefineS("длина", VMFuncOneParam(func(v VMIndexer, rets *VMSlice) error {
+		rets.Append(v.Length())
 		return nil
 	}))
 
@@ -95,25 +92,19 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
-	env.DefineS("текущаядата", VMFuncZeroParams(func(
-		args VMSlice, rets *VMSlice,
-	) error {
+	env.DefineS("текущаядата", VMFuncZeroParams(func(rets *VMSlice) error {
 		rets.Append(Now())
 		return nil
 	}))
 
-	env.DefineS("прошловременис", VMFuncOneParam[VMDateTimer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(Now().Sub(args[0].(VMDateTimer).Time()))
+	env.DefineS("прошловременис", VMFuncOneParam(func(date VMDateTimer, rets *VMSlice) error {
+		rets.Append(Now().Sub(date.Time()))
 		return nil
 	}))
 
-	env.DefineS("пауза", VMFuncOneParam[VMNumberer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
+	env.DefineS("пауза", VMFuncOneParam(func(n VMNumberer, rets *VMSlice) error {
 		sec1 := NewVMDecNumFromInt64(int64(VMSecond))
-		time.Sleep(time.Duration(args[0].(VMNumberer).DecNum().Mul(sec1).Int()))
+		time.Sleep(time.Duration(n.DecNum().Mul(sec1).Int()))
 		return nil
 	}))
 
@@ -125,122 +116,78 @@ func Import(env *Env) *Env {
 	env.DefineS("длительностьчаса", VMHour)
 	env.DefineS("длительностьдня", VMDay)
 
-	env.DefineS("хэш", VMFuncOneParam[VMHasher](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(args[0].(VMHasher).Hash())
+	env.DefineS("хэш", VMFuncOneParam(func(h VMHasher, rets *VMSlice) error {
+		rets.Append(h.Hash())
 		return nil
 	}))
 
-	env.DefineS("уникальныйидентификатор", VMFuncZeroParams(func(
-		args VMSlice, rets *VMSlice,
-	) error {
+	env.DefineS("уникальныйидентификатор", VMFuncZeroParams(func(rets *VMSlice) error {
 		rets.Append(VMString(uuid.NewV1().String()))
 		return nil
 	}))
 
-	env.DefineS("получитьмассивизпула", VMFuncZeroParams(func(
-		args VMSlice, rets *VMSlice,
-	) error {
+	env.DefineS("получитьмассивизпула", VMFuncZeroParams(func(rets *VMSlice) error {
 		rets.Append(GetGlobalVMSlice())
 		return nil
 	}))
 
-	env.DefineS("вернутьмассиввпул", VMFuncOneParam[VMSlice](func(
-		args VMSlice, rets *VMSlice,
-	) error {
+	env.DefineS("вернутьмассиввпул", VMFuncOneParam(func(args VMSlice, rets *VMSlice) error {
 		PutGlobalVMSlice(args[0].(VMSlice))
 		return nil
 	}))
 
-	env.DefineS("случайнаястрока", VMFuncOneParam[VMInt](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMString(MustGenerateRandomString(int(args[0].(VMInt)))))
+	env.DefineS("случайнаястрока", VMFuncOneParam(func(n VMInt, rets *VMSlice) error {
+		rets.Append(VMString(MustGenerateRandomString(int(n))))
 		return nil
 	}))
 
-	env.DefineS("нрег", VMFuncOneParam[VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMString(strings.ToLower(args[0].(VMStringer).String())))
+	env.DefineS("нрег", VMFuncOneParam(func(s VMStringer, rets *VMSlice) error {
+		rets.Append(VMString(strings.ToLower(s.String())))
 		return nil
 	}))
 
-	env.DefineS("врег", VMFuncOneParam[VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMString(strings.ToUpper(args[0].(VMStringer).String())))
+	env.DefineS("врег", VMFuncOneParam(func(s VMStringer, rets *VMSlice) error {
+		rets.Append(VMString(strings.ToUpper(s.String())))
 		return nil
 	}))
 
-	env.DefineS("стрсодержит", VMFuncTwoParams[VMStringer, VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMBool(strings.Contains(
-			args[0].(VMStringer).String(),
-			args[1].(VMStringer).String())))
+	env.DefineS("стрсодержит", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
+		rets.Append(VMBool(strings.Contains(s1.String(), s2.String())))
 		return nil
 	}))
 
-	env.DefineS("стрсодержитлюбой", VMFuncTwoParams[VMStringer, VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMBool(strings.ContainsAny(
-			args[0].(VMStringer).String(),
-			args[1].(VMStringer).String())))
+	env.DefineS("стрсодержитлюбой", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
+		rets.Append(VMBool(strings.ContainsAny(s1.String(), s2.String())))
 		return nil
 	}))
 
-	env.DefineS("стрколичество", VMFuncTwoParams[VMStringer, VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMInt(strings.Count(
-			args[0].(VMStringer).String(),
-			args[1].(VMStringer).String())))
+	env.DefineS("стрколичество", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
+		rets.Append(VMInt(strings.Count(s1.String(), s2.String())))
 		return nil
 	}))
 
-	env.DefineS("стрнайти", VMFuncTwoParams[VMStringer, VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMInt(strings.Index(
-			args[0].(VMStringer).String(),
-			args[1].(VMStringer).String())))
+	env.DefineS("стрнайти", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
+		rets.Append(VMInt(strings.Index(s1.String(), s2.String())))
 		return nil
 	}))
 
-	env.DefineS("стрнайтилюбой", VMFuncTwoParams[VMStringer, VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMInt(strings.IndexAny(
-			args[0].(VMStringer).String(),
-			args[1].(VMStringer).String())))
+	env.DefineS("стрнайтилюбой", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
+		rets.Append(VMInt(strings.IndexAny(s1.String(), s2.String())))
 		return nil
 	}))
 
-	env.DefineS("стрнайтипоследний", VMFuncTwoParams[VMStringer, VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMInt(strings.LastIndex(
-			args[0].(VMStringer).String(),
-			args[1].(VMStringer).String())))
+	env.DefineS("стрнайтипоследний", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
+		rets.Append(VMInt(strings.LastIndex(s1.String(), s2.String())))
 		return nil
 	}))
 
-	env.DefineS("стрзаменить", VMFuncThreeParams[VMStringer, VMStringer, VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		rets.Append(VMString(strings.Replace(
-			args[0].(VMStringer).String(),
-			args[1].(VMStringer).String(),
-			args[2].(VMStringer).String(), -1)))
+	env.DefineS("стрзаменить", VMFuncThreeParams(func(s1, s2, s3 VMStringer, rets *VMSlice) error {
+		rets.Append(VMString(strings.Replace(s1.String(), s2.String(), s3.String(), -1)))
 		return nil
 	}))
 
-	env.DefineS("окр", VMFuncTwoParams[VMDecNum, VMInt](func(args VMSlice, rets *VMSlice) error {
-		rets.Append(VMDecNum{num: args[0].(VMDecNum).num.RoundWithMode(
-			int32(args[1].(VMInt)), decnum.RoundHalfUp)})
+	env.DefineS("окр", VMFuncTwoParams(func(f VMDecNum, n VMInt, rets *VMSlice) error {
+		rets.Append(VMDecNum{num: f.num.RoundWithMode(int32(n), decnum.RoundHalfUp)})
 		return nil
 	}))
 
@@ -256,10 +203,8 @@ func Import(env *Env) *Env {
 		return VMErrorNeedString
 	}))
 
-	env.DefineS("кодсимвола", VMFuncOneParam[VMStringer](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		s := args[0].(VMStringer).String()
+	env.DefineS("кодсимвола", VMFuncOneParam(func(vms VMStringer, rets *VMSlice) error {
+		s := vms.String()
 		if len(s) == 0 {
 			rets.Append(VMInt(0))
 		} else {
@@ -299,17 +244,13 @@ func Import(env *Env) *Env {
 		return VMErrorNeedString
 	}))
 
-	env.DefineS("обработатьгорутины", VMFuncZeroParams(func(
-		args VMSlice, rets *VMSlice,
-	) error {
+	env.DefineS("обработатьгорутины", VMFuncZeroParams(func(rets *VMSlice) error {
 		runtime.Gosched()
 		return nil
 	}))
 
-	env.DefineS("переменнаяокружения", VMFuncOneParam[VMString](func(
-		args VMSlice, rets *VMSlice,
-	) error {
-		val, ok := os.LookupEnv(string(args[0].(VMString)))
+	env.DefineS("переменнаяокружения", VMFuncOneParam(func(s VMString, rets *VMSlice) error {
+		val, ok := os.LookupEnv(string(s))
 		rets.Append(VMString(val))
 		rets.Append(VMBool(ok))
 		return nil

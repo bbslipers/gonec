@@ -65,21 +65,21 @@ func (x *VMBoltDB) MethodMember(name int) (VMFunc, bool) {
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "открыть":
-		return VMFuncOneParam[VMString](x.Открыть), true
+		return VMFuncOneParam(x.Открыть), true
 	case "закрыть":
 		return VMFuncZeroParams(x.Закрыть), true
 	case "начатьтранзакцию":
-		return VMFuncOneParam[VMBool](x.НачатьТранзакцию), true
+		return VMFuncOneParam(x.НачатьТранзакцию), true
 	}
 	return nil, false
 }
 
-func (x *VMBoltDB) Открыть(args VMSlice, rets *VMSlice) error {
-	return x.Open(string(args[0].(VMString)))
+func (x *VMBoltDB) Открыть(s VMString, rets *VMSlice) error {
+	return x.Open(string(s))
 }
 
-func (x *VMBoltDB) НачатьТранзакцию(args VMSlice, rets *VMSlice) error {
-	tr, err := x.Begin(args[0].(VMBool).Bool())
+func (x *VMBoltDB) НачатьТранзакцию(writable VMBool, rets *VMSlice) error {
+	tr, err := x.Begin(writable.Bool())
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func (x *VMBoltDB) НачатьТранзакцию(args VMSlice, rets *VMSlice)
 	return nil
 }
 
-func (x *VMBoltDB) Закрыть(args VMSlice, rets *VMSlice) error {
+func (x *VMBoltDB) Закрыть(rets *VMSlice) error {
 	x.Close()
 	return nil
 }
@@ -175,25 +175,25 @@ func (x *VMBoltTransaction) MethodMember(name int) (VMFunc, bool) {
 	case "отменитьтранзакцию":
 		return VMFuncZeroParams(x.ОтменитьТранзакцию), true
 	case "таблица":
-		return VMFuncOneParam[VMString](x.Таблица), true
+		return VMFuncOneParam(x.Таблица), true
 	case "удалитьтаблицу":
-		return VMFuncOneParam[VMString](x.УдалитьТаблицу), true
+		return VMFuncOneParam(x.УдалитьТаблицу), true
 	case "полныйбэкап":
-		return VMFuncOneParam[VMString](x.ПолныйБэкап), true
+		return VMFuncOneParam(x.ПолныйБэкап), true
 	}
 	return nil, false
 }
 
-func (x *VMBoltTransaction) ЗафиксироватьТранзакцию(args VMSlice, rets *VMSlice) error {
+func (x *VMBoltTransaction) ЗафиксироватьТранзакцию(rets *VMSlice) error {
 	return x.Commit()
 }
 
-func (x *VMBoltTransaction) ОтменитьТранзакцию(args VMSlice, rets *VMSlice) error {
+func (x *VMBoltTransaction) ОтменитьТранзакцию(rets *VMSlice) error {
 	return x.Rollback()
 }
 
-func (x *VMBoltTransaction) Таблица(args VMSlice, rets *VMSlice) error {
-	t, err := x.CreateTableIfNotExists(string(args[0].(VMString)))
+func (x *VMBoltTransaction) Таблица(table VMString, rets *VMSlice) error {
+	t, err := x.CreateTableIfNotExists(string(table))
 	if err != nil {
 		return err
 	}
@@ -201,12 +201,12 @@ func (x *VMBoltTransaction) Таблица(args VMSlice, rets *VMSlice) error {
 	return nil
 }
 
-func (x *VMBoltTransaction) УдалитьТаблицу(args VMSlice, rets *VMSlice) error {
-	return x.DeleteTable(string(args[0].(VMString)))
+func (x *VMBoltTransaction) УдалитьТаблицу(table VMString, rets *VMSlice) error {
+	return x.DeleteTable(string(table))
 }
 
-func (x *VMBoltTransaction) ПолныйБэкап(args VMSlice, rets *VMSlice) error {
-	return x.BackupDBToFile(string(args[0].(VMString)))
+func (x *VMBoltTransaction) ПолныйБэкап(table VMString, rets *VMSlice) error {
+	return x.BackupDBToFile(string(table))
 }
 
 // VMBoltTable реализует функционал Bucket для BoltDB
@@ -339,27 +339,27 @@ func (x *VMBoltTable) MethodMember(name int) (VMFunc, bool) {
 	// только эти методы будут доступны из кода на языке Гонец!
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "получить":
-		return VMFuncOneParam[VMString](x.Получить), true
+		return VMFuncOneParam(x.Получить), true
 	case "установить":
-		return VMFuncTwoParams[VMString, VMBinaryTyper](x.Установить), true
+		return VMFuncTwoParams(x.Установить), true
 	case "удалить":
-		return VMFuncOneParam[VMString](x.Удалить), true
+		return VMFuncOneParam(x.Удалить), true
 	case "следующийидентификатор":
 		return VMFuncZeroParams(x.СледующийИдентификатор), true
 	case "получитьдиапазон":
-		return VMFuncTwoParams[VMString, VMString](x.ПолучитьДиапазон), true
+		return VMFuncTwoParams(x.ПолучитьДиапазон), true
 	case "получитьпрефикс":
-		return VMFuncOneParam[VMString](x.ПолучитьПрефикс), true
+		return VMFuncOneParam(x.ПолучитьПрефикс), true
 	case "получитьвсе":
 		return VMFuncZeroParams(x.ПолучитьВсе), true
 	case "установитьструктуру":
-		return VMFuncOneParam[VMStringMap](x.УстановитьСтруктуру), true
+		return VMFuncOneParam(x.УстановитьСтруктуру), true
 	}
 	return nil, false
 }
 
-func (x *VMBoltTable) Получить(args VMSlice, rets *VMSlice) error {
-	rv, ok, err := x.Get(string(args[0].(VMString)))
+func (x *VMBoltTable) Получить(key VMString, rets *VMSlice) error {
+	rv, ok, err := x.Get(string(key))
 	if err != nil {
 		return err
 	}
@@ -368,22 +368,22 @@ func (x *VMBoltTable) Получить(args VMSlice, rets *VMSlice) error {
 	return nil
 }
 
-func (x *VMBoltTable) Установить(args VMSlice, rets *VMSlice) error {
-	return x.Set(string(args[0].(VMString)), args[1].(VMBinaryTyper))
+func (x *VMBoltTable) Установить(key VMString, value VMBinaryTyper, rets *VMSlice) error {
+	return x.Set(string(key), value)
 }
 
-func (x *VMBoltTable) Удалить(args VMSlice, rets *VMSlice) error {
-	return x.Delete(string(args[0].(VMString)))
+func (x *VMBoltTable) Удалить(key VMString, rets *VMSlice) error {
+	return x.Delete(string(key))
 }
 
-func (x *VMBoltTable) СледующийИдентификатор(args VMSlice, rets *VMSlice) error {
+func (x *VMBoltTable) СледующийИдентификатор(rets *VMSlice) error {
 	v, err := x.NextId()
 	rets.Append(v)
 	return err
 }
 
-func (x *VMBoltTable) ПолучитьДиапазон(args VMSlice, rets *VMSlice) error {
-	vsm, err := x.GetRange(string(args[0].(VMString)), string(args[1].(VMString)))
+func (x *VMBoltTable) ПолучитьДиапазон(kmin, kmax VMString, rets *VMSlice) error {
+	vsm, err := x.GetRange(string(kmin), string(kmax))
 	if err != nil {
 		return err
 	}
@@ -391,8 +391,8 @@ func (x *VMBoltTable) ПолучитьДиапазон(args VMSlice, rets *VMSli
 	return nil
 }
 
-func (x *VMBoltTable) ПолучитьПрефикс(args VMSlice, rets *VMSlice) error {
-	vsm, err := x.GetPrefix(string(args[0].(VMString)))
+func (x *VMBoltTable) ПолучитьПрефикс(pref VMString, rets *VMSlice) error {
+	vsm, err := x.GetPrefix(string(pref))
 	if err != nil {
 		return err
 	}
@@ -400,7 +400,7 @@ func (x *VMBoltTable) ПолучитьПрефикс(args VMSlice, rets *VMSlice
 	return nil
 }
 
-func (x *VMBoltTable) ПолучитьВсе(args VMSlice, rets *VMSlice) error {
+func (x *VMBoltTable) ПолучитьВсе(rets *VMSlice) error {
 	vsm, err := x.GetAll()
 	if err != nil {
 		return err
@@ -409,6 +409,6 @@ func (x *VMBoltTable) ПолучитьВсе(args VMSlice, rets *VMSlice) error 
 	return nil
 }
 
-func (x *VMBoltTable) УстановитьСтруктуру(args VMSlice, rets *VMSlice) error {
-	return x.SetByMap(args[0].(VMStringMap))
+func (x *VMBoltTable) УстановитьСтруктуру(m VMStringMap, rets *VMSlice) error {
+	return x.SetByMap(m)
 }

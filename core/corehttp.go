@@ -141,9 +141,9 @@ func (x *VMHttpRequest) MethodMember(name int) (VMFunc, bool) {
 	case "метод":
 		return VMFuncZeroParams(x.Метод), true
 	case "заголовок":
-		return VMFuncOneParam[VMString](x.Заголовок), true
+		return VMFuncOneParam(x.Заголовок), true
 	case "установитьзаголовок":
-		return VMFuncTwoParams[VMString, VMString](x.УстановитьЗаголовок), true
+		return VMFuncTwoParams(x.УстановитьЗаголовок), true
 	case "тело":
 		return VMFuncZeroParams(x.Тело), true
 	case "путь":
@@ -153,7 +153,7 @@ func (x *VMHttpRequest) MethodMember(name int) (VMFunc, bool) {
 	case "фрагмент":
 		return VMFuncZeroParams(x.Фрагмент), true
 	case "параметр":
-		return VMFuncOneParam[VMString](x.Параметр), true
+		return VMFuncOneParam(x.Параметр), true
 	case "данные":
 		return VMFuncZeroParams(x.Данные), true
 	case "сообщение":
@@ -163,53 +163,53 @@ func (x *VMHttpRequest) MethodMember(name int) (VMFunc, bool) {
 	return nil, false
 }
 
-func (x *VMHttpRequest) Метод(args VMSlice, rets *VMSlice) error {
+func (x *VMHttpRequest) Метод(rets *VMSlice) error {
 	rets.Append(x.Method())
 	return nil
 }
 
-func (x *VMHttpRequest) Заголовок(args VMSlice, rets *VMSlice) error {
-	rets.Append(x.GetHeader(args[0].(VMString)))
+func (x *VMHttpRequest) Заголовок(header VMString, rets *VMSlice) error {
+	rets.Append(x.GetHeader(header))
 	return nil
 }
 
-func (x *VMHttpRequest) УстановитьЗаголовок(args VMSlice, rets *VMSlice) error {
-	x.SetHeader(args[0].(VMString), args[1].(VMString))
+func (x *VMHttpRequest) УстановитьЗаголовок(key, value VMString, rets *VMSlice) error {
+	x.SetHeader(key, value)
 	return nil
 }
 
-func (x *VMHttpRequest) Тело(args VMSlice, rets *VMSlice) error {
+func (x *VMHttpRequest) Тело(rets *VMSlice) error {
 	s, _ := x.ReadBody()
 	rets.Append(VMString(s))
 	return nil
 }
 
-func (x *VMHttpRequest) Путь(args VMSlice, rets *VMSlice) error {
+func (x *VMHttpRequest) Путь(rets *VMSlice) error {
 	rets.Append(x.Path())
 	return nil
 }
 
-func (x *VMHttpRequest) Адрес(args VMSlice, rets *VMSlice) error {
+func (x *VMHttpRequest) Адрес(rets *VMSlice) error {
 	rets.Append(x.RemoteAddr())
 	return nil
 }
 
-func (x *VMHttpRequest) Фрагмент(args VMSlice, rets *VMSlice) error {
+func (x *VMHttpRequest) Фрагмент(rets *VMSlice) error {
 	rets.Append(x.Fragment())
 	return nil
 }
 
-func (x *VMHttpRequest) Параметр(args VMSlice, rets *VMSlice) error {
-	rets.Append(x.GetParam(args[0].(VMString)))
+func (x *VMHttpRequest) Параметр(param VMString, rets *VMSlice) error {
+	rets.Append(x.GetParam(param))
 	return nil
 }
 
-func (x *VMHttpRequest) Данные(args VMSlice, rets *VMSlice) error {
+func (x *VMHttpRequest) Данные(rets *VMSlice) error {
 	rets.Append(x.data)
 	return nil
 }
 
-func (x *VMHttpRequest) Сообщение(args VMSlice, rets *VMSlice) error {
+func (x *VMHttpRequest) Сообщение(rets *VMSlice) error {
 	v, err := x.RequestAsVMStringMap()
 	if err != nil {
 		return err
@@ -304,7 +304,7 @@ func (x *VMHttpResponse) MethodMember(name int) (VMFunc, bool) {
 
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "отправить":
-		return VMFuncOneParam[VMStringMap](x.Отправить), true
+		return VMFuncOneParam(x.Отправить), true
 	case "сообщение":
 		return VMFuncZeroParams(x.Сообщение), true
 	}
@@ -312,12 +312,11 @@ func (x *VMHttpResponse) MethodMember(name int) (VMFunc, bool) {
 	return nil, false
 }
 
-func (x *VMHttpResponse) Отправить(args VMSlice, rets *VMSlice) error {
+func (x *VMHttpResponse) Отправить(vsm VMStringMap, rets *VMSlice) error {
 	if x.w == nil || x.w == http.ResponseWriter(nil) {
 		return VMErrorHTTPResponseMethod
 	}
 
-	vsm := args[0].(VMStringMap)
 	var h VMStringMap
 	if v, ok := vsm["Заголовки"]; ok {
 		if h, ok = v.(VMStringMap); !ok {
@@ -344,7 +343,7 @@ func (x *VMHttpResponse) Отправить(args VMSlice, rets *VMSlice) error {
 	return x.Send(sts, b, h)
 }
 
-func (x *VMHttpResponse) Сообщение(args VMSlice, rets *VMSlice) error {
+func (x *VMHttpResponse) Сообщение(rets *VMSlice) error {
 	v, err := x.RequestAsVMStringMap()
 	if err != nil {
 		return err
