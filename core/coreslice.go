@@ -93,7 +93,6 @@ func (x VMSlice) SortDefault() {
 
 func (x VMSlice) MethodMember(name int) (VMFunc, bool) {
 	// только эти методы будут доступны из кода на языке Гонец!
-
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "сортировать":
 		return VMFuncMustParams(0, x.Сортировать), true
@@ -107,10 +106,10 @@ func (x VMSlice) MethodMember(name int) (VMFunc, bool) {
 		return VMFuncMustParams(1, x.Найти), true
 	case "найтисорт":
 		return VMFuncMustParams(1, x.НайтиСорт), true
-	case "вставить":
-		return VMFuncTwoParams[VMInt, VMValue]((&x).Вставить), true
-	case "удалить":
-		return VMFuncMustParams(1, (&x).Удалить), true
+	// case "вставить":
+	// 	return VMFuncTwoParams[VMInt, VMValue](x.Вставить), true
+	// case "удалить":
+	// 	return VMFuncOneParam[VMInt](x.Удалить), true
 	case "скопироватьуникальные":
 		return VMFuncMustParams(0, x.СкопироватьУникальные), true
 	}
@@ -163,31 +162,30 @@ func (x VMSlice) НайтиСорт(args VMSlice, rets *VMSlice, envout *(*Env))
 // Вставить (индекс, значение) - вставляет значение по индексу.
 // Индекс может быть равен длине, тогда вставка происходит в последний элемент.
 // Обычно используется в связке с НайтиСорт, т.к. позволяет вставлять значения с сохранением сортировки по возрастанию
-func (x *VMSlice) Вставить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	p := args[0].(VMInt)
-	if int(p) < 0 || int(p) > len(*x) {
-		return VMErrorIndexOutOfBoundary
-	}
-	y := args[1]
-	*x = append(*x, VMNil)
-	copy((*x)[p+1:], (*x)[p:])
-	(*x)[p] = y
-	return nil
-}
+// func (x VMSlice) Вставить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+// 	p := args[0].(VMInt)
+// 	if int(p) < 0 || int(p) > len(x) {
+// 		return VMErrorIndexOutOfBoundary
+// 	}
+// 	y := args[1]
+// 	x = append(x, VMNil)
+// 	copy(x[p+1:], x[p:])
+// 	x[p] = y
+// 	rets.Append(x)
+// 	return nil
+// }
 
-func (x *VMSlice) Удалить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	p, ok := args[0].(VMInt)
-	if !ok {
-		return VMErrorNeedInt
-	}
-	if int(p) < 0 || int(p) >= len(*x) {
-		return VMErrorIndexOutOfBoundary
-	}
-	copy((*x)[p:], (*x)[p+1:])
-	(*x)[len(*x)-1] = nil
-	*x = (*x)[:len(*x)-1]
-	return nil
-}
+// func (x VMSlice) Удалить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+// 	p := args[0].(VMInt)
+// 	if int(p) < 0 || int(p) >= len(x) {
+// 		return VMErrorIndexOutOfBoundary
+// 	}
+// 	copy(x[p:], x[p+1:])
+// 	x[len(x)-1] = nil
+// 	x = x[:len(x)-1]
+// 	rets.Append(x)
+// 	return nil
+// }
 
 func (x VMSlice) СортироватьУбыв(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 	sort.Sort(sort.Reverse(VMSliceUpSort(x)))
