@@ -15,6 +15,10 @@ type RconClient struct {
 	conn     *mcrcon.MCConn
 }
 
+func (x *RconClient) VMTypeString() string {
+	return "СерверМайнкрафт"
+}
+
 func (x *RconClient) String() string {
 	return fmt.Sprintf("СерверМайнкрафт %s %s", x.password, x.addr)
 }

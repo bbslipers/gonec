@@ -18,7 +18,7 @@ import (
 	"github.com/shinanca/gonec/names"
 )
 
-func NewVMConn(data VMValuer) *VMConn {
+func NewVMConn(data VMValue) *VMConn {
 	return &VMConn{
 		id:     -1,
 		closed: false,
@@ -44,11 +44,11 @@ type VMConn struct {
 	id     int
 	closed bool
 	uid    string
-	data   VMValuer
+	data   VMValue
 	gzip   bool
 }
 
-func (c *VMConn) vmval() {}
+func (c *VMConn) VMTypeString() string { return "Соединение" }
 
 func (c *VMConn) Interface() interface{} {
 	return c.conn

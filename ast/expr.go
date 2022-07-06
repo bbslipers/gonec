@@ -705,8 +705,12 @@ type AssocExpr struct {
 }
 
 func (x *AssocExpr) Simplify() Expr {
-	x.Lhs = x.Lhs.Simplify()
-	x.Rhs = x.Rhs.Simplify()
+	if x.Lhs != nil {
+		x.Lhs = x.Lhs.Simplify()
+	}
+	if x.Rhs != nil {
+		x.Rhs = x.Rhs.Simplify()
+	}
 	return x
 }
 
@@ -764,7 +768,7 @@ func (x *ConstExpr) Simplify() Expr {
 }
 
 func (e *ConstExpr) BinTo(bins *binstmt.BinStmts, reg int, lid *int, inStmt bool, maxreg *int) {
-	var v core.VMValuer
+	var v core.VMValue
 
 	switch names.FastToLower(e.Value) {
 	case "истина", "true":
@@ -962,7 +966,7 @@ func (e *MakeArrayExpr) BinTo(bins *binstmt.BinStmts, reg int, lid *int, inStmt 
 // хранит реальное значение, рассчитанное на этапе оптимизации AST
 type NativeExpr struct {
 	ExprImpl
-	Value core.VMValuer
+	Value core.VMValue
 }
 
 func (x *NativeExpr) Simplify() Expr {

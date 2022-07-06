@@ -22,7 +22,7 @@ var (
 	VMDecNumNegOne  = NewVMDecNumFromInt64(-1)
 )
 
-func (x VMDecNum) vmval() {}
+func (x VMDecNum) VMTypeString() string { return "Число" }
 
 func (x VMDecNum) Interface() interface{} {
 	return x.num
@@ -186,7 +186,7 @@ func NewVMDecNumFromInt64(x int64) VMDecNum {
 	return VMDecNum{num: decnum.FromInt64(x)}
 }
 
-func (x VMDecNum) EvalUnOp(op rune) (VMValuer, error) {
+func (x VMDecNum) EvalUnOp(op rune) (VMValue, error) {
 	switch op {
 	case '-':
 		return VMDecNum{num: x.num.Neg()}, nil
@@ -197,7 +197,7 @@ func (x VMDecNum) EvalUnOp(op rune) (VMValuer, error) {
 	}
 }
 
-func (x VMDecNum) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMDecNum) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		switch yy := y.(type) {
@@ -315,7 +315,7 @@ func (x VMDecNum) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (x VMDecNum) ConvertToType(nt reflect.Type) (VMValuer, error) {
+func (x VMDecNum) ConvertToType(nt reflect.Type) (VMValue, error) {
 	switch nt {
 	case ReflectVMDecNum:
 		return x, nil

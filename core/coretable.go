@@ -18,6 +18,10 @@ func NewVMTableColumn(vtcs *VMTableColumns) *VMTableColumn {
 	return vtc
 }
 
+func (vtc *VMTableColumn) VMTypeString() string {
+	return "КолонкаТаблицыЗначений"
+}
+
 func (vtc *VMTableColumn) VMRegister() {
 	// vt.VMRegisterField("ПолеСтрока", &vt.ПолеСтрока)
 	// vt.VMRegisterMethod("Имя", vt.Имя)
@@ -37,6 +41,10 @@ func NewVMTableColumns(vt *VMTable) *VMTableColumns {
 	vtcs.VMInit(vtcs)
 	vtcs.VMRegister()
 	return vtcs
+}
+
+func (vtcs *VMTableColumns) VMTypeString() string {
+	return "КоллекцияКолонокТаблицыЗначений"
 }
 
 func (vtcs *VMTableColumns) VMRegister() {
@@ -61,6 +69,10 @@ func NewVMTableLine(vt *VMTable) *VMTableLine {
 	return vtl
 }
 
+func (vtl *VMTableLine) VMTypeString() string {
+	return "СтрокаТаблицыЗначений"
+}
+
 func (vtl *VMTableLine) VMRegister() {
 	// vt.VMRegisterField("ПолеСтрока", &vt.ПолеСтрока)
 	// vt.VMRegisterMethod("Имя", vt.Имя)
@@ -71,6 +83,10 @@ type VMTable struct {
 
 	cols  *VMTableColumns
 	lines []*VMTableLine
+}
+
+func (vt *VMTable) VMTypeString() string {
+	return "ТаблицаЗначений"
 }
 
 func (vt *VMTable) VMRegister() {
@@ -95,7 +111,7 @@ func (vt *VMTable) Length() VMInt {
 	return VMInt(len(vt.lines))
 }
 
-func (vt *VMTable) IndexVal(idx VMValuer) VMValuer {
+func (vt *VMTable) IndexVal(idx VMValue) VMValue {
 	if i, ok := idx.(VMInt); ok {
 		return vt.lines[int(i)]
 	}

@@ -28,7 +28,7 @@ type VMTimeDuration time.Duration
 
 var ReflectVMTimeDuration = reflect.TypeOf(VMTimeDuration(0))
 
-func (v VMTimeDuration) vmval() {}
+func (v VMTimeDuration) VMTypeString() string { return "Длительность" }
 
 func (v VMTimeDuration) Interface() interface{} {
 	return time.Duration(v)
@@ -157,7 +157,7 @@ func fmtInt(buf []byte, v uint64) int {
 }
 
 // EvalBinOp сравнивает два значения или выполняет бинарную операцию
-func (x VMTimeDuration) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMTimeDuration) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		switch yy := y.(type) {
@@ -249,7 +249,7 @@ func (x VMTimeDuration) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, er
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (x VMTimeDuration) ConvertToType(nt reflect.Type) (VMValuer, error) {
+func (x VMTimeDuration) ConvertToType(nt reflect.Type) (VMValue, error) {
 	switch nt {
 	case ReflectVMString:
 		return VMString(x.String()), nil
@@ -329,7 +329,7 @@ func Now() VMTime {
 	return VMTime(time.Now())
 }
 
-func (t VMTime) vmval() {}
+func (t VMTime) VMTypeString() string { return "Дата" }
 
 func (t VMTime) Interface() interface{} {
 	return time.Time(t)
@@ -1028,7 +1028,7 @@ func (t VMTime) ВЛокации(args VMSlice, rets *VMSlice, envout *(*Env)) er
 }
 
 // EvalBinOp сравнивает два значения или выполняет бинарную операцию
-func (x VMTime) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMTime) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		switch yy := y.(type) {
@@ -1104,7 +1104,7 @@ func (x VMTime) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (x VMTime) ConvertToType(nt reflect.Type) (VMValuer, error) {
+func (x VMTime) ConvertToType(nt reflect.Type) (VMValue, error) {
 	switch nt {
 	case ReflectVMString:
 		// сериализуем в json

@@ -19,7 +19,7 @@ type VMString string
 
 var ReflectVMString = reflect.TypeOf(VMString(""))
 
-func (x VMString) vmval() {}
+func (x VMString) VMTypeString() string { return "Строка" }
 
 func (x VMString) Interface() interface{} {
 	return string(x)
@@ -33,7 +33,7 @@ func (x VMString) Length() VMInt {
 	return VMInt(utf8.RuneCountInString(string(x)))
 }
 
-func (x VMString) IndexVal(i VMValuer) VMValuer {
+func (x VMString) IndexVal(i VMValue) VMValue {
 	if ii, ok := i.(VMInt); ok {
 		return VMString(string([]rune(string(x))[int(ii)]))
 	}
@@ -158,7 +158,7 @@ func (x VMString) StringMap() VMStringMap {
 	return rm
 }
 
-func (x VMString) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMString) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		switch yy := y.(type) {
@@ -238,7 +238,7 @@ func (x VMString) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (x VMString) ConvertToType(nt reflect.Type) (VMValuer, error) {
+func (x VMString) ConvertToType(nt reflect.Type) (VMValue, error) {
 	switch nt {
 	case ReflectVMString:
 		return x, nil
@@ -263,7 +263,7 @@ func (x VMString) ConvertToType(nt reflect.Type) (VMValuer, error) {
 		if err := json.Unmarshal([]byte(x), rm); err != nil {
 			return VMNil, err
 		}
-		if rv, ok := rm.(VMValuer); ok {
+		if rv, ok := rm.(VMValue); ok {
 			if vobj, ok := rv.(VMMetaObject); ok {
 				vobj.VMInit(vobj)
 				vobj.VMRegister()

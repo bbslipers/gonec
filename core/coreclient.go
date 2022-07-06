@@ -13,6 +13,10 @@ type VMClient struct {
 	conn     *VMConn // клиент tcp, каждому соединению присваивается GUID
 }
 
+func (x *VMClient) VMTypeString() string {
+	return "Клиент"
+}
+
 func (x *VMClient) String() string {
 	return fmt.Sprintf("Клиент %s %s", x.protocol, x.addr)
 }
@@ -21,7 +25,7 @@ func (x *VMClient) IsOnline() bool {
 	return x.conn != nil && !x.conn.closed
 }
 
-func (x *VMClient) Open(proto, addr string, handler VMFunc, data VMValuer, closeOnExitHandler bool) error {
+func (x *VMClient) Open(proto, addr string, handler VMFunc, data VMValue, closeOnExitHandler bool) error {
 	switch proto {
 	case "tcp", "tcpzip", "tcptls", "http", "https":
 

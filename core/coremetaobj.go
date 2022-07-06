@@ -16,13 +16,15 @@ import (
 // например, Set и set - в вирт. машине будут считаться одинаковыми, будет использоваться последнее по индексу
 type VMMetaObj struct {
 	vmMetaCacheM      map[int]VMFunc
-	vmMetaCacheF      map[int]VMValuer
+	vmMetaCacheF      map[int]VMValue
 	vmMetaConstructor VMConstructor
 
 	vmOriginal VMMetaObject
 }
 
-func (v *VMMetaObj) vmval() {}
+func (v *VMMetaObj) VMTypeString() string {
+	return "Объект"
+}
 
 func (v *VMMetaObj) VMInit(m VMMetaObject) {
 	// исходная структура
@@ -66,9 +68,9 @@ func (v *VMMetaObj) VMRegisterMethod(name string, m VMMethod) {
 	}(m)
 }
 
-func (v *VMMetaObj) VMRegisterField(name string, m VMValuer) {
+func (v *VMMetaObj) VMRegisterField(name string, m VMValue) {
 	if v.vmMetaCacheF == nil {
-		v.vmMetaCacheF = make(map[int]VMValuer)
+		v.vmMetaCacheF = make(map[int]VMValue)
 	}
 	switch m.(type) {
 	case *VMInt, *VMString, *VMBool,
@@ -87,7 +89,7 @@ func (v *VMMetaObj) VMIsField(name int) bool {
 	return ok
 }
 
-func (v *VMMetaObj) VMGetField(name int) VMValuer {
+func (v *VMMetaObj) VMGetField(name int) VMValue {
 	if r, ok := v.vmMetaCacheF[name]; ok {
 		switch rv := r.(type) {
 		case *VMInt:
@@ -113,7 +115,7 @@ func (v *VMMetaObj) VMGetField(name int) VMValuer {
 	panic("Невозможно получить значение поля")
 }
 
-func (v *VMMetaObj) VMSetField(name int, val VMValuer) {
+func (v *VMMetaObj) VMSetField(name int, val VMValue) {
 	if r, ok := v.vmMetaCacheF[name]; ok {
 		switch rv := r.(type) {
 		case *VMInt:
@@ -162,7 +164,7 @@ func (v *VMMetaObj) VMGetConstructor() VMConstructor {
 	return v.vmMetaConstructor
 }
 
-func (v *VMMetaObj) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (v *VMMetaObj) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		return VMNil, VMErrorIncorrectOperation
@@ -214,7 +216,7 @@ func (v *VMMetaObj) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error)
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (v *VMMetaObj) ConvertToType(nt reflect.Type) (VMValuer, error) {
+func (v *VMMetaObj) ConvertToType(nt reflect.Type) (VMValue, error) {
 	switch nt {
 	case ReflectVMString:
 		// сериализуем в json

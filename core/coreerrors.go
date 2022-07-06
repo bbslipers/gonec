@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"fmt"
+	"reflect"
 )
 
 var (
@@ -62,4 +63,46 @@ var (
 
 func VMErrorNeedArgs(n int) error {
 	return fmt.Errorf("Неверное количество параметров (требуется %d)", n)
+}
+
+var argIndexStrs = [3]string{"Первым", "Вторым", "Третьим"}
+
+func interfaceType[V any]() reflect.Type {
+	return reflect.TypeOf((*V)(nil)).Elem()
+}
+
+func typeString[V VMValue]() string {
+	var v V
+	if any(v) == nil {
+		// an interface would initialize to nil
+		vtype := reflect.TypeOf(&v).Elem()
+		if vtype.Implements(interfaceType[VMStringer]()) {
+			return "значение, приводимое к Строке"
+		} else if vtype.Implements(interfaceType[VMNumberer]()) {
+			return "значение, приводимое к Числу"
+		} else if vtype.Implements(interfaceType[VMDateTimer]()) {
+			return "значение, приводимое к Дате"
+		} else if vtype.Implements(interfaceType[VMIndexer]()) {
+			return "значение, имеющее длину"
+		} else if vtype.Implements(interfaceType[VMHasher]()) {
+			return "хешируемое значение"
+		} else if vtype.Implements(interfaceType[VMValue]()) {
+			return "значение любого типа Гонца"
+		}
+		panic("Не известно строковое представление типа")
+	}
+	return "значение типа " + v.VMTypeString()
+}
+
+func VMErrorNeedArgType[V VMValue](i, n int) error {
+	if i >= n {
+		panic("VMErrorNeedArgType: i < n")
+	}
+	indStr, typeStr := argIndexStrs[i], typeString[V]()
+
+	if n == 1 {
+		return fmt.Errorf("Требуется %s", typeStr)
+	} else {
+		return fmt.Errorf("%s параметром требуется %s", indStr, typeStr)
+	}
 }

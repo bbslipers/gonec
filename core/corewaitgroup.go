@@ -14,7 +14,7 @@ type VMWaitGroup struct {
 
 var ReflectVMWaitGroup = reflect.TypeOf(VMWaitGroup{})
 
-func (x *VMWaitGroup) vmval() {}
+func (x *VMWaitGroup) VMTypeString() string { return "ГруппаОжидания" }
 
 func (x *VMWaitGroup) Interface() interface{} {
 	return x

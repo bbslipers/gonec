@@ -10,11 +10,11 @@ import (
 	"github.com/shinanca/gonec/names"
 )
 
-type VMStringMap map[string]VMValuer
+type VMStringMap map[string]VMValue
 
 var ReflectVMStringMap = reflect.TypeOf(make(VMStringMap, 0))
 
-func (x VMStringMap) vmval() {}
+func (x VMStringMap) VMTypeString() string { return "Структура" }
 
 func (x VMStringMap) Interface() interface{} {
 	return x
@@ -28,14 +28,14 @@ func (x VMStringMap) Length() VMInt {
 	return VMInt(len(x))
 }
 
-func (x VMStringMap) IndexVal(i VMValuer) VMValuer {
+func (x VMStringMap) IndexVal(i VMValue) VMValue {
 	if ii, ok := i.(VMStringer); ok {
 		return x[ii.String()]
 	}
 	panic("Индекс должен быть строкой")
 }
 
-func (x VMStringMap) Index(i VMValuer) VMValuer {
+func (x VMStringMap) Index(i VMValue) VMValue {
 	if s, ok := i.(VMString); ok {
 		return x[string(s)]
 	}
@@ -128,7 +128,7 @@ func (x VMStringMap) Скопировать(args VMSlice, rets *VMSlice, envout 
 	return nil
 }
 
-func (x VMStringMap) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMStringMap) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		// новые добавляются, а существующие обновляются
@@ -266,7 +266,7 @@ func (x VMStringMap) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (x VMStringMap) ConvertToType(nt reflect.Type) (VMValuer, error) {
+func (x VMStringMap) ConvertToType(nt reflect.Type) (VMValue, error) {
 	// fmt.Println(nt)
 
 	switch nt {
@@ -311,7 +311,7 @@ func (x VMStringMap) ConvertToType(nt reflect.Type) (VMValuer, error) {
 				}
 			}
 		}
-		if vv, ok := rs.Interface().(VMValuer); ok {
+		if vv, ok := rs.Interface().(VMValue); ok {
 			if vobj, ok := vv.(VMMetaObject); ok {
 				vobj.VMInit(vobj)
 				vobj.VMRegister()

@@ -13,6 +13,10 @@ type File struct {
 	name string
 }
 
+func (f *File) VMTypeString() string {
+	return "Файл"
+}
+
 func (f *File) wrapError(err error) error {
 	if os.IsNotExist(err) {
 		return fmt.Errorf("Файла '%s' не существует", f.name)

@@ -77,7 +77,7 @@ func putRegs(sl core.VMSlice) {
 }
 
 // Run запускает код на исполнение, например, после загрузки из файла
-func Run(stmts binstmt.BinCode, env *core.Env) (retval core.VMValuer, reterr error) {
+func Run(stmts binstmt.BinCode, env *core.Env) (retval core.VMValue, reterr error) {
 	defer func() {
 		// если это не паника из кода языка
 		// if os.Getenv("GONEC_DEBUG") == "" {
@@ -120,7 +120,6 @@ func Run(stmts binstmt.BinCode, env *core.Env) (retval core.VMValuer, reterr err
 						panic(err)
 					}
 					rets.Append(rv)
-					return nil
 				} else {
 					_, bins, err := ParseSrc(string(body))
 					if err != nil {
@@ -137,7 +136,6 @@ func Run(stmts binstmt.BinCode, env *core.Env) (retval core.VMValuer, reterr err
 						panic(err)
 					}
 					rets.Append(rv)
-					return nil
 				}
 				return nil
 			}
@@ -153,7 +151,7 @@ func Run(stmts binstmt.BinCode, env *core.Env) (retval core.VMValuer, reterr err
 }
 
 // RunWorker исполняет кусок кода, начиная с инструкции idx
-func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.Env, idx int) (retval core.VMValuer, reterr error) {
+func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.Env, idx int) (retval core.VMValue, reterr error) {
 	defer func() {
 		// если это не паника из кода языка
 		// if os.Getenv("GONEC_DEBUG") == "" {
@@ -344,7 +342,7 @@ func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.En
 			var err error
 
 			// функцию на языке Гонец можно вызывать прямо с аргументами из слайса в регистре
-			var fgnc core.VMValuer
+			var fgnc core.VMValue
 			var argsl core.VMSlice
 			if s.Name == 0 {
 				fgnc = registers[s.RegArgs]
@@ -863,7 +861,7 @@ func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.En
 			} else {
 				v = reflect.Zero(rt)
 			}
-			if vv, ok := v.Interface().(core.VMValuer); ok {
+			if vv, ok := v.Interface().(core.VMValue); ok {
 				invalidArgs := false
 				if vobj, ok := vv.(core.VMMetaObject); ok {
 					vobj.VMInit(vobj)
@@ -956,7 +954,7 @@ func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.En
 
 		case *binstmt.BinINC:
 			v := registers[s.Reg]
-			var x core.VMValuer
+			var x core.VMValue
 			if vv, ok := v.(core.VMInt); ok {
 				x = core.VMInt(int64(vv) + 1)
 			} else if vv, ok := v.(core.VMDecNum); ok {
@@ -966,7 +964,7 @@ func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.En
 
 		case *binstmt.BinDEC:
 			v := registers[s.Reg]
-			var x core.VMValuer
+			var x core.VMValue
 			if vv, ok := v.(core.VMInt); ok {
 				x = core.VMInt(int64(vv) - 1)
 			} else if vv, ok := v.(core.VMDecNum); ok {

@@ -31,7 +31,6 @@ func NewGonecInterpreter(header core.VMServiceHeader, args []string, tmode bool)
 }
 
 type VMGonecInterpreterService struct {
-	core.VMValueStruct
 	hdr          core.VMServiceHeader
 	fsArgs       []string
 	testingMode  bool
@@ -42,7 +41,9 @@ type VMGonecInterpreterService struct {
 	lasterr      error
 }
 
-func (x *VMGonecInterpreterService) vmval() {}
+func (x *VMGonecInterpreterService) VMTypeString() string {
+	return "ИнтерпретаторГонца"
+}
 
 func (x *VMGonecInterpreterService) Header() core.VMServiceHeader {
 	return x.hdr

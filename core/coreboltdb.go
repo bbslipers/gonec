@@ -19,7 +19,7 @@ type VMBoltDB struct {
 
 var ReflectVMBoltDB = reflect.TypeOf(VMBoltDB{})
 
-func (x *VMBoltDB) vmval() {}
+func (x *VMBoltDB) VMTypeString() string { return "ФайловаяБазаДанных" }
 
 func (x *VMBoltDB) Interface() interface{} {
 	return x
@@ -106,7 +106,9 @@ type VMBoltTransaction struct {
 	writable bool
 }
 
-func (x *VMBoltTransaction) vmval() {}
+func (x *VMBoltTransaction) VMTypeString() string {
+	return "ТранзакцияФайловойБазыДанных"
+}
 
 func (x *VMBoltTransaction) Interface() interface{} {
 	return x
@@ -233,7 +235,9 @@ type VMBoltTable struct {
 	b    *bolt.Bucket
 }
 
-func (x *VMBoltTable) vmval() {}
+func (x *VMBoltTable) VMTypeString() string {
+	return "ТаблицаФайловойБазыДанных"
+}
 
 func (x *VMBoltTable) Interface() interface{} {
 	return x
@@ -252,7 +256,7 @@ func (x *VMBoltTable) Set(k string, v VMBinaryTyper) error {
 	return x.b.Put([]byte(k), append(i, ii...))
 }
 
-func parseBoltValue(sl []byte) (VMValuer, error) {
+func parseBoltValue(sl []byte) (VMValue, error) {
 	if len(sl) < 1 {
 		return nil, VMErrorWrongDBValue
 	}
@@ -268,7 +272,7 @@ func parseBoltValue(sl []byte) (VMValuer, error) {
 	return vv, nil
 }
 
-func (x *VMBoltTable) Get(k string) (VMValuer, bool, error) {
+func (x *VMBoltTable) Get(k string) (VMValue, bool, error) {
 	sl := x.b.Get([]byte(k))
 	if sl == nil {
 		return VMNil, false, nil

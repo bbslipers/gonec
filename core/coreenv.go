@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -48,14 +49,14 @@ func NewVals() *Vals {
 	return &v
 }
 
-func (v *Vals) Get(name int) (VMValuer, bool) {
+func (v *Vals) Get(name int) (VMValue, bool) {
 	if i, ok := v.idx[name]; ok {
 		return v.vals[i], v.vals[i] != nil
 	}
 	return nil, false
 }
 
-func (v *Vals) Set(name int, val VMValuer) {
+func (v *Vals) Set(name int, val VMValue) {
 	if i, ok := v.idx[name]; ok {
 		v.vals[i] = val
 	} else {
@@ -87,12 +88,13 @@ type Env struct {
 	stdout       io.Writer
 	sid          string
 	lastid       int
-	lastval      VMValuer
+	lastval      VMValue
 	builtsLoaded bool
 	Valid        bool
 }
 
-func (e *Env) vmval() {} // нужно для того, чтобы *Env можно было сохранять в переменные VMValuer
+// нужно для того, чтобы *Env можно было сохранять в переменные VMValue
+func (e *Env) VMTypeString() string { return "Окружение" }
 
 // NewEnv creates new global scope.
 // !!!не забывать вызывать core.LoadAllBuiltins(m)!!!
@@ -261,7 +263,7 @@ func (e *Env) Type(k int) (reflect.Type, error) {
 
 // Get returns value which specified symbol. It goes to upper scope until
 // found or returns error.
-func (e *Env) Get(k int) (VMValuer, error) {
+func (e *Env) Get(k int) (VMValue, error) {
 	for ee := e; ee != nil; ee = ee.parent {
 		ee.RLock()
 		if ee.lastid == k {
@@ -287,7 +289,7 @@ func (e *Env) Get(k int) (VMValuer, error) {
 
 // Set modifies value which specified as symbol. It goes to upper scope until
 // found or returns error.
-func (e *Env) Set(k int, v VMValuer) error {
+func (e *Env) Set(k int, v VMValue) error {
 	for ee := e; ee != nil; ee = ee.parent {
 		ee.Lock()
 		if _, ok := ee.env.Get(k); ok {
@@ -303,7 +305,7 @@ func (e *Env) Set(k int, v VMValuer) error {
 }
 
 // DefineGlobal defines symbol in global scope.
-func (e *Env) DefineGlobal(k int, v VMValuer) error {
+func (e *Env) DefineGlobal(k int, v VMValue) error {
 	for ee := e; ee != nil; ee = ee.parent {
 		if ee.parent == nil {
 			return ee.Define(k, v)
@@ -325,18 +327,33 @@ func (e *Env) DefineType(k int, t reflect.Type) error {
 	return fmt.Errorf("Отсутствует глобальный контекст!")
 }
 
-func (e *Env) DefineTypeS(k string, t reflect.Type) error {
-	return e.DefineType(names.UniqueNames.Set(k), t)
+func (e *Env) defineTypeHelper(v reflect.Value) error {
+	value := v
+	if v.Kind() == reflect.Struct {
+		value = reflect.New(v.Type())
+		value.Elem().Set(v)
+	}
+
+	ret := value.MethodByName("VMTypeString").Call([]reflect.Value{})
+	if len(ret) != 1 || ret[0].Kind() != reflect.String {
+		return errors.New("VMTypeString должен возвращать строку")
+	}
+	return e.DefineType(names.UniqueNames.Set(names.FastToLower(ret[0].String())), v.Type())
+}
+
+// DefineTypeS регистрирует системный тип
+func (e *Env) DefineTypeS(t reflect.Type) error {
+	return e.defineTypeHelper(reflect.New(t).Elem())
 }
 
 // DefineTypeStruct регистрирует системную функциональную структуру, переданную в виде указателя!
-func (e *Env) DefineTypeStruct(k string, t interface{}) error {
+func (e *Env) DefineTypeStruct(t interface{}) error {
 	gob.Register(t)
-	return e.DefineType(names.UniqueNames.Set(k), reflect.Indirect(reflect.ValueOf(t)).Type())
+	return e.defineTypeHelper(reflect.Indirect(reflect.ValueOf(t)))
 }
 
 // Define defines symbol in current scope.
-func (e *Env) Define(k int, v VMValuer) error {
+func (e *Env) Define(k int, v VMValue) error {
 	e.Lock()
 	e.env.Set(k, v)
 	e.lastid = k
@@ -347,7 +364,7 @@ func (e *Env) Define(k int, v VMValuer) error {
 	return nil
 }
 
-func (e *Env) DefineS(k string, v VMValuer) error {
+func (e *Env) DefineS(k string, v VMValue) error {
 	return e.Define(names.UniqueNames.Set(k), v)
 }
 

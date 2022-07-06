@@ -5,24 +5,24 @@ import (
 )
 
 // VMChan - канал для передачи любого типа вирт. машины
-type VMChan chan VMValuer
+type VMChan chan VMValue
 
-func (x VMChan) vmval() {}
+func (x VMChan) VMTypeString() string { return "Канал" }
 
 func (x VMChan) Interface() interface{} {
 	return x
 }
 
-func (x VMChan) Send(v VMValuer) {
+func (x VMChan) Send(v VMValue) {
 	x <- v
 }
 
-func (x VMChan) Recv() (VMValuer, bool) {
+func (x VMChan) Recv() (VMValue, bool) {
 	rv, ok := <-x
 	return rv, ok
 }
 
-func (x VMChan) TrySend(v VMValuer) (ok bool) {
+func (x VMChan) TrySend(v VMValue) (ok bool) {
 	select {
 	case x <- v:
 		ok = true
@@ -32,7 +32,7 @@ func (x VMChan) TrySend(v VMValuer) (ok bool) {
 	return
 }
 
-func (x VMChan) TryRecv() (v VMValuer, ok bool, notready bool) {
+func (x VMChan) TryRecv() (v VMValue, ok bool, notready bool) {
 	select {
 	case v, ok = <-x:
 		notready = false

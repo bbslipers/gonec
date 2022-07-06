@@ -16,7 +16,7 @@ type VMInt int64
 
 var ReflectVMInt = reflect.TypeOf(VMInt(0))
 
-func (x VMInt) vmval() {}
+func (x VMInt) VMTypeString() string { return "ЦелоеЧисло" }
 
 func (x VMInt) Interface() interface{} {
 	return int64(x)
@@ -113,7 +113,7 @@ func ParseVMInt(s string) (VMInt, error) {
 	return VMInt(i64), nil
 }
 
-func (x VMInt) EvalUnOp(op rune) (VMValuer, error) {
+func (x VMInt) EvalUnOp(op rune) (VMValue, error) {
 	switch op {
 	case '-':
 		return VMInt(-int64(x)), nil
@@ -126,7 +126,7 @@ func (x VMInt) EvalUnOp(op rune) (VMValuer, error) {
 	}
 }
 
-func (x VMInt) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMInt) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		switch yy := y.(type) {
@@ -259,7 +259,7 @@ func (x VMInt) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (x VMInt) ConvertToType(nt reflect.Type) (VMValuer, error) {
+func (x VMInt) ConvertToType(nt reflect.Type) (VMValue, error) {
 	switch nt {
 	case ReflectVMInt:
 		return x, nil

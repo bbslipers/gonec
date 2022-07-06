@@ -21,6 +21,10 @@ type TextDocument struct {
 	separator string
 }
 
+func (t *TextDocument) VMTypeString() string {
+	return "ТекстовыйДокумент"
+}
+
 func (t *TextDocument) String() string {
 	return strings.Join(t.lines, t.separator)
 }

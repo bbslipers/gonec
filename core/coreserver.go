@@ -29,6 +29,10 @@ type VMServer struct {
 	maxconn  int
 }
 
+func (x *VMServer) VMTypeString() string {
+	return "Сервер"
+}
+
 func (x *VMServer) String() string {
 	return fmt.Sprintf("Сервер %s %s", x.protocol, x.addr)
 }
@@ -53,7 +57,7 @@ func (x *VMServer) healthSender() {
 	}
 }
 
-func (x *VMServer) Open(proto, addr string, maxconn int, handler VMFunc, data VMValuer, vsmHandlers VMStringMap) (err error) {
+func (x *VMServer) Open(proto, addr string, maxconn int, handler VMFunc, data VMValue, vsmHandlers VMStringMap) (err error) {
 	// запускаем сервер
 	if x.lnr != nil || x.srv != nil {
 		return VMErrorServerNowOnline

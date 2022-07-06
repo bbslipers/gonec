@@ -11,11 +11,11 @@ import (
 // VMHttpRequest запрос к http серверу
 type VMHttpRequest struct {
 	r    *http.Request
-	data VMValuer
+	data VMValue
 	body []byte
 }
 
-func (x *VMHttpRequest) vmval() {}
+func (x *VMHttpRequest) VMTypeString() string { return "HttpЗапрос" }
 
 func (x *VMHttpRequest) Interface() interface{} {
 	return x.r
@@ -239,10 +239,10 @@ type VMHttpResponse struct {
 	r    *http.Response
 	w    http.ResponseWriter
 	body []byte
-	data VMValuer
+	data VMValue
 }
 
-func (x *VMHttpResponse) vmval() {}
+func (x *VMHttpResponse) VMTypeString() string { return "HttpОтвет" }
 
 func (x *VMHttpResponse) Interface() interface{} {
 	return x.r

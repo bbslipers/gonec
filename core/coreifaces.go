@@ -7,61 +7,61 @@ import (
 
 // иерархия базовых типов вирт. машины
 type (
-	// VMValuer корневой тип всех значений, доступных вирт. машине
-	VMValuer interface {
-		vmval()
+	// VMValue корневой тип всех значений, доступных вирт. машине
+	VMValue interface {
+		VMTypeString() string
 	}
 
 	// VMInterfacer корневой тип всех значений,
 	// которые могут преобразовываться в значения для функций на языке Го в родные типы Го
 	VMInterfacer interface {
-		VMValuer
+		VMValue
 		Interface() interface{} // в типах Го, может возвращать в т.ч. nil
 	}
 
 	// VMFromGoParser может парсить из значений на языке Го
 	VMFromGoParser interface {
-		VMValuer
+		VMValue
 		ParseGoType(interface{}) // используется для указателей, т.к. парсит в их значения
 	}
 
 	// VMOperationer может выполнить операцию с другим значением, операцию сравнения или математическую
 	VMOperationer interface {
-		VMValuer
-		EvalBinOp(VMOperation, VMOperationer) (VMValuer, error) // возвращает результат выражения с другим значением
+		VMValue
+		EvalBinOp(VMOperation, VMOperationer) (VMValue, error) // возвращает результат выражения с другим значением
 	}
 
 	// VMUnarer может выполнить унарную операцию над свои значением
 	VMUnarer interface {
-		VMValuer
-		EvalUnOp(rune) (VMValuer, error) // возвращает результат выражения с другим значением
+		VMValue
+		EvalUnOp(rune) (VMValue, error) // возвращает результат выражения с другим значением
 	}
 
 	// VMConverter может конвертироваться в тип reflect.Type
 	VMConverter interface {
-		VMValuer
-		ConvertToType(t reflect.Type) (VMValuer, error)
+		VMValue
+		ConvertToType(t reflect.Type) (VMValue, error)
 	}
 
 	// VMChaner реализует поведение канала
 	VMChaner interface {
 		VMInterfacer
-		Send(VMValuer)
-		Recv() (VMValuer, bool)
-		TrySend(VMValuer) bool
-		TryRecv() (VMValuer, bool, bool)
+		Send(VMValue)
+		Recv() (VMValue, bool)
+		TrySend(VMValue) bool
+		TryRecv() (VMValue, bool, bool)
 	}
 
 	// VMIndexer имеет длину и значение по индексу
 	VMIndexer interface {
 		VMInterfacer
 		Length() VMInt
-		IndexVal(VMValuer) VMValuer
+		IndexVal(VMValue) VMValue
 	}
 
 	// VMBinaryTyper может сериализовываться в бинарные данные внутри слайсов и структур
 	VMBinaryTyper interface {
-		VMValuer
+		VMValue
 		encoding.BinaryMarshaler
 		BinaryType() VMBinaryType
 	}
@@ -145,24 +145,24 @@ type (
 		// то будет использован для инстанцирования объекта
 		VMRegisterConstructor(VMConstructor)
 		VMRegisterMethod(string, VMMethod) // реализовано в VMMetaObj
-		VMRegisterField(string, VMValuer)  // реализовано в VMMetaObj
+		VMRegisterField(string, VMValue)   // реализовано в VMMetaObj
 
 		VMIsField(int) bool              // реализовано в VMMetaObj
-		VMGetField(int) VMValuer         // реализовано в VMMetaObj
-		VMSetField(int, VMValuer)        // реализовано в VMMetaObj
+		VMGetField(int) VMValue          // реализовано в VMMetaObj
+		VMSetField(int, VMValue)         // реализовано в VMMetaObj
 		VMGetMethod(int) (VMFunc, bool)  // реализовано в VMMetaObj
 		VMGetConstructor() VMConstructor // реализовано в VMMetaObj
 	}
 
 	// VMMethodImplementer реализует только методы, доступные в языке Гонец
 	VMMethodImplementer interface {
-		VMValuer
+		VMValue
 		MethodMember(int) (VMFunc, bool) // возвращает метод в нужном формате
 	}
 
 	// VMServicer определяет микросервис, который может регистрироваться в главном менеджере сервисов
 	VMServicer interface {
-		VMValuer
+		VMValue
 		Header() VMServiceHeader
 		Start() error       // запускает горутину, и если не стартовал, возвращает ошибку
 		HealthCheck() error // если не живой, то возвращает ошибку

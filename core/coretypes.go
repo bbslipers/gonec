@@ -80,11 +80,6 @@ var OperMapR = map[VMOperation]string{
 	SHR:  ">>", // >>
 }
 
-// VMValueStruct используется для встраивания в структуры других пакетов для обеспечения возможности соответствия VMValuer интерфейсу
-type VMValueStruct struct{}
-
-func (x VMValueStruct) vmval() {}
-
 type VMBinaryType byte
 
 const (
@@ -101,7 +96,7 @@ const (
 	VMNULL
 )
 
-func (x VMBinaryType) ParseBinary(data []byte) (VMValuer, error) {
+func (x VMBinaryType) ParseBinary(data []byte) (VMValue, error) {
 	switch x {
 	case VMBOOL:
 		var v VMBool
@@ -147,7 +142,7 @@ func (x VMBinaryType) ParseBinary(data []byte) (VMValuer, error) {
 
 type VMNilType struct{}
 
-func (x VMNilType) vmval()                 {}
+func (x VMNilType) VMTypeString() string   { return "Неопределенность" }
 func (x VMNilType) String() string         { return "Неопределено" }
 func (x VMNilType) Interface() interface{} { return nil }
 func (x VMNilType) ParseGoType(v interface{}) {
@@ -170,7 +165,7 @@ func (x VMNilType) BinaryType() VMBinaryType {
 var VMNil = VMNilType{}
 
 // EvalBinOp сравнивает два значения или выполняет бинарную операцию
-func (x VMNilType) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMNilType) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		return VMNil, VMErrorIncorrectOperation
@@ -259,7 +254,7 @@ func (x *VMNilType) UnmarshalJSON(data []byte) error {
 
 type VMNullType struct{}
 
-func (x VMNullType) vmval()                 {}
+func (x VMNullType) VMTypeString() string   { return "Null" }
 func (x VMNullType) null()                  {}
 func (x VMNullType) String() string         { return "NULL" }
 func (x VMNullType) Interface() interface{} { return x }
@@ -270,7 +265,7 @@ func (x VMNullType) BinaryType() VMBinaryType {
 var VMNullVar = VMNullType{}
 
 // EvalBinOp сравнивает два значения или выполняет бинарную операцию
-func (x VMNullType) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMNullType) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		return VMNil, VMErrorIncorrectOperation
@@ -423,7 +418,7 @@ func ReflectToVMValue(rv reflect.Value) VMInterfacer {
 	panic(VMErrorNotConverted)
 }
 
-func VMValuerFromJSON(s string) (VMValuer, error) {
+func VMValuerFromJSON(s string) (VMValue, error) {
 	var i64 int64
 	var err error
 	if strings.HasPrefix(s, "0x") {
@@ -502,11 +497,11 @@ func VMStringMapFromJson(x string) (VMStringMap, error) {
 	return rvms, nil
 }
 
-func EqualVMValues(v1, v2 VMValuer) bool {
+func EqualVMValues(v1, v2 VMValue) bool {
 	return BoolOperVMValues(v1, v2, EQL)
 }
 
-func BoolOperVMValues(v1, v2 VMValuer, op VMOperation) bool {
+func BoolOperVMValues(v1, v2 VMValue, op VMOperation) bool {
 	if xop, ok := v1.(VMOperationer); ok {
 		if yop, ok := v2.(VMOperationer); ok {
 			cmp, err := xop.EvalBinOp(op, yop)
@@ -520,7 +515,7 @@ func BoolOperVMValues(v1, v2 VMValuer, op VMOperation) bool {
 	return false
 }
 
-func SortLessVMValues(v1, v2 VMValuer) bool {
+func SortLessVMValues(v1, v2 VMValue) bool {
 	// числа
 	if vi, ok := v1.(VMInt); ok {
 		if vj, ok := v2.(VMInt); ok {

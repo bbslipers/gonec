@@ -10,9 +10,9 @@
       "request": "launch",
       "mode": "auto",
       "program": "${fileDirname}",
-      "args": ["core/slice_test.gnc"],
+      "args": [],
       "env": {},
-      "cwd": "./test"
+      "cwd": ""
     }
   ]
 }

@@ -222,7 +222,7 @@ type BinLOAD struct {
 	BinStmtImpl
 
 	Reg  int
-	Val  core.VMValuer
+	Val  core.VMValue
 	IsId bool
 }
 
@@ -241,7 +241,7 @@ func (v BinLOAD) String() string {
 	return fmt.Sprintf("LOAD r%d, %#v", v.Reg, v.Val)
 }
 
-func NewBinLOAD(reg int, val core.VMValuer, isid bool, e pos.Pos) *BinLOAD {
+func NewBinLOAD(reg int, val core.VMValue, isid bool, e pos.Pos) *BinLOAD {
 	v := &BinLOAD{
 		Reg:  reg,
 		Val:  val,

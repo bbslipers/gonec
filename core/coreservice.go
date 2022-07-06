@@ -44,7 +44,9 @@ type VMServiceBus struct {
 	done     chan bool
 }
 
-func (x *VMServiceBus) vmval() {}
+func (x *VMServiceBus) VMTypeString() string {
+	return "МенеджерСервисов"
+}
 
 func (x *VMServiceBus) Interface() interface{} {
 	return x

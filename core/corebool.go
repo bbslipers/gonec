@@ -13,7 +13,7 @@ type VMBool bool
 
 var ReflectVMBool = reflect.TypeOf(VMBool(true))
 
-func (x VMBool) vmval() {}
+func (x VMBool) VMTypeString() string { return "Булево" }
 
 func (x VMBool) Interface() interface{} {
 	return bool(x)
@@ -86,7 +86,7 @@ func ParseVMBool(s string) (VMBool, error) {
 	return false, VMErrorNotConverted
 }
 
-func (x VMBool) EvalUnOp(op rune) (VMValuer, error) {
+func (x VMBool) EvalUnOp(op rune) (VMValue, error) {
 	switch op {
 	// case '-':
 	// case '^':
@@ -96,7 +96,7 @@ func (x VMBool) EvalUnOp(op rune) (VMValuer, error) {
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (x VMBool) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMBool) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		return VMNil, VMErrorIncorrectOperation
@@ -154,7 +154,7 @@ func (x VMBool) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (x VMBool) ConvertToType(nt reflect.Type) (VMValuer, error) {
+func (x VMBool) ConvertToType(nt reflect.Type) (VMValue, error) {
 	switch nt {
 	case ReflectVMBool:
 		return x, nil

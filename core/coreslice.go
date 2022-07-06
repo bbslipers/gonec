@@ -36,11 +36,11 @@ func PutGlobalVMSlice(sl VMSlice) {
 	}
 }
 
-type VMSlice []VMValuer
+type VMSlice []VMValue
 
 var ReflectVMSlice = reflect.TypeOf(make(VMSlice, 0))
 
-func (x VMSlice) vmval() {}
+func (x VMSlice) VMTypeString() string { return "Массив" }
 
 func (x VMSlice) Interface() interface{} {
 	return x
@@ -62,7 +62,7 @@ func (x VMSlice) Args() []interface{} {
 	return ai
 }
 
-func (x *VMSlice) Append(a ...VMValuer) {
+func (x *VMSlice) Append(a ...VMValue) {
 	*x = append(*x, a...)
 }
 
@@ -70,7 +70,7 @@ func (x VMSlice) Length() VMInt {
 	return VMInt(len(x))
 }
 
-func (x VMSlice) IndexVal(i VMValuer) VMValuer {
+func (x VMSlice) IndexVal(i VMValue) VMValue {
 	if ii, ok := i.(VMInt); ok {
 		return x[int(ii)]
 	}
@@ -108,7 +108,7 @@ func (x VMSlice) MethodMember(name int) (VMFunc, bool) {
 	case "найтисорт":
 		return VMFuncMustParams(1, x.НайтиСорт), true
 	case "вставить":
-		return VMFuncMustParams(2, (&x).Вставить), true
+		return VMFuncTwoParams[VMInt, VMValue]((&x).Вставить), true
 	case "удалить":
 		return VMFuncMustParams(1, (&x).Удалить), true
 	case "скопироватьуникальные":
@@ -164,10 +164,7 @@ func (x VMSlice) НайтиСорт(args VMSlice, rets *VMSlice, envout *(*Env))
 // Индекс может быть равен длине, тогда вставка происходит в последний элемент.
 // Обычно используется в связке с НайтиСорт, т.к. позволяет вставлять значения с сохранением сортировки по возрастанию
 func (x *VMSlice) Вставить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
-	p, ok := args[0].(VMInt)
-	if !ok {
-		return VMErrorNeedInt
-	}
+	p := args[0].(VMInt)
 	if int(p) < 0 || int(p) > len(*x) {
 		return VMErrorIndexOutOfBoundary
 	}
@@ -237,7 +234,7 @@ func (x VMSlice) Скопировать(args VMSlice, rets *VMSlice, envout *(*E
 
 func (x VMSlice) СкопироватьУникальные(args VMSlice, rets *VMSlice, envout *(*Env)) error { // VMSlice {
 	rv := make(VMSlice, len(x))
-	seen := make(map[VMValuer]bool)
+	seen := make(map[VMValue]bool)
 	for i, v := range x {
 		if _, ok := seen[v]; ok {
 			continue
@@ -257,14 +254,14 @@ func (x VMSlice) СкопироватьУникальные(args VMSlice, rets *
 	return nil
 }
 
-func (x VMSlice) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
+func (x VMSlice) EvalBinOp(op VMOperation, y VMOperationer) (VMValue, error) {
 	switch op {
 	case ADD:
 		switch yy := y.(type) {
 		case VMSlice:
 			// добавляем второй слайс в конец первого
 			return append(x, yy...), nil
-		case VMValuer:
+		case VMValue:
 			return append(x, yy), nil
 		}
 		return append(x, y), nil
@@ -437,7 +434,7 @@ func (x VMSlice) EvalBinOp(op VMOperation, y VMOperationer) (VMValuer, error) {
 	return VMNil, VMErrorUnknownOperation
 }
 
-func (x VMSlice) ConvertToType(nt reflect.Type) (VMValuer, error) {
+func (x VMSlice) ConvertToType(nt reflect.Type) (VMValue, error) {
 	switch nt {
 	case ReflectVMString:
 		// сериализуем в json

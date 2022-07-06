@@ -16,7 +16,7 @@ type VMFunc func(args VMSlice, rets *VMSlice, envout *(*Env)) error
 
 var ReflectVMFunc = reflect.TypeOf(VMFunc(nil))
 
-func (f VMFunc) vmval() {}
+func (f VMFunc) VMTypeString() string { return "Функция" }
 
 func (f VMFunc) Interface() interface{} {
 	return f
@@ -36,6 +36,7 @@ type (
 )
 
 func VMFuncMustParams(n int, f VMMethod) VMFunc {
+	needArgsErr := VMErrorNeedArgs(n)
 	return VMFunc(
 		func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 			if len(args) != n {
@@ -43,9 +44,59 @@ func VMFuncMustParams(n int, f VMMethod) VMFunc {
 				case 0:
 					return VMErrorNoNeedArgs
 				default:
-					return VMErrorNeedArgs(n)
+					return needArgsErr
 				}
 			}
 			return f(args, rets, envout)
 		})
+}
+
+func paramCheckHelper[V VMValue](args VMSlice, i, n int, errs []error) error {
+	if _, ok := args[i].(V); !ok {
+		return errs[i]
+	}
+	return nil
+}
+
+func VMFuncOneParam[V1 VMValue](f VMMethod) VMFunc {
+	errs := []error{VMErrorNeedArgType[V1](0, 1)}
+	return VMFuncMustParams(1, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+		if err := paramCheckHelper[V1](args, 0, 1, errs); err != nil {
+			return err
+		}
+		return f(args, rets, envout)
+	})
+}
+
+func VMFuncTwoParams[V1, V2 VMValue](f VMMethod) VMFunc {
+	errs := []error{
+		VMErrorNeedArgType[V1](0, 2),
+		VMErrorNeedArgType[V2](1, 2),
+	}
+	return VMFuncMustParams(2, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+		if err := paramCheckHelper[V1](args, 0, 2, errs); err != nil {
+			return err
+		} else if err := paramCheckHelper[V2](args, 1, 2, errs); err != nil {
+			return err
+		}
+		return f(args, rets, envout)
+	})
+}
+
+func VMFuncThreeParams[V1, V2, V3 VMValue](f VMMethod) VMFunc {
+	errs := []error{
+		VMErrorNeedArgType[V1](0, 3),
+		VMErrorNeedArgType[V2](1, 3),
+		VMErrorNeedArgType[V3](2, 3),
+	}
+	return VMFuncMustParams(3, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+		if err := paramCheckHelper[V1](args, 0, 3, errs); err != nil {
+			return err
+		} else if err := paramCheckHelper[V2](args, 1, 3, errs); err != nil {
+			return err
+		} else if err := paramCheckHelper[V3](args, 2, 3, errs); err != nil {
+			return err
+		}
+		return f(args, rets, envout)
+	})
 }
