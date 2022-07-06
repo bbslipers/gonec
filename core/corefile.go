@@ -115,7 +115,7 @@ func (f *File) VMRegister() {
 		f.УстановитьВремяИзменения))
 }
 
-func (f *File) Существует(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (f *File) Существует(args VMSlice, rets *VMSlice) error {
 	exists, err := f.Exists()
 	if err == nil {
 		rets.Append(VMBool(exists))
@@ -123,7 +123,7 @@ func (f *File) Существует(args VMSlice, rets *VMSlice, envout *(*Env))
 	return err
 }
 
-func (f *File) Размер(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (f *File) Размер(args VMSlice, rets *VMSlice) error {
 	size, err := f.Size()
 	if err == nil {
 		rets.Append(VMInt(size))
@@ -131,7 +131,7 @@ func (f *File) Размер(args VMSlice, rets *VMSlice, envout *(*Env)) error {
 	return err
 }
 
-func (f *File) ПолучитьТолькоЧтение(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (f *File) ПолучитьТолькоЧтение(args VMSlice, rets *VMSlice) error {
 	readonly, err := f.IsReadOnly()
 	if err == nil {
 		rets.Append(VMBool(readonly))
@@ -139,7 +139,7 @@ func (f *File) ПолучитьТолькоЧтение(args VMSlice, rets *VMSl
 	return err
 }
 
-func (f *File) ПолучитьВремяИзменения(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (f *File) ПолучитьВремяИзменения(args VMSlice, rets *VMSlice) error {
 	modtime, err := f.ModificationTime()
 	if err == nil {
 		if args[0].(VMBool) {
@@ -151,10 +151,10 @@ func (f *File) ПолучитьВремяИзменения(args VMSlice, rets *
 	return err
 }
 
-func (f *File) УстановитьТолькоЧтение(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (f *File) УстановитьТолькоЧтение(args VMSlice, rets *VMSlice) error {
 	return f.SetReadOnly(args[0].(VMBool).Bool())
 }
 
-func (f *File) УстановитьВремяИзменения(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (f *File) УстановитьВремяИзменения(args VMSlice, rets *VMSlice) error {
 	return f.SetModificationTime(args[0].(VMDateTimer).Time().GolangTime())
 }

@@ -492,7 +492,7 @@ func (t VMTime) Year() VMInt {
 	return VMInt(time.Time(t).Year())
 }
 
-func (t VMTime) Год(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Год(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Year())
 	return nil
 }
@@ -501,7 +501,7 @@ func (t VMTime) Month() VMInt {
 	return VMInt(time.Time(t).Month())
 }
 
-func (t VMTime) Месяц(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Месяц(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Month())
 	return nil
 }
@@ -510,7 +510,7 @@ func (t VMTime) Day() VMInt {
 	return VMInt(time.Time(t).Day())
 }
 
-func (t VMTime) День(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) День(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Day())
 	return nil
 }
@@ -529,14 +529,14 @@ func (t VMTime) ISOWeek() (year, week VMInt) {
 // 1-53, выровнены по годам,
 // т.е. конец декабря (три дня) попадает в следующий год,
 // или первые три дня января попадают в предыдущий год
-func (t VMTime) Неделя(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Неделя(args VMSlice, rets *VMSlice) error {
 	yy, ww := t.ISOWeek()
 	rets.Append(ww)
 	rets.Append(yy)
 	return nil
 }
 
-func (t VMTime) ДеньНедели(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) ДеньНедели(args VMSlice, rets *VMSlice) error {
 	// 1=понедельник, 7=воскресенье ...
 	wd := t.Weekday()
 	if wd == 0 {
@@ -552,7 +552,7 @@ func (t VMTime) Quarter() VMInt {
 	return VMInt(int64(time.Time(t).Month())/4 + 1)
 }
 
-func (t VMTime) Квартал(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Квартал(args VMSlice, rets *VMSlice) error {
 	// 1-4
 	rets.Append(t.Quarter())
 	return nil
@@ -563,7 +563,7 @@ func (t VMTime) YearDay() VMInt {
 	return VMInt(time.Time(t).YearDay())
 }
 
-func (t VMTime) ДеньГода(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) ДеньГода(args VMSlice, rets *VMSlice) error {
 	// 1-366
 	rets.Append(t.YearDay())
 	return nil
@@ -573,7 +573,7 @@ func (t VMTime) Hour() VMInt {
 	return VMInt(time.Time(t).Hour())
 }
 
-func (t VMTime) Час(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Час(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Hour())
 	return nil
 }
@@ -582,7 +582,7 @@ func (t VMTime) Minute() VMInt {
 	return VMInt(time.Time(t).Minute())
 }
 
-func (t VMTime) Минута(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Минута(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Minute())
 	return nil
 }
@@ -591,7 +591,7 @@ func (t VMTime) Second() VMInt {
 	return VMInt(time.Time(t).Second())
 }
 
-func (t VMTime) Секунда(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Секунда(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Second())
 	return nil
 }
@@ -600,7 +600,7 @@ func (t VMTime) Millisecond() VMInt {
 	return VMInt(int64(time.Time(t).Nanosecond()) / 1e6)
 }
 
-func (t VMTime) Миллисекунда(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Миллисекунда(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Millisecond())
 	return nil
 }
@@ -609,7 +609,7 @@ func (t VMTime) Microsecond() VMInt {
 	return VMInt(int64(time.Time(t).Nanosecond()) / 1e3)
 }
 
-func (t VMTime) Микросекунда(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Микросекунда(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Microsecond())
 	return nil
 }
@@ -618,7 +618,7 @@ func (t VMTime) Nanosecond() VMInt {
 	return VMInt(time.Time(t).Nanosecond())
 }
 
-func (t VMTime) Наносекунда(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Наносекунда(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Nanosecond())
 	return nil
 }
@@ -627,7 +627,7 @@ func (t VMTime) UnixNano() VMInt {
 	return VMInt(time.Time(t).UnixNano())
 }
 
-func (t VMTime) ЮниксНано(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) ЮниксНано(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.UnixNano())
 	return nil
 }
@@ -636,12 +636,12 @@ func (t VMTime) Unix() VMInt {
 	return VMInt(time.Time(t).Unix())
 }
 
-func (t VMTime) Юникс(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Юникс(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Unix())
 	return nil
 }
 
-func (t VMTime) Формат(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Формат(args VMSlice, rets *VMSlice) error {
 	// аргумент - форматная строка
 	fmtstr := args[0].(VMString)
 
@@ -887,7 +887,7 @@ func (t VMTime) Sub(t2 VMTime) VMTimeDuration {
 	return VMTimeDuration(time.Time(t).Sub(time.Time(t2)))
 }
 
-func (t VMTime) Вычесть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Вычесть(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Sub(args[0].(VMTime)))
 	return nil
 }
@@ -896,12 +896,12 @@ func (t VMTime) Add(d VMTimeDuration) VMTime {
 	return VMTime(time.Time(t).Add(time.Duration(d)))
 }
 
-func (t VMTime) Добавить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t VMTime) Добавить(args VMSlice, rets *VMSlice) error {
 	rets.Append(t.Add(args[0].(VMTimeDuration)))
 	return nil
 }
 
-func (t VMTime) ДобавитьПериод(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(dy, dm, dd int) VMTime {
+func (t VMTime) ДобавитьПериод(args VMSlice, rets *VMSlice) error { //(dy, dm, dd int) VMTime {
 	rets.Append(VMTime(time.Time(t).AddDate(
 		int(args[0].(VMInt)),
 		int(args[1].(VMInt)),
@@ -913,7 +913,7 @@ func (t VMTime) Before(d VMTime) bool {
 	return time.Time(t).Before(time.Time(d))
 }
 
-func (t VMTime) Раньше(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(d VMTime) bool {
+func (t VMTime) Раньше(args VMSlice, rets *VMSlice) error { //(d VMTime) bool {
 	rets.Append(VMBool(t.Before(args[0].(VMTime))))
 	return nil
 }
@@ -922,7 +922,7 @@ func (t VMTime) After(d VMTime) bool {
 	return time.Time(t).After(time.Time(d))
 }
 
-func (t VMTime) Позже(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(d VMTime) bool {
+func (t VMTime) Позже(args VMSlice, rets *VMSlice) error { //(d VMTime) bool {
 	rets.Append(VMBool(t.After(args[0].(VMTime))))
 	return nil
 }
@@ -932,7 +932,7 @@ func (t VMTime) Equal(d VMTime) bool {
 	return time.Time(t).Equal(time.Time(d))
 }
 
-func (t VMTime) Равно(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(d VMTime) bool {
+func (t VMTime) Равно(args VMSlice, rets *VMSlice) error { //(d VMTime) bool {
 	// для разных локаций тоже работает, в отличие от =
 	rets.Append(VMBool(t.Equal(args[0].(VMTime))))
 	return nil
@@ -942,7 +942,7 @@ func (t VMTime) IsZero() bool {
 	return time.Time(t).IsZero()
 }
 
-func (t VMTime) Пустая(args VMSlice, rets *VMSlice, envout *(*Env)) error { //() bool {
+func (t VMTime) Пустая(args VMSlice, rets *VMSlice) error { //() bool {
 	rets.Append(VMBool(t.IsZero()))
 	return nil
 }
@@ -951,7 +951,7 @@ func (t VMTime) Local() VMTime {
 	return VMTime(time.Time(t).Local())
 }
 
-func (t VMTime) Местное(args VMSlice, rets *VMSlice, envout *(*Env)) error { //() VMTime {
+func (t VMTime) Местное(args VMSlice, rets *VMSlice) error { //() VMTime {
 	rets.Append(t.Local())
 	return nil
 }
@@ -960,7 +960,7 @@ func (t VMTime) UTC() VMTime {
 	return VMTime(time.Time(t).UTC())
 }
 
-func (t VMTime) ВремяUTC(args VMSlice, rets *VMSlice, envout *(*Env)) error { //() VMTime {
+func (t VMTime) ВремяUTC(args VMSlice, rets *VMSlice) error { //() VMTime {
 	rets.Append(t.UTC())
 	return nil
 }
@@ -969,7 +969,7 @@ func (t VMTime) LocationString() string {
 	return time.Time(t).Location().String()
 }
 
-func (t VMTime) Локация(args VMSlice, rets *VMSlice, envout *(*Env)) error { //() string {
+func (t VMTime) Локация(args VMSlice, rets *VMSlice) error { //() string {
 	rets.Append(VMString(t.LocationString()))
 	return nil
 }
@@ -982,7 +982,7 @@ func (t VMTime) InLocation(name string) VMTime {
 	return VMTime(time.Time(t).In(loc))
 }
 
-func (t VMTime) ВЛокации(args VMSlice, rets *VMSlice, envout *(*Env)) error { //(name string) VMTime {
+func (t VMTime) ВЛокации(args VMSlice, rets *VMSlice) error { //(name string) VMTime {
 	loc, err := time.LoadLocation(string(args[0].(VMString)))
 	if err != nil {
 		return err

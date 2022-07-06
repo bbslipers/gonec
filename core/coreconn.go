@@ -227,14 +227,13 @@ func (x *VMConn) Handle(f VMFunc, closeOnExitHandler bool) {
 	args := make(VMSlice, 1)
 	rets := make(VMSlice, 0)
 	args[0] = x
-	var env *Env // сюда вернется окружение вызываемой функции
-	err := f(args, &rets, &env)
+	err := f(args, &rets)
 	// закрываем по окончании обработки
 	if closeOnExitHandler {
 		x.Close()
 	}
-	if err != nil && env.Valid {
-		env.Println(err)
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 
@@ -394,12 +393,12 @@ func (c *VMConn) MethodMember(name int) (VMFunc, bool) {
 	return nil, false
 }
 
-func (x *VMConn) Идентификатор(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMConn) Идентификатор(args VMSlice, rets *VMSlice) error {
 	rets.Append(VMString(x.uid))
 	return nil
 }
 
-func (x *VMConn) Получить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMConn) Получить(args VMSlice, rets *VMSlice) error {
 	if x.httpcl != nil {
 		return VMErrorWrongHTTPMethod
 	}
@@ -409,7 +408,7 @@ func (x *VMConn) Получить(args VMSlice, rets *VMSlice, envout *(*Env)) e
 	return err // при ошибке вызовет исключение, нужно обрабатывать в попытке
 }
 
-func (x *VMConn) Отправить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMConn) Отправить(args VMSlice, rets *VMSlice) error {
 	if x.httpcl != nil {
 		return VMErrorWrongHTTPMethod
 	}
@@ -417,22 +416,22 @@ func (x *VMConn) Отправить(args VMSlice, rets *VMSlice, envout *(*Env))
 	return x.Send(args[0].(VMStringMap))
 }
 
-func (x *VMConn) Закрыто(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMConn) Закрыто(args VMSlice, rets *VMSlice) error {
 	rets.Append(VMBool(x.closed))
 	return nil
 }
 
-func (x *VMConn) Данные(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMConn) Данные(args VMSlice, rets *VMSlice) error {
 	rets.Append(x.data)
 	return nil
 }
 
-func (x *VMConn) Закрыть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMConn) Закрыть(args VMSlice, rets *VMSlice) error {
 	x.Close()
 	return nil
 }
 
-func (x *VMConn) Запрос(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMConn) Запрос(args VMSlice, rets *VMSlice) error {
 	if x.httpcl == nil {
 		return VMErrorNonHTTPMethod
 	}

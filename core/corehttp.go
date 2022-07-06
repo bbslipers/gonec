@@ -163,53 +163,53 @@ func (x *VMHttpRequest) MethodMember(name int) (VMFunc, bool) {
 	return nil, false
 }
 
-func (x *VMHttpRequest) Метод(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) Метод(args VMSlice, rets *VMSlice) error {
 	rets.Append(x.Method())
 	return nil
 }
 
-func (x *VMHttpRequest) Заголовок(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) Заголовок(args VMSlice, rets *VMSlice) error {
 	rets.Append(x.GetHeader(args[0].(VMString)))
 	return nil
 }
 
-func (x *VMHttpRequest) УстановитьЗаголовок(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) УстановитьЗаголовок(args VMSlice, rets *VMSlice) error {
 	x.SetHeader(args[0].(VMString), args[1].(VMString))
 	return nil
 }
 
-func (x *VMHttpRequest) Тело(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) Тело(args VMSlice, rets *VMSlice) error {
 	s, _ := x.ReadBody()
 	rets.Append(VMString(s))
 	return nil
 }
 
-func (x *VMHttpRequest) Путь(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) Путь(args VMSlice, rets *VMSlice) error {
 	rets.Append(x.Path())
 	return nil
 }
 
-func (x *VMHttpRequest) Адрес(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) Адрес(args VMSlice, rets *VMSlice) error {
 	rets.Append(x.RemoteAddr())
 	return nil
 }
 
-func (x *VMHttpRequest) Фрагмент(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) Фрагмент(args VMSlice, rets *VMSlice) error {
 	rets.Append(x.Fragment())
 	return nil
 }
 
-func (x *VMHttpRequest) Параметр(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) Параметр(args VMSlice, rets *VMSlice) error {
 	rets.Append(x.GetParam(args[0].(VMString)))
 	return nil
 }
 
-func (x *VMHttpRequest) Данные(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) Данные(args VMSlice, rets *VMSlice) error {
 	rets.Append(x.data)
 	return nil
 }
 
-func (x *VMHttpRequest) Сообщение(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpRequest) Сообщение(args VMSlice, rets *VMSlice) error {
 	v, err := x.RequestAsVMStringMap()
 	if err != nil {
 		return err
@@ -312,7 +312,7 @@ func (x *VMHttpResponse) MethodMember(name int) (VMFunc, bool) {
 	return nil, false
 }
 
-func (x *VMHttpResponse) Отправить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpResponse) Отправить(args VMSlice, rets *VMSlice) error {
 	if x.w == nil || x.w == http.ResponseWriter(nil) {
 		return VMErrorHTTPResponseMethod
 	}
@@ -344,7 +344,7 @@ func (x *VMHttpResponse) Отправить(args VMSlice, rets *VMSlice, envout 
 	return x.Send(sts, b, h)
 }
 
-func (x *VMHttpResponse) Сообщение(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMHttpResponse) Сообщение(args VMSlice, rets *VMSlice) error {
 	v, err := x.RequestAsVMStringMap()
 	if err != nil {
 		return err

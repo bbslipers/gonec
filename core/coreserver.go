@@ -140,10 +140,9 @@ func (x *VMServer) Open(proto, addr string, maxconn int, handler VMFunc, data VM
 					rets := make(VMSlice, 0)
 					args[0] = resp
 					args[1] = req
-					var env *Env // сюда вернется окружение вызываемой функции
-					err := f(args, &rets, &env)
-					if err != nil && env.Valid {
-						env.Println(err)
+					err := f(args, &rets)
+					if err != nil {
+						fmt.Println(err)
 					}
 					req.Close()
 				})
@@ -243,8 +242,7 @@ func (x *VMServer) ForEachClient(f VMFunc) {
 		args := make(VMSlice, 1)
 		rets := make(VMSlice, 0)
 		args[0] = cli
-		var env *Env
-		f(args, &rets, &env)
+		f(args, &rets)
 	}
 }
 
@@ -256,17 +254,17 @@ func (x *VMServer) VMRegister() {
 }
 
 // Закрыть возвращает настоящую причину закрытия, в том числе, ошибку отстрела сервера до вызова закрытия
-func (x *VMServer) Закрыть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMServer) Закрыть(args VMSlice, rets *VMSlice) error {
 	rets.Append(VMString(fmt.Sprint(x.Close())))
 	return nil
 }
 
-func (x *VMServer) Работает(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMServer) Работает(args VMSlice, rets *VMSlice) error {
 	rets.Append(VMBool(x.IsOnline()))
 	return nil
 }
 
-func (x *VMServer) Открыть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMServer) Открыть(args VMSlice, rets *VMSlice) error {
 	if len(args) != 5 {
 		return VMErrorNeedArgs(5)
 	}

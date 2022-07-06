@@ -10,7 +10,7 @@ import (
 // функции такого типа создаются на языке Гонец,
 // их можно использовать в стандартной библиотеке, проверив на этот тип
 // в args передаются входные параметры, в rets передается ссылка на слайс возвращаемых значений - он заполняется в функции
-type VMFunc func(args VMSlice, rets *VMSlice, envout *(*Env)) error
+type VMFunc func(args VMSlice, rets *VMSlice) error
 
 var ReflectVMFunc = reflect.TypeOf(VMFunc(nil))
 
@@ -29,7 +29,7 @@ func (f VMFunc) Func() VMFunc {
 }
 
 type (
-	VMMethod      = func(VMSlice, *VMSlice, *(*Env)) error
+	VMMethod      = VMFunc
 	VMConstructor = func(VMSlice) error
 )
 
@@ -48,21 +48,21 @@ func paramCheckHelper[V VMValue](args VMSlice, i, n int, errs []error) error {
 }
 
 func VMFuncZeroParams(f VMMethod) VMFunc {
-	return VMFunc(func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	return VMFunc(func(args VMSlice, rets *VMSlice) error {
 		if len(args) != 0 {
 			return VMErrorNoNeedArgs
 		}
-		return f(args, rets, envout)
+		return f(args, rets)
 	})
 }
 
 func VMFuncOneParam[V1 VMValue](f VMMethod) VMFunc {
 	errs := []error{VMErrorNeedArgType[V1](0, 1)}
-	return VMFuncNParams(1, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	return VMFuncNParams(1, func(args VMSlice, rets *VMSlice) error {
 		if err := paramCheckHelper[V1](args, 0, 1, errs); err != nil {
 			return err
 		}
-		return f(args, rets, envout)
+		return f(args, rets)
 	})
 }
 
@@ -71,13 +71,13 @@ func VMFuncTwoParams[V1, V2 VMValue](f VMMethod) VMFunc {
 		VMErrorNeedArgType[V1](0, 2),
 		VMErrorNeedArgType[V2](1, 2),
 	}
-	return VMFuncNParams(2, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	return VMFuncNParams(2, func(args VMSlice, rets *VMSlice) error {
 		if err := paramCheckHelper[V1](args, 0, 2, errs); err != nil {
 			return err
 		} else if err := paramCheckHelper[V2](args, 1, 2, errs); err != nil {
 			return err
 		}
-		return f(args, rets, envout)
+		return f(args, rets)
 	})
 }
 
@@ -87,7 +87,7 @@ func VMFuncThreeParams[V1, V2, V3 VMValue](f VMMethod) VMFunc {
 		VMErrorNeedArgType[V2](1, 3),
 		VMErrorNeedArgType[V3](2, 3),
 	}
-	return VMFuncNParams(3, func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	return VMFuncNParams(3, func(args VMSlice, rets *VMSlice) error {
 		if err := paramCheckHelper[V1](args, 0, 3, errs); err != nil {
 			return err
 		} else if err := paramCheckHelper[V2](args, 1, 3, errs); err != nil {
@@ -95,13 +95,13 @@ func VMFuncThreeParams[V1, V2, V3 VMValue](f VMMethod) VMFunc {
 		} else if err := paramCheckHelper[V3](args, 2, 3, errs); err != nil {
 			return err
 		}
-		return f(args, rets, envout)
+		return f(args, rets)
 	})
 }
 
 func VMFuncNParams(n int, f VMMethod) VMFunc {
 	needArgsErr := VMErrorNeedArgs(n)
-	return VMFunc(func(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+	return VMFunc(func(args VMSlice, rets *VMSlice) error {
 		if len(args) != n {
 			switch n {
 			case 0:
@@ -110,6 +110,6 @@ func VMFuncNParams(n int, f VMMethod) VMFunc {
 				return needArgsErr
 			}
 		}
-		return f(args, rets, envout)
+		return f(args, rets)
 	})
 }

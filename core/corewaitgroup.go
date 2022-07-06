@@ -49,17 +49,17 @@ func (x *VMWaitGroup) MethodMember(name int) (VMFunc, bool) {
 	return nil, false
 }
 
-func (x *VMWaitGroup) Добавить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMWaitGroup) Добавить(args VMSlice, rets *VMSlice) error {
 	x.Add(int(args[0].(VMInt)))
 	return nil
 }
 
-func (x *VMWaitGroup) Завершить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMWaitGroup) Завершить(args VMSlice, rets *VMSlice) error {
 	x.Done()
 	return nil
 }
 
-func (x *VMWaitGroup) Ожидать(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMWaitGroup) Ожидать(args VMSlice, rets *VMSlice) error {
 	x.Wait()
 	return nil
 }

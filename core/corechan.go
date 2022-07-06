@@ -59,12 +59,12 @@ func (x VMChan) MethodMember(name int) (VMFunc, bool) {
 	return nil, false
 }
 
-func (x VMChan) Закрыть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x VMChan) Закрыть(args VMSlice, rets *VMSlice) error {
 	x.Close()
 	return nil
 }
 
-func (x VMChan) Размер(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x VMChan) Размер(args VMSlice, rets *VMSlice) error {
 	rets.Append(VMInt(x.Size()))
 	return nil
 }

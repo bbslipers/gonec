@@ -65,7 +65,7 @@ func (x *RconClient) VMRegister() {
 	x.VMRegisterMethod("Выполнить", x.Выполнить)
 }
 
-func (x *RconClient) Открыть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *RconClient) Открыть(args VMSlice, rets *VMSlice) error {
 	if len(args) != 2 {
 		return VMErrorNeedArgs(2)
 	}
@@ -81,17 +81,17 @@ func (x *RconClient) Открыть(args VMSlice, rets *VMSlice, envout *(*Env))
 	return x.Open(string(adr), string(pass), true)
 }
 
-func (x *RconClient) Закрыть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *RconClient) Закрыть(args VMSlice, rets *VMSlice) error {
 	x.Close()
 	return nil
 }
 
-func (x *RconClient) Работает(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *RconClient) Работает(args VMSlice, rets *VMSlice) error {
 	rets.Append(VMBool(x.IsOnline()))
 	return nil
 }
 
-func (x *RconClient) Выполнить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *RconClient) Выполнить(args VMSlice, rets *VMSlice) error {
 	if len(args) != 1 {
 		return VMErrorNeedArgs(1)
 	}

@@ -54,7 +54,7 @@ func (x *VMClient) VMRegister() {
 	// tst.VMRegisterField("ПолеСтрока", &tst.ПолеСтрока)
 }
 
-func (x *VMClient) Открыть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMClient) Открыть(args VMSlice, rets *VMSlice) error {
 	if len(args) != 4 {
 		return VMErrorNeedArgs(4)
 	}
@@ -74,7 +74,7 @@ func (x *VMClient) Открыть(args VMSlice, rets *VMSlice, envout *(*Env)) e
 	return x.Open(string(p), string(adr), f, args[3], true)
 }
 
-func (x *VMClient) Соединить(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMClient) Соединить(args VMSlice, rets *VMSlice) error {
 	if len(args) != 2 {
 		return VMErrorNeedArgs(2)
 	}
@@ -101,12 +101,12 @@ func (x *VMClient) Соединить(args VMSlice, rets *VMSlice, envout *(*Env
 	return nil
 }
 
-func (x *VMClient) Закрыть(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMClient) Закрыть(args VMSlice, rets *VMSlice) error {
 	x.Close()
 	return nil
 }
 
-func (x *VMClient) Работает(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (x *VMClient) Работает(args VMSlice, rets *VMSlice) error {
 	rets.Append(VMBool(x.IsOnline()))
 	return nil
 }

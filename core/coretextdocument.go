@@ -100,24 +100,24 @@ func (t *TextDocument) VMRegister() {
 	t.VMRegisterMethod("ЗаменитьСтроку", VMFuncTwoParams[VMInt, VMString](t.ЗаменитьСтроку))
 }
 
-func (t *TextDocument) Прочитать(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t *TextDocument) Прочитать(args VMSlice, rets *VMSlice) error {
 	return t.Read(string(args[0].(VMString)))
 }
 
-func (t *TextDocument) Записать(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t *TextDocument) Записать(args VMSlice, rets *VMSlice) error {
 	return t.Write(string(args[0].(VMString)))
 }
 
-func (t *TextDocument) ПолучитьТекст(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t *TextDocument) ПолучитьТекст(args VMSlice, rets *VMSlice) error {
 	rets.Append(VMString(t.String()))
 	return nil
 }
 
-func (t *TextDocument) УстановитьТекст(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t *TextDocument) УстановитьТекст(args VMSlice, rets *VMSlice) error {
 	return t.fromText(string(args[0].(VMString)))
 }
 
-func (t *TextDocument) КоличествоСтрок(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t *TextDocument) КоличествоСтрок(args VMSlice, rets *VMSlice) error {
 	rets.Append(VMInt(len(t.lines)))
 	return nil
 }
@@ -131,7 +131,7 @@ func (t *TextDocument) isSingleLine(line string) bool {
 }
 
 // O(1)
-func (t *TextDocument) ДобавитьСтроку(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t *TextDocument) ДобавитьСтроку(args VMSlice, rets *VMSlice) error {
 	line := string(args[0].(VMString))
 
 	// Добавляем строку только если она действительно является ОДНОЙ строкой
@@ -152,7 +152,7 @@ func (t *TextDocument) parseLineNumberArg(args VMSlice) (int, error) {
 }
 
 // O(n)
-func (t *TextDocument) УдалитьСтроку(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t *TextDocument) УдалитьСтроку(args VMSlice, rets *VMSlice) error {
 	n, err := t.parseLineNumberArg(args)
 	if err != nil {
 		return err
@@ -162,7 +162,7 @@ func (t *TextDocument) УдалитьСтроку(args VMSlice, rets *VMSlice, e
 	return nil
 }
 
-func (t *TextDocument) ЗаменитьСтроку(args VMSlice, rets *VMSlice, envout *(*Env)) error {
+func (t *TextDocument) ЗаменитьСтроку(args VMSlice, rets *VMSlice) error {
 	n, err := t.parseLineNumberArg(args)
 	if err != nil {
 		return err
