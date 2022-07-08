@@ -249,7 +249,7 @@ func (x *VMServer) ForEachClient(f VMFunc) {
 func (x *VMServer) VMRegister() {
 	x.VMRegisterMethod("Закрыть", x.Закрыть)
 	x.VMRegisterMethod("Работает", x.Работает)
-	x.VMRegisterMethod("Открыть", x.Открыть)
+	x.VMRegisterMethod("Открыть", VMFuncNParams(5, x.Открыть))
 	// tst.VMRegisterField("ПолеСтрока", &tst.ПолеСтрока)
 }
 
@@ -265,9 +265,6 @@ func (x *VMServer) Работает(args VMSlice, rets *VMSlice) error {
 }
 
 func (x *VMServer) Открыть(args VMSlice, rets *VMSlice) error {
-	if len(args) != 5 {
-		return VMErrorNeedArgs(5)
-	}
 	p, ok := args[0].(VMString)
 	if !ok {
 		return errors.New("Первый аргумент должен быть строкой с типом канала")

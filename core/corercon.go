@@ -61,14 +61,11 @@ func (x *RconClient) Close() {
 func (x *RconClient) VMRegister() {
 	x.VMRegisterMethod("Закрыть", x.Закрыть)
 	x.VMRegisterMethod("Работает", x.Работает)
-	x.VMRegisterMethod("Открыть", x.Открыть)
-	x.VMRegisterMethod("Выполнить", x.Выполнить)
+	x.VMRegisterMethod("Открыть", VMFuncNParams(2, x.Открыть))
+	x.VMRegisterMethod("Выполнить", VMFuncNParams(1, x.Выполнить))
 }
 
 func (x *RconClient) Открыть(args VMSlice, rets *VMSlice) error {
-	if len(args) != 2 {
-		return VMErrorNeedArgs(2)
-	}
 	adr, ok := args[0].(VMString)
 	if !ok {
 		return errors.New("Первый аргумент должен быть строкой с адресом")
@@ -92,9 +89,6 @@ func (x *RconClient) Работает(args VMSlice, rets *VMSlice) error {
 }
 
 func (x *RconClient) Выполнить(args VMSlice, rets *VMSlice) error {
-	if len(args) != 1 {
-		return VMErrorNeedArgs(1)
-	}
 	command, ok := args[0].(VMString)
 	if !ok {
 		return errors.New("Первый аргумент должен быть командой")

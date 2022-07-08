@@ -48,16 +48,13 @@ func (x *VMClient) Close() {
 func (x *VMClient) VMRegister() {
 	x.VMRegisterMethod("Закрыть", x.Закрыть)
 	x.VMRegisterMethod("Работает", x.Работает)
-	x.VMRegisterMethod("Открыть", x.Открыть)     // асинхронно
-	x.VMRegisterMethod("Соединить", x.Соединить) // синхронно
+	x.VMRegisterMethod("Открыть", VMFuncNParams(4, x.Открыть))     // асинхронно
+	x.VMRegisterMethod("Соединить", VMFuncNParams(2, x.Соединить)) // синхронно
 
 	// tst.VMRegisterField("ПолеСтрока", &tst.ПолеСтрока)
 }
 
 func (x *VMClient) Открыть(args VMSlice, rets *VMSlice) error {
-	if len(args) != 4 {
-		return VMErrorNeedArgs(4)
-	}
 	p, ok := args[0].(VMString)
 	if !ok {
 		return errors.New("Первый аргумент должен быть строкой с типом канала")
@@ -75,9 +72,6 @@ func (x *VMClient) Открыть(args VMSlice, rets *VMSlice) error {
 }
 
 func (x *VMClient) Соединить(args VMSlice, rets *VMSlice) error {
-	if len(args) != 2 {
-		return VMErrorNeedArgs(2)
-	}
 	p, ok := args[0].(VMString)
 	if !ok {
 		return errors.New("Первый аргумент должен быть строкой с типом канала")

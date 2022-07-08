@@ -62,6 +62,10 @@ func VMErrorNeedArgs(n int) error {
 	return fmt.Errorf("Неверное количество параметров (требуется %d)", n)
 }
 
+func VMErrorMaxArgs(n int) error {
+	return fmt.Errorf("Неверное количество параметров (максимум %d)", n)
+}
+
 var argIndexStrs = [3]string{"Первым", "Вторым", "Третьим"}
 
 func interfaceType[V any]() reflect.Type {

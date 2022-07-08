@@ -44,23 +44,13 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
-	env.DefineS("диапазон", VMFunc(func(args VMSlice, rets *VMSlice) error {
-		if len(args) < 1 {
-			return VMErrorNoArgs
-		}
-		if len(args) > 2 {
-			return VMErrorNeedLengthOrBoundary
-		}
+	env.DefineS("диапазон", VMFuncOneParamOptionals(1, func(arg1 VMInt, rest VMSlice,
+		rets *VMSlice,
+	) error {
 		var min, max int64
 		var arr VMSlice
-		if len(args) == 1 {
-			min = 0
-			maxvm, ok := args[0].(VMInt)
-			if !ok {
-				return VMErrorNeedInt
-			}
-
-			max = maxvm.Int()
+		if len(rest) == 0 {
+			min, max = 0, arg1.Int()
 			if max == 0 {
 				rets.Append(make(VMSlice, 0))
 				return nil
@@ -69,16 +59,12 @@ func Import(env *Env) *Env {
 			}
 			max--
 		} else {
-			minvm, ok := args[0].(VMInt)
-			if !ok {
+			min = arg1.Int()
+			if maxvm, ok := rest[0].(VMInt); ok {
+				max = maxvm.Int()
+			} else {
 				return VMErrorNeedInt
 			}
-			min = minvm.Int()
-			maxvm, ok := args[1].(VMInt)
-			if !ok {
-				return VMErrorNeedInt
-			}
-			max = maxvm.Int()
 		}
 		if min > max {
 			return VMErrorNeedLess
