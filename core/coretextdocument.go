@@ -31,7 +31,7 @@ func (t *TextDocument) String() string {
 
 func (t *TextDocument) fromText(text string) error {
 	if !utf8.ValidString(text) {
-		return errors.New("Текст не является корректным UTF-8 документом")
+		return errors.New("Текст не является корректной UTF-8 строкой")
 	}
 
 	// Пытаемся сохранить вместимость
@@ -56,6 +56,11 @@ func (t *TextDocument) fromText(text string) error {
 		t.separator = CRLF
 	} else {
 		t.separator = LF
+	}
+
+	// Убираем последнюю пустую строку если документ заканчивается на окончание строки
+	if strings.HasSuffix(text, t.separator) && len(t.lines) > 0 && t.lines[len(t.lines)-1] == "" {
+		t.lines = t.lines[:len(t.lines)-1]
 	}
 	return nil
 }

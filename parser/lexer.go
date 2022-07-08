@@ -608,6 +608,9 @@ eos:
 			case 't':
 				ret = append(ret, '\t')
 				continue
+			case l:
+				ret = append(ret, l)
+				continue
 			}
 			ret = append(ret, s.peek())
 			continue

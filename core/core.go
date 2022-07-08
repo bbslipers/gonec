@@ -122,56 +122,6 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
-	env.DefineS("случайнаястрока", VMFuncOneParam(func(n VMInt, rets *VMSlice) error {
-		rets.Append(VMString(MustGenerateRandomString(int(n))))
-		return nil
-	}))
-
-	env.DefineS("нрег", VMFuncOneParam(func(s VMStringer, rets *VMSlice) error {
-		rets.Append(VMString(strings.ToLower(s.String())))
-		return nil
-	}))
-
-	env.DefineS("врег", VMFuncOneParam(func(s VMStringer, rets *VMSlice) error {
-		rets.Append(VMString(strings.ToUpper(s.String())))
-		return nil
-	}))
-
-	env.DefineS("стрсодержит", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
-		rets.Append(VMBool(strings.Contains(s1.String(), s2.String())))
-		return nil
-	}))
-
-	env.DefineS("стрсодержитлюбой", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
-		rets.Append(VMBool(strings.ContainsAny(s1.String(), s2.String())))
-		return nil
-	}))
-
-	env.DefineS("стрколичество", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
-		rets.Append(VMInt(strings.Count(s1.String(), s2.String())))
-		return nil
-	}))
-
-	env.DefineS("стрнайти", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
-		rets.Append(VMInt(strings.Index(s1.String(), s2.String())))
-		return nil
-	}))
-
-	env.DefineS("стрнайтилюбой", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
-		rets.Append(VMInt(strings.IndexAny(s1.String(), s2.String())))
-		return nil
-	}))
-
-	env.DefineS("стрнайтипоследний", VMFuncTwoParams(func(s1, s2 VMStringer, rets *VMSlice) error {
-		rets.Append(VMInt(strings.LastIndex(s1.String(), s2.String())))
-		return nil
-	}))
-
-	env.DefineS("стрзаменить", VMFuncThreeParams(func(s1, s2, s3 VMStringer, rets *VMSlice) error {
-		rets.Append(VMString(strings.Replace(s1.String(), s2.String(), s3.String(), -1)))
-		return nil
-	}))
-
 	env.DefineS("окр", VMFuncTwoParams(func(f VMDecNum, n VMInt, rets *VMSlice) error {
 		rets.Append(VMDecNum{num: f.num.RoundWithMode(int32(n), decnum.RoundHalfUp)})
 		return nil
@@ -204,7 +154,7 @@ func Import(env *Env) *Env {
 			rets.Append(VMString("Неопределено"))
 			return nil
 		}
-		rets.Append(VMString(names.UniqueNames.Get(env.TypeName(reflect.TypeOf(args[0])))))
+		rets.Append(VMString(names.UniqueNames.GetLowerCase(env.TypeName(reflect.TypeOf(args[0])))))
 		return nil
 	}))
 
@@ -267,6 +217,8 @@ func Import(env *Env) *Env {
 	env.DefineTypeStruct(&VMTableColumn{})
 	env.DefineTypeStruct(&VMTableColumns{})
 	env.DefineTypeStruct(&VMTableLine{})
+
+	ImportStrings(env)
 
 	//////////////////
 	env.DefineTypeStruct(&TttStructTest{})

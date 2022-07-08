@@ -80,7 +80,6 @@ func (en *EnvNames) GetLowerCaseOk(i int) (s string, ok bool) {
 	} else {
 		return "", false
 	}
-	return
 }
 
 func (en *EnvNames) SetToId(n string, i int) {
