@@ -284,7 +284,7 @@ func (e *Env) Get(k int) (VMValue, error) {
 		}
 		ee.RUnlock()
 	}
-	return nil, fmt.Errorf("Имя неопределено '%s'", names.UniqueNames.Get(k))
+	return nil, fmt.Errorf("Имя не определено '%s'", names.UniqueNames.Get(k))
 }
 
 // Set modifies value which specified as symbol. It goes to upper scope until
@@ -301,7 +301,7 @@ func (e *Env) Set(k int, v VMValue) error {
 		}
 		ee.Unlock()
 	}
-	return fmt.Errorf("Имя неопределено '%s'", names.UniqueNames.Get(k))
+	return fmt.Errorf("Имя не определено '%s'", names.UniqueNames.Get(k))
 }
 
 // DefineGlobal defines symbol in global scope.

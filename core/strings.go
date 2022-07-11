@@ -159,4 +159,56 @@ func ImportStrings(env *Env) {
 		rets.Append(VMString(strings.Replace(s1.String(), s2.String(), s3.String(), -1)))
 		return nil
 	}))
+
+	// Третий необязательный параметр - стоит ли включать в результат пустые строки
+	env.DefineS("стрразделить", VMFuncTwoParamsOptionals(1, func(
+		s1, s2 VMStringer, rest VMSlice, rets *VMSlice,
+	) error {
+		includeEmpty := true
+		if len(rest) != 0 {
+			vmb, ok := rest[0].(VMBool)
+			if !ok {
+				return VMErrorNeedBool
+			}
+			includeEmpty = vmb.Bool()
+		}
+
+		results := VMSlice{}
+		append := func(s string) {
+			if len(s) != 0 || includeEmpty {
+				results.Append(VMString(s))
+			}
+		}
+
+		separators := map[rune]struct{}{}
+		for _, c := range s2.String() {
+			separators[c] = struct{}{}
+		}
+
+		start, s := 0, s1.String()
+		for i, c := range s {
+			if _, ok := separators[c]; ok {
+				append(s[start:i])
+				start = i + 1
+			}
+		}
+		append(s[start:])
+
+		rets.Append(results)
+		return nil
+	}))
+
+	env.DefineS("стрсоединить", VMFuncTwoParams(func(vals VMSlice, s VMStringer, rets *VMSlice) error {
+		strs := make([]string, len(vals))
+		for i, s := range vals {
+			str, ok := s.(VMStringer)
+			if !ok {
+				return errors.New("Первым параметром требуется массив значений, приводимых к Строке")
+			}
+			strs[i] = str.String()
+		}
+
+		rets.Append(VMString(strings.Join(strs, s.String())))
+		return nil
+	}))
 }

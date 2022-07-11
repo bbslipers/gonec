@@ -1,5 +1,5 @@
 PACKAGE_NAME := github.com/shinanca/gonec
-GOLANG_CROSS_VERSION ?= v1.17
+GOLANG_CROSS_VERSION ?= v1.18
 
 DOCKER_RUN=docker run \
 	--rm \
