@@ -10,7 +10,7 @@ import (
 	"github.com/shinanca/gonec/names"
 )
 
-// VMBoltDB - группа ожидания исполнения горутин
+// VMBoltDB - файловая база данных BoltDB
 type VMBoltDB struct {
 	sync.Mutex
 	name string

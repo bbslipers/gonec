@@ -112,6 +112,7 @@ func (f *File) VMRegister() {
 	f.VMRegisterMethod("ПолучитьВремяИзменения", VMFuncOneParam(f.ПолучитьВремяИзменения))
 	f.VMRegisterMethod("УстановитьТолькоЧтение", VMFuncOneParam(f.УстановитьТолькоЧтение))
 	f.VMRegisterMethod("УстановитьВремяИзменения", VMFuncOneParam(f.УстановитьВремяИзменения))
+	f.VMRegisterMethod("Удалить", VMFuncZeroParams(f.Удалить))
 }
 
 func (f *File) Существует(rets *VMSlice) error {
@@ -156,4 +157,11 @@ func (f *File) УстановитьТолькоЧтение(readonly VMBool, ret
 
 func (f *File) УстановитьВремяИзменения(time VMDateTimer, rets *VMSlice) error {
 	return f.SetModificationTime(time.Time().GolangTime())
+}
+
+func (f *File) Удалить(rets *VMSlice) error {
+	if err := os.Remove(f.name); err != nil {
+		return f.wrapError(err)
+	}
+	return nil
 }

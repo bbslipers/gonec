@@ -25,7 +25,7 @@ var (
 func (x VMDecNum) VMTypeString() string { return "Число" }
 
 func (x VMDecNum) Interface() interface{} {
-	return x.num
+	return x.Float()
 }
 
 func (x *VMDecNum) ParseGoType(v interface{}) {

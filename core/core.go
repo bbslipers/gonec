@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"strings"
@@ -192,6 +193,21 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
+	env.DefineS("создатьвременныйфайл", VMFuncZeroParams(func(rets *VMSlice) error {
+		file, err := os.CreateTemp("", "gonectmp")
+		if err != nil {
+			return fmt.Errorf("Не удалось создать временный файл: %s", err.Error())
+		}
+
+		path, err := filepath.Abs(file.Name())
+		if err != nil {
+			return fmt.Errorf("Не удалось получить путь до временного файла: %s", err.Error())
+		}
+
+		rets.Append(VMString(path))
+		return nil
+	}))
+
 	// при изменении состава типов не забывать изменять их и в lexer.go
 	env.DefineTypeS(ReflectVMInt)
 	env.DefineTypeS(ReflectVMDecNum)
@@ -205,6 +221,7 @@ func Import(env *Env) *Env {
 
 	env.DefineTypeS(ReflectVMWaitGroup)
 	env.DefineTypeS(ReflectVMBoltDB)
+	env.DefineTypeStruct(&VMSqliteDB{})
 
 	env.DefineTypeStruct(&VMServer{})
 	env.DefineTypeStruct(&VMClient{})
