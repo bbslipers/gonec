@@ -238,7 +238,7 @@ func RunWorker(stmts binstmt.BinStmts, labels []int, numofregs int, env *core.En
 		case *binstmt.BinGET:
 			v, err := env.Get(s.Id)
 			if err != nil {
-				catcherr = binstmt.NewStringError(stmt, "Невозможно получить значение")
+				catcherr = binstmt.NewErrorf(stmt, "Невозможно получить значение: %s", err.Error())
 				break
 			}
 			registers[s.Reg] = v

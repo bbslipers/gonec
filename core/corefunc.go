@@ -151,9 +151,10 @@ func VMFuncNParams(n int, f VMMethod) VMFunc {
 }
 
 // VMFuncNParamsOptionals оборачивает функцию во враппер, который проверяет,
-// что передано как минимум nreq аргументов и максимум nopt дополнительных
+// что передано как минимум nreq аргументов и максимум nopt дополнительных.
+// Если nopt = -1, то можно передать бесконечное кол-во опциональных параметров.
 func VMFuncNParamsOptionals(nreq, nopt int, f VMMethod) VMFunc {
-	if nreq+nopt == 0 {
+	if nreq == 0 && nopt == 0 {
 		return VMFuncZeroParams(func(rets *VMSlice) error {
 			return f(VMSlice{}, rets)
 		})
@@ -164,7 +165,7 @@ func VMFuncNParamsOptionals(nreq, nopt int, f VMMethod) VMFunc {
 	return VMFunc(func(args VMSlice, rets *VMSlice) error {
 		if len(args) < nreq {
 			return needArgsErr
-		} else if len(args) <= nreq+nopt {
+		} else if nopt == -1 || len(args) <= nreq+nopt {
 			return f(args, rets)
 		} else {
 			return maxArgsErr
