@@ -39,8 +39,9 @@ func (d *VMSqliteDB) VMRegister() {
 		return nil
 	})
 
-	d.VMRegisterMethod("Исполнить", VMFuncOneParamOptionals(-1, d.Исполнить))
-	d.VMRegisterMethod("Запросить", VMFuncOneParamOptionals(-1, d.Запросить))
+	d.VMRegisterMethod("Выполнить", VMFuncOneParamOptionals(-1, d.Выполнить))
+	d.VMRegisterMethod("Выбрать", VMFuncOneParamOptionals(-1, d.Выбрать))
+	d.VMRegisterMethod("Закрыть", VMFuncZeroParams(d.Закрыть))
 }
 
 func (d *VMSqliteDB) convertParam(v VMValue) (any, error) {
@@ -75,7 +76,7 @@ func (d *VMSqliteDB) convertParams(params VMSlice) ([]any, error) {
 	return args, nil
 }
 
-func (d *VMSqliteDB) Исполнить(query VMString, rest VMSlice, rets *VMSlice) error {
+func (d *VMSqliteDB) Выполнить(query VMString, rest VMSlice, rets *VMSlice) error {
 	args, err := d.convertParams(rest)
 	if err != nil {
 		return err
@@ -103,6 +104,8 @@ func (r *VMSqliteQueryResult) MethodMember(name int) (VMFunc, bool) {
 		return VMFuncZeroParams(r.Получить), true
 	case "выгрузить":
 		return VMFuncZeroParams(r.Выгрузить), true
+	case "закрыть":
+		return VMFuncZeroParams(r.Закрыть), true
 	}
 	return nil, false
 }
@@ -238,10 +241,15 @@ func (r *VMSqliteQueryResult) Выгрузить(rets *VMSlice) error {
 	}
 
 	rets.Append(results)
-	return nil
+	// возвращаем Err после неявного закрытия
+	return r.Err()
 }
 
-func (d *VMSqliteDB) Запросить(query VMString, rest VMSlice, rets *VMSlice) error {
+func (r *VMSqliteQueryResult) Закрыть(rets *VMSlice) error {
+	return r.Close()
+}
+
+func (d *VMSqliteDB) Выбрать(query VMString, rest VMSlice, rets *VMSlice) error {
 	args, err := d.convertParams(rest)
 	if err != nil {
 		return err
@@ -254,4 +262,8 @@ func (d *VMSqliteDB) Запросить(query VMString, rest VMSlice, rets *VMSl
 
 	rets.Append(&VMSqliteQueryResult{Rows: rows})
 	return nil
+}
+
+func (d *VMSqliteDB) Закрыть(rets *VMSlice) error {
+	return d.Close()
 }

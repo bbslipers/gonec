@@ -195,6 +195,7 @@ func Import(env *Env) *Env {
 
 	env.DefineS("создатьвременныйфайл", VMFuncZeroParams(func(rets *VMSlice) error {
 		file, err := os.CreateTemp("", "gonectmp")
+		defer file.Close()
 		if err != nil {
 			return fmt.Errorf("Не удалось создать временный файл: %s", err.Error())
 		}
