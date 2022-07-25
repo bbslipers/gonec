@@ -234,6 +234,11 @@ func (e *Env) GetName() string {
 
 // TypeName определяет имя типа по типу значения
 func (e *Env) TypeName(t reflect.Type) int {
+	if t.Kind() == reflect.Pointer {
+		// Функциональные структуры хранятся в виде указателей,
+		// но зарегистрированы как структуры
+		return e.TypeName(t.Elem())
+	}
 	for ee := e; ee != nil; ee = ee.parent {
 		ee.RLock()
 		for k, v := range ee.typ {
