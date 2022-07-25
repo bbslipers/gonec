@@ -8,6 +8,7 @@ DOCKER_RUN=docker run \
 	-v /var/run/docker.sock:/var/run/docker.sock \
 	-v `pwd`:/go/src/$(PACKAGE_NAME) \
 	-w /go/src/$(PACKAGE_NAME) \
+	$(DOCKER_ARGS) \
 	goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
 
 build:

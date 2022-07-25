@@ -45,4 +45,7 @@ changelog:
       - "^test:"
       - "^chore:"
 release:
-  disable: true
+  github:
+    owner: mcap-2020
+    name: gonec
+  prerelease: auto
