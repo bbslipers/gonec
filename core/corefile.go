@@ -113,6 +113,15 @@ func (f *File) VMRegister() {
 	f.VMRegisterMethod("УстановитьТолькоЧтение", VMFuncOneParam(f.УстановитьТолькоЧтение))
 	f.VMRegisterMethod("УстановитьВремяИзменения", VMFuncOneParam(f.УстановитьВремяИзменения))
 	f.VMRegisterMethod("Удалить", VMFuncZeroParams(f.Удалить))
+	f.VMRegisterMethod("ПолучитьДанныеФайла", VMFuncZeroParams(f.ПолучитьДанныеФайла))
+}
+
+func (f *File) ПолучитьДанныеФайла(rets *VMSlice) error {
+	data, err := os.ReadFile(f.name)
+	if err == nil {
+		rets.Append(VMString(data))
+	}
+	return err
 }
 
 func (f *File) Существует(rets *VMSlice) error {
