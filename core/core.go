@@ -236,6 +236,9 @@ func Import(env *Env) *Env {
 	env.DefineTypeStruct(&VMTableColumns{})
 	env.DefineTypeStruct(&VMTableLine{})
 
+	env.DefineTypeStruct(&EmailProfile{})
+	env.DefineTypeStruct(&EmailData{})
+
 	ImportStrings(env)
 
 	//////////////////
@@ -250,7 +253,7 @@ func Import(env *Env) *Env {
 	return env
 }
 
-/////////////////
+// ///////////////
 // TttStructTest - тестовая структура для отладки работы с системными функциональными структурами
 type TttStructTest struct {
 	VMMetaObj
