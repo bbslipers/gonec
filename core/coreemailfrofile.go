@@ -24,28 +24,28 @@ func (f *EmailProfile) VMRegister() {
 			return VMErrorNeedArgs(4)
 		}
 
-		smtpServer, ok := args[0].(VMString)
+		smtpHost, ok := args[0].(VMString)
 		if !ok {
 			return VMErrorNeedString
 		}
 
-		UserName, ok := args[1].(VMString)
+		smtpPort, ok := args[1].(VMInt)
 		if !ok {
 			return VMErrorNeedString
 		}
 
-		Password, ok := args[2].(VMString)
+		UserName, ok := args[2].(VMString)
 		if !ok {
 			return VMErrorNeedString
 		}
 
-		Host, ok := args[3].(VMString)
+		Password, ok := args[3].(VMString)
 		if !ok {
 			return VMErrorNeedString
 		}
 
-		f.SmtpServer = string(smtpServer)
-		f.Auth = smtp.PlainAuth("", string(UserName), string(Password), string(Host))
+		f.SmtpServer = fmt.Sprintf("%s:%d", smtpHost, smtpPort)
+		f.Auth = smtp.PlainAuth("", string(UserName), string(Password), string(smtpHost))
 
 		return nil
 	})
