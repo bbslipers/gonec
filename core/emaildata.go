@@ -8,7 +8,6 @@ import (
 type EmailInfo struct {
 	RecipientAdr string   `json:"recipient_adr"`
 	SenderAdr    string   `json:"sender_adr"`
-	SenderName   string   `json:"sender_name"`
 	Subject      string   `json:"subject"`
 	Text         string   `json:"text"`
 	Attachments  []string `json:"attachments"`
@@ -34,7 +33,7 @@ func (f *EmailData) String() string {
 
 func (f *EmailData) VMRegister() {
 	f.VMRegisterConstructor(func(args VMSlice) error {
-		if len(args) != 5 {
+		if len(args) != 4 {
 			return VMErrorNeedArgs(4)
 		}
 
@@ -48,22 +47,17 @@ func (f *EmailData) VMRegister() {
 			return VMErrorNeedString
 		}
 
-		SenderName, ok := args[2].(VMString)
+		Subject, ok := args[2].(VMString)
 		if !ok {
 			return VMErrorNeedString
 		}
 
-		Subject, ok := args[3].(VMString)
+		Text, ok := args[3].(VMString)
 		if !ok {
 			return VMErrorNeedString
 		}
 
-		Text, ok := args[4].(VMString)
-		if !ok {
-			return VMErrorNeedString
-		}
-
-		f.EmailInfo = EmailInfo{RecipientAdr: string(RecipientAdr), SenderAdr: string(SenderAdr), SenderName: string(SenderName), Subject: string(Subject), Text: string(Text)}
+		f.EmailInfo = EmailInfo{RecipientAdr: string(RecipientAdr), SenderAdr: string(SenderAdr), Subject: string(Subject), Text: string(Text)}
 
 		return nil
 	})

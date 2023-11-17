@@ -1,5 +1,5 @@
 Почта = Новый ПочтовыйПрофиль("smtp.mail.ru:587","from@mail.ru","password for external apps", "smtp.mail.ru")
-Письмо = Новый ПочтовоеОтправление("destination@mail.ru","from@mail.ru","destination@mail.ru","Какой-то заголовок","Какое-то содержание письма")
+Письмо = Новый ПочтовоеОтправление("destination@mail.ru","from@mail.ru","Какой-то заголовок","Какое-то содержание письма")
 Письмо.ПрикрепитьВложение("C:/Users/Vladimir/Desktop/data.txt")
 Письмо.ПрикрепитьВложение("C:/Users/Vladimir/Desktop/Hearthstone Screenshot 03-03-23 19.06.32.png")
 Сообщить(Письмо);
