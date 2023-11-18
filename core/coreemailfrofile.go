@@ -6,6 +6,7 @@ import (
 	"net/smtp"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type EmailProfile struct {
@@ -31,7 +32,7 @@ func (f *EmailProfile) VMRegister() {
 
 		smtpPort, ok := args[1].(VMInt)
 		if !ok {
-			return VMErrorNeedString
+			return VMErrorNeedInt
 		}
 
 		UserName, ok := args[2].(VMString)
@@ -97,11 +98,33 @@ func (f *EmailProfile) Отправить(emailInfo *EmailData, rets *VMSlice) e
 		file.Close()
 	}
 
-	// Отправка сообщения
-	err := e.Send(f.SmtpServer, f.Auth)
-	if err != nil {
-		fmt.Println("Failed to send Email:", err)
-		return err
+	// Настройка таймаута
+	timeout := 10 * time.Second // установите таймаут в секундах
+
+	// Создание канала для управления таймаутом
+	done := make(chan error)
+
+	// Горутина для выполнения отправки почты
+	go func() {
+		// Отправка сообщения
+		err := e.Send(f.SmtpServer, f.Auth)
+		if err != nil {
+			done <- err
+		} else {
+			done <- nil
+		}
+	}()
+
+	// Ожидание либо завершения горутины, либо таймаута
+	select {
+	case err := <-done:
+		if err != nil {
+			fmt.Println("Email sending failed: ", err)
+		} else {
+			fmt.Println("Email sent successfully!")
+		}
+	case <-time.After(timeout):
+		fmt.Println("Timeout: Failed to send email within the specified time.")
 	}
 
 	return nil
