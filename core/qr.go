@@ -49,8 +49,14 @@ func (f *QrCode) VMRegister() {
 
 		f.path = abspath
 
-		qrCode, _ := qr.Encode("Hello World", qr.M, qr.Auto)
-		qrCode, _ = barcode.Scale(qrCode, f.size, f.size)
+		qrCode, err := qr.Encode(f.text, qr.M, qr.Auto)
+		if err != nil {
+			return VMErrorIncorrectOperation
+		}
+		qrCode, err = barcode.Scale(qrCode, f.size, f.size)
+		if err != nil {
+			return VMErrorIncorrectOperation
+		}
 		file, _ := os.Create(f.path)
 		defer file.Close()
 		png.Encode(file, qrCode)

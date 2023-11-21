@@ -32,7 +32,7 @@ func (f *I2of5) VMRegister() {
 		}
 
 		if len(text)%2 != 0 || !isDigitsOnly(string(text)) {
-			return VMErrorEan13Format
+			return VMErrorI2Of5Format
 		}
 
 		width, ok := args[1].(VMInt)

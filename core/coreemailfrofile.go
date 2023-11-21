@@ -119,12 +119,12 @@ func (f *EmailProfile) Отправить(emailInfo *EmailData, rets *VMSlice) e
 	select {
 	case err := <-done:
 		if err != nil {
-			fmt.Println("Email sending failed: ", err)
+			fmt.Println("Ошибка при отправке почты")
 		} else {
-			fmt.Println("Email sent successfully!")
+			fmt.Println("Почта отправлена успешно!")
 		}
 	case <-time.After(timeout):
-		fmt.Println("Timeout: Failed to send email within the specified time.")
+		fmt.Println("Превышено время ожидания ответа: проверьте антивирус, возможно он блокирует исходящую почту")
 	}
 
 	return nil

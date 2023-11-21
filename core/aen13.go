@@ -11,7 +11,7 @@ import (
 
 type Ean13 struct {
 	VMMetaObj
-	text   string
+	code   barcode.BarcodeIntCS
 	width  int
 	height int
 	path   string
@@ -41,7 +41,7 @@ func (f *Ean13) VMRegister() {
 			return VMErrorNeedString
 		}
 
-		if len(text) != 12 || !isDigitsOnly(string(text)) {
+		if (len(text) != 13 && len(text) != 12) || !isDigitsOnly(string(text)) {
 			return VMErrorEan13Format
 		}
 
@@ -60,7 +60,10 @@ func (f *Ean13) VMRegister() {
 			return VMErrorNeedString
 		}
 
-		f.text = string(text)
+		if len(text) == 13 {
+			text = text[:len(text)-1]
+		}
+
 		f.width = int(width)
 		f.height = int(height)
 		abspath, err := filepath.Abs(string(path))
@@ -70,8 +73,14 @@ func (f *Ean13) VMRegister() {
 
 		f.path = abspath
 
-		eanCode, _ := ean.Encode(f.text)
-		barcode, err := barcode.Scale(eanCode, f.width, f.height)
+		f.code, err = ean.Encode(string(text))
+		if err != nil {
+			return VMErrorIncorrectOperation
+		}
+		barcode, err := barcode.Scale(f.code, f.width, f.height)
+		if err != nil {
+			return VMErrorIncorrectOperation
+		}
 		file, _ := os.Create(f.path)
 		defer file.Close()
 		png.Encode(file, barcode)
@@ -86,7 +95,7 @@ func (f *Ean13) VMRegister() {
 }
 
 func (f *Ean13) ПолучитьКод(rets *VMSlice) error {
-	rets.Append(VMString(f.text))
+	rets.Append(VMString(f.code.Content()))
 	return nil
 }
 
