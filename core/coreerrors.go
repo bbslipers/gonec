@@ -56,6 +56,9 @@ var (
 	VMErrorTransactionNotOpened = errors.New("Не открыта транзакция")
 	VMErrorTableNotExists       = errors.New("Отсутствует таблица в базе данных")
 	VMErrorWrongDBValue         = errors.New("Невозможно распознать значение в базе данных")
+
+	VMErrorEan13Format = errors.New("Ean13 состоит из 12 цифр")
+	VMErrorI2Of5Format = errors.New("I2Of5 состоит из чётного количества цифр")
 )
 
 func VMErrorNeedArgs(n int) error {

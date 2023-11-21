@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/Kelwing/mc-rcon v0.0.0-20220214194105-bec8dcbccc3f
 	github.com/boltdb/bolt v1.3.1
+	github.com/boombuler/barcode v1.0.1
 	github.com/covrom/decnum v0.0.0-20181120130125-279518e708a6
 	github.com/daviddengcn/go-colortext v1.0.0
 	github.com/dchest/siphash v1.2.3

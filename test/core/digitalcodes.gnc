@@ -1,0 +1,9 @@
+QR = Новый QRКод("Привет",400,"C:/Users/Vladimir/Desktop/qr.png") // QR - квадрат
+DM = Новый DMКод("Привет",400,"C:/Users/Vladimir/Desktop/dm.png") // DataMatrix - квадрат
+EAN13 = Новый EAN13Код("123456789012",600,400,"C:/Users/Vladimir/Desktop/ean.png") // EAN 13  - прямоугольник
+I2OF5 = Новый I2OF5Код("123456789012",600,400,"C:/Users/Vladimir/Desktop/i2of5.png") // 2 of 5 (interleaved)  - прямоугольник
+Сообщить(QR.ПолучитьКод())
+Сообщить(QR.ПолучитьПуть())
+Сообщить(QR.ПолучитьВысоту())
+Сообщить(EAN13.ПолучитьВысоту())
+Сообщить(EAN13.ПолучитьШирину())

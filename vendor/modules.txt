@@ -7,6 +7,14 @@ github.com/armon/go-metrics
 # github.com/boltdb/bolt v1.3.1
 ## explicit
 github.com/boltdb/bolt
+# github.com/boombuler/barcode v1.0.1
+## explicit
+github.com/boombuler/barcode
+github.com/boombuler/barcode/datamatrix
+github.com/boombuler/barcode/ean
+github.com/boombuler/barcode/qr
+github.com/boombuler/barcode/twooffive
+github.com/boombuler/barcode/utils
 # github.com/covrom/decnum v0.0.0-20181120130125-279518e708a6
 ## explicit
 github.com/covrom/decnum

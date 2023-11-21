@@ -231,6 +231,11 @@ func Import(env *Env) *Env {
 	env.DefineTypeStruct(&TextDocument{})
 	env.DefineTypeStruct(&File{})
 
+	env.DefineTypeStruct(&QrCode{})
+	env.DefineTypeStruct(&DataMatrix{})
+	env.DefineTypeStruct(&I2of5{})
+	env.DefineTypeStruct(&Ean13{})
+
 	env.DefineTypeStruct(&VMTable{})
 	env.DefineTypeStruct(&VMTableColumn{})
 	env.DefineTypeStruct(&VMTableColumns{})
