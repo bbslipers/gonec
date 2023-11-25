@@ -104,8 +104,6 @@ func (x VMSlice) MethodMember(name int) (VMFunc, bool) {
 		return VMFuncZeroParams(x.Скопировать), true
 	case "найти":
 		return VMFuncNParams(1, x.Найти), true
-	case "найтисорт":
-		return VMFuncNParams(1, x.НайтиСорт), true
 	// case "вставить":
 	// 	return VMFuncTwoParams[VMInt, VMValue](x.Вставить), true
 	// case "удалить":
@@ -127,35 +125,14 @@ func (x VMSlice) Сортировать(rets *VMSlice) error {
 func (x VMSlice) Найти(args VMSlice, rets *VMSlice) error {
 	y := args[0]
 	p := 0
-	fnd := false
 	for p < len(x) {
 		if EqualVMValues(x[p], y) {
-			fnd = true
-			break
+			rets.Append(VMInt(p))
+			return nil
 		}
 		p++
 	}
-	rets.Append(VMInt(p))
-	rets.Append(VMBool(fnd))
-	return nil
-}
-
-// НайтиСорт (значение) (индекс, найдено) - находит индекс значения или места для его вставки, если его еще нет
-// поиск осуществляется в отсортированном по возрастанию массиве
-// иначе будет непредсказуемый ответ
-func (x VMSlice) НайтиСорт(args VMSlice, rets *VMSlice) error {
-	y := args[0]
-	p := sort.Search(len(x), func(i int) bool { return !SortLessVMValues(x[i], y) }) // data[i] >= x
-	if p < len(x) && EqualVMValues(x[p], y) {
-		// y is present at x[p]
-		rets.Append(VMInt(p))
-		rets.Append(VMBool(true))
-	} else {
-		// y is not present in x,
-		// but p is the index where it would be inserted.
-		rets.Append(VMInt(p))
-		rets.Append(VMBool(false))
-	}
+	rets.Append(VMNilType{})
 	return nil
 }
 
