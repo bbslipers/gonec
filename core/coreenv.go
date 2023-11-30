@@ -343,7 +343,7 @@ func (e *Env) defineTypeHelper(v reflect.Value) error {
 	if len(ret) != 1 || ret[0].Kind() != reflect.String {
 		return errors.New("VMTypeString должен возвращать строку")
 	}
-	return e.DefineType(names.UniqueNames.Set(names.FastToLower(ret[0].String())), v.Type())
+	return e.DefineType(names.UniqueNames.Set(ret[0].String()), v.Type())
 }
 
 // DefineTypeS регистрирует системный тип

@@ -151,11 +151,11 @@ func Import(env *Env) *Env {
 	}))
 
 	env.DefineS("типзнч", VMFuncNParams(1, func(args VMSlice, rets *VMSlice) error {
-		if args[0] == nil || args[0] == VMNil {
+		if args[0] == nil || args[0] == VMNil || args[0] == VMNullVar {
 			rets.Append(VMString("Неопределено"))
 			return nil
 		}
-		rets.Append(VMString(names.UniqueNames.GetLowerCase(env.TypeName(reflect.TypeOf(args[0])))))
+		rets.Append(VMString(names.UniqueNames.Get(env.TypeName(reflect.TypeOf(args[0])))))
 		return nil
 	}))
 

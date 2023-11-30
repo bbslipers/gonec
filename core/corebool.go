@@ -34,9 +34,9 @@ func (x *VMBool) ParseGoType(v interface{}) {
 
 func (x VMBool) String() string {
 	if x {
-		return "true"
+		return "Истина"
 	} else {
-		return "false"
+		return "Ложь"
 	}
 }
 

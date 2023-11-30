@@ -2,9 +2,12 @@ package core
 
 import (
 	"bytes"
+	cryto "crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
+	"math/big"
 	"reflect"
 	"sort"
 	"sync"
@@ -39,6 +42,10 @@ func PutGlobalVMSlice(sl VMSlice) {
 type VMSlice []VMValue
 
 var ReflectVMSlice = reflect.TypeOf(make(VMSlice, 0))
+
+func (x VMSlice) Len() int { return len(x) }
+
+func (x VMSlice) Swap(i, j int) { x[i], x[j] = x[j], x[i] }
 
 func (x VMSlice) VMTypeString() string { return "Массив" }
 
@@ -88,7 +95,11 @@ func (x VMSlice) Hash() VMString {
 }
 
 func (x VMSlice) SortDefault() {
-	sort.Sort(VMSliceUpSort(x))
+	sort.Sort(VMSliceUpSort{x})
+}
+
+func (x VMSlice) SortRand() {
+	sort.Sort(VMSliceRandSort{x})
 }
 
 func (x VMSlice) MethodMember(name int) (VMFunc, bool) {
@@ -96,20 +107,22 @@ func (x VMSlice) MethodMember(name int) (VMFunc, bool) {
 	switch names.UniqueNames.GetLowerCase(name) {
 	case "сортировать":
 		return VMFuncZeroParams(x.Сортировать), true
-	case "сортироватьубыв":
-		return VMFuncZeroParams(x.СортироватьУбыв), true
-	case "обратить":
-		return VMFuncZeroParams(x.Обратить), true
-	case "скопировать":
-		return VMFuncZeroParams(x.Скопировать), true
+	case "обратныйпорядок":
+		return VMFuncZeroParams(x.ОбратныйПорядок), true
+	case "копировать":
+		return VMFuncZeroParams(x.Копировать), true
 	case "найти":
 		return VMFuncNParams(1, x.Найти), true
+	//case "добавить":
+	//return VMFuncOneParam(x.Добавить), true
+	case "случайныйпорядок":
+		return VMFuncZeroParams(x.СлучайныйПорядок), true
 	// case "вставить":
 	// 	return VMFuncTwoParams[VMInt, VMValue](x.Вставить), true
 	// case "удалить":
 	// 	return VMFuncOneParam[VMInt](x.Удалить), true
-	case "скопироватьуникальные":
-		return VMFuncZeroParams(x.СкопироватьУникальные), true
+	case "копироватьуникальные":
+		return VMFuncZeroParams(x.КопироватьУникальные), true
 	}
 
 	return nil, false
@@ -133,6 +146,16 @@ func (x VMSlice) Найти(args VMSlice, rets *VMSlice) error {
 		p++
 	}
 	rets.Append(VMNilType{})
+	return nil
+}
+
+func (x *VMSlice) Добавить(value VMValue, rets *VMSlice) error {
+	x.Append(value)
+	return nil
+}
+
+func (x VMSlice) СлучайныйПорядок(rets *VMSlice) error {
+	x.SortRand()
 	return nil
 }
 
@@ -164,12 +187,7 @@ func (x VMSlice) Найти(args VMSlice, rets *VMSlice) error {
 // 	return nil
 // }
 
-func (x VMSlice) СортироватьУбыв(rets *VMSlice) error {
-	sort.Sort(sort.Reverse(VMSliceUpSort(x)))
-	return nil
-}
-
-func (x VMSlice) Обратить(rets *VMSlice) error {
+func (x VMSlice) ОбратныйПорядок(rets *VMSlice) error {
 	for left, right := 0, len(x)-1; left < right; left, right = left+1, right-1 {
 		x[left], x[right] = x[right], x[left]
 	}
@@ -191,8 +209,8 @@ func (x VMSlice) CopyRecursive() VMSlice {
 	return rv
 }
 
-// Скопировать - помимо обычного копирования еще и рекурсивно копирует и слайсы/структуры, находящиеся в элементах
-func (x VMSlice) Скопировать(rets *VMSlice) error { // VMSlice {
+// Копировать - помимо обычного копирования еще и рекурсивно копирует и слайсы/структуры, находящиеся в элементах
+func (x VMSlice) Копировать(rets *VMSlice) error { // VMSlice {
 	rv := make(VMSlice, len(x))
 	copy(rv, x)
 	for i, v := range rv {
@@ -207,8 +225,8 @@ func (x VMSlice) Скопировать(rets *VMSlice) error { // VMSlice {
 	return nil
 }
 
-func (x VMSlice) СкопироватьУникальные(rets *VMSlice) error { // VMSlice {
-	rv := make(VMSlice, len(x))
+func (x VMSlice) КопироватьУникальные(rets *VMSlice) error { // VMSlice {
+	rv := make(VMSlice, 0)
 	seen := make(map[VMValue]bool)
 	for i, v := range x {
 		if _, ok := seen[v]; ok {
@@ -216,15 +234,14 @@ func (x VMSlice) СкопироватьУникальные(rets *VMSlice) error
 		}
 		switch vv := v.(type) {
 		case VMSlice:
-			rv[i] = vv.CopyRecursive()
+			rv = append(rv, vv.CopyRecursive())
 		case VMStringMap:
-			rv[i] = vv.CopyRecursive()
+			rv = append(rv, vv.CopyRecursive())
 		default:
-			rv[i] = x[i]
+			rv = append(rv, x[i])
 		}
 		seen[v] = true
 	}
-	rv = rv[0:len(seen)]
 	rets.Append(rv)
 	return nil
 }
@@ -547,11 +564,31 @@ func (x *VMSlice) UnmarshalJSON(data []byte) error {
 }
 
 // VMSliceUpSort - обертка для сортировки слайса по возрастанию
-type VMSliceUpSort VMSlice
+type VMSliceUpSort struct {
+	VMSlice
+}
 
-func (x VMSliceUpSort) Len() int           { return len(x) }
-func (x VMSliceUpSort) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }
-func (x VMSliceUpSort) Less(i, j int) bool { return SortLessVMValues(x[i], x[j]) }
+func (x VMSliceUpSort) Less(i, j int) bool { return SortLessVMValues(x.VMSlice[i], x.VMSlice[j]) }
+
+// VMSliceRandSort - обертка для сортировки слайса рандомом
+type VMSliceRandSort struct {
+	VMSlice
+}
+
+func (x VMSliceRandSort) Less(i, j int) bool {
+	n1, err := cryto.Int(cryto.Reader, big.NewInt(int64(len(x.VMSlice))))
+	if err != nil {
+		fmt.Println("Ошибка генерации случайного числа:", err)
+		return false
+	}
+	n2, err := cryto.Int(cryto.Reader, big.NewInt(int64(len(x.VMSlice))))
+	if err != nil {
+		fmt.Println("Ошибка генерации случайного числа:", err)
+		return false
+	}
+
+	return n1.Int64() < n2.Int64()
+}
 
 // NewVMSliceFromStrings создает слайс вирт. машины []VMString из слайса строк []string на языке Го
 func NewVMSliceFromStrings(ss []string) (rv VMSlice) {
