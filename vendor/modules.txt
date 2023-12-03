@@ -141,3 +141,6 @@ modernc.org/strutil
 # modernc.org/token v1.0.0
 ## explicit
 modernc.org/token
+# moul.io/number-to-words v0.7.0
+## explicit; go 1.12
+moul.io/number-to-words

@@ -22,7 +22,7 @@ var (
 	VMDecNumNegOne  = NewVMDecNumFromInt64(-1)
 )
 
-func (x VMDecNum) VMTypeString() string { return "Число" }
+func (x VMDecNum) VMTypeString() string { return "ЧислоСТочкой" }
 
 func (x VMDecNum) Interface() interface{} {
 	return x.Float()

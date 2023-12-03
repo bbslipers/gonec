@@ -1,7 +1,10 @@
 package core
 
 import (
+	crypto "crypto/rand"
 	"errors"
+	"fmt"
+	"math/big"
 	"math/rand"
 	"strings"
 	"time"
@@ -25,6 +28,26 @@ func ImportStrings(env *Env) {
 		}
 
 		rets.Append(VMString(b.String()))
+		return nil
+	}))
+
+	env.DefineS("случайноечисло", VMFuncTwoParams(func(start VMInt, end VMInt, rets *VMSlice) error {
+		if start >= end {
+			return fmt.Errorf("Неверный диапазон")
+		}
+
+		diff := big.NewInt(int64(end - start + 1))
+
+		// Генерируем случайное число в диапазоне [0, diff]
+		random, err := crypto.Int(crypto.Reader, diff)
+		if err != nil {
+			return err
+		}
+
+		// Прибавляем start к случайному числу
+		result := random.Add(random, big.NewInt(int64(start)))
+
+		rets.Append(VMInt(result.Int64()))
 		return nil
 	}))
 

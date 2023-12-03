@@ -254,7 +254,9 @@ func (x *VMNilType) UnmarshalJSON(data []byte) error {
 
 type VMNullType struct{}
 
-func (x VMNullType) VMTypeString() string   { return "Null" }
+var ReflectVMNul = reflect.TypeOf(VMNullType{})
+
+func (x VMNullType) VMTypeString() string   { return "NULL" }
 func (x VMNullType) null()                  {}
 func (x VMNullType) String() string         { return "NULL" }
 func (x VMNullType) Interface() interface{} { return x }

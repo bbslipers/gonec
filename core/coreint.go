@@ -16,7 +16,7 @@ type VMInt int64
 
 var ReflectVMInt = reflect.TypeOf(VMInt(0))
 
-func (x VMInt) VMTypeString() string { return "ЦелоеЧисло" }
+func (x VMInt) VMTypeString() string { return "ЧислоЦелое" }
 
 func (x VMInt) Interface() interface{} {
 	return int64(x)

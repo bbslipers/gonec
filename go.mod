@@ -16,6 +16,7 @@ require (
 	github.com/mattn/go-isatty v0.0.14
 	github.com/satori/go.uuid v1.2.0
 	modernc.org/sqlite v1.17.3
+	moul.io/number-to-words v0.7.0
 )
 
 require (

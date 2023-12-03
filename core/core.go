@@ -4,18 +4,63 @@ package core
 import (
 	"errors"
 	"fmt"
+	"github.com/covrom/decnum"
+	uuid "github.com/satori/go.uuid"
 	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
+	"unicode"
+	"unicode/utf8"
 
-	"github.com/covrom/decnum"
-
-	uuid "github.com/satori/go.uuid"
 	"github.com/shinanca/gonec/names"
+	"moul.io/number-to-words"
 )
+
+func fractionWordMap(decimalPlaces int) string {
+	fractionWords := map[int]string{
+		1: "дес.",
+		2: "сот.",
+		3: "тыс.",
+		4: "десятитыс.",
+		5: "стотыс.",
+		6: "миллионных",
+		7: "десятимиллионных",
+		8: "стомиллионных",
+	}
+
+	word, found := fractionWords[decimalPlaces]
+	if !found {
+		return "Неизвестное количество знаков после запятой"
+	}
+
+	return word
+}
+
+func intToWords(num int) string {
+	numStr := ntw.IntegerToRuRu(num)
+	words := strings.Fields(numStr)
+
+	// Проверяем, что есть хотя бы одно слово в строке
+	if len(words) > 0 {
+		// Получаем последнее слово
+		lastWord := words[len(words)-1]
+
+		switch lastWord {
+		case "один":
+			words[len(words)-1] = "одна"
+		case "два":
+			words[len(words)-1] = "две"
+		}
+	}
+
+	// Собираем строку обратно
+	resultString := strings.Join(words, " ")
+	return resultString
+}
 
 // LoadAllBuiltins is a convenience function that loads all defineSd builtins.
 func LoadAllBuiltins(env *Env) {
@@ -123,8 +168,133 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
-	env.DefineS("окр", VMFuncTwoParams(func(f VMDecNum, n VMInt, rets *VMSlice) error {
-		rets.Append(VMDecNum{num: f.num.RoundWithMode(int32(n), decnum.RoundHalfUp)})
+	env.DefineS("округлить", VMFuncTwoParams(func(f VMDecNum, n VMInt, rets *VMSlice) error {
+		if n == 0 {
+			rets.Append(VMDecNum{num: f.num.RoundWithMode(int32(n), decnum.RoundDown)})
+		} else if n < 0 {
+			rets.Append(VMDecNum{num: f.num.RoundWithMode(int32(n)*(-1), decnum.RoundHalfDown)})
+		} else {
+			rets.Append(VMDecNum{num: f.num.RoundWithMode(int32(n), decnum.RoundHalfUp)})
+		}
+		return nil
+	}))
+
+	env.DefineS("длиначисла", VMFuncOneParam(func(f VMDecNum, rets *VMSlice) error {
+		rets.Append(VMInt(len(f.String())))
+		return nil
+	}))
+
+	env.DefineS("точностьчисла", VMFuncOneParam(func(f VMDecNum, rets *VMSlice) error {
+		numStr := f.String()
+		dotIndex := strings.Index(numStr, ".")
+
+		if dotIndex == -1 {
+			rets.Append(VMInt(0))
+		} else {
+			rets.Append(VMInt(len(numStr) - dotIndex - 1))
+		}
+		return nil
+	}))
+
+	env.DefineS("числовстроку", VMFuncNParams(5, func(args VMSlice, rets *VMSlice) error {
+		if len(args) != 5 {
+			return VMErrorNeedArgs(5)
+		}
+		number, ok := args[0].(VMDecNum)
+		if !ok {
+			intnumber, ok := args[0].(VMInt)
+			if !ok {
+				return VMErrorIncorrectFieldType
+			}
+			number.ParseGoType(intnumber)
+		}
+		length, ok := args[1].(VMInt)
+		if !ok {
+			return VMErrorNeedInt
+		}
+		accuracy, ok := args[2].(VMInt)
+		if !ok {
+			return VMErrorNeedInt
+		}
+		needLeadingNuls, ok := args[3].(VMBool)
+		if !ok {
+			return VMErrorNeedInt
+		}
+		NulValue, ok := args[4].(VMString)
+		if !ok {
+			return VMErrorNeedInt
+		}
+
+		if number.Int() == 0 {
+			rets.Append(NulValue)
+			return nil
+		}
+
+		numberString := number.String()
+		dotIndex := strings.Index(numberString, ".")
+		if dotIndex == -1 && accuracy > 0 {
+			numberString = numberString + "."
+			dotIndex = len(numberString) - 1
+		}
+
+		decimalPlaces := len(numberString) - dotIndex - 1
+		if decimalPlaces > int(accuracy) {
+			numberString = numberString[:dotIndex+int(accuracy)+1]
+		} else {
+			numberString = numberString + strings.Repeat("0", int(accuracy)-decimalPlaces)
+		}
+
+		if len(numberString) > int(length) {
+			return fmt.Errorf("Oшибка: Длина числа больше чем %d", length)
+		}
+
+		if needLeadingNuls {
+			numberString = strings.Repeat("0", int(length)-len(numberString)) + numberString
+		}
+
+		rets.Append(VMString(numberString))
+
+		return nil
+	}))
+
+	env.DefineS("числопрописью", VMFuncOneParam(func(f VMDecNum, rets *VMSlice) error {
+		stringNum := f.String()
+		dotIndex := strings.Index(stringNum, ".")
+		floatPart := ""
+		if dotIndex != -1 {
+			decimalPartString := stringNum[dotIndex+1:]
+			decimalPart, _ := strconv.Atoi(decimalPartString)
+			floatPart = intToWords(decimalPart) + " " + fractionWordMap(len(decimalPartString))
+		}
+
+		res := intToWords(int(f.Int())) + " " + "цел." + " " + floatPart
+
+		r, i := utf8.DecodeRuneInString(res)
+		res = string(unicode.ToTitle(r)) + res[i:]
+
+		rets.Append(VMString(res))
+		return nil
+	}))
+
+	env.DefineS("суммапрописью", VMFuncOneParam(func(f VMDecNum, rets *VMSlice) error {
+		stringNum := f.String()
+		dotIndex := strings.Index(stringNum, ".")
+		floatPart := ""
+		if dotIndex != -1 {
+			decimalPartString := stringNum[dotIndex+1:]
+			decimalPart, _ := strconv.Atoi(decimalPartString)
+			decimalPartStr := intToWords(decimalPart)
+			if decimalPart > 99 {
+				return fmt.Errorf("Oшибка: Неверное представление количества копеек")
+			}
+			floatPart = decimalPartStr + " " + "коп."
+		}
+
+		res := ntw.IntegerToRuRu(int(f.Int())) + " " + "руб." + " " + floatPart
+		r, i := utf8.DecodeRuneInString(res)
+		res = string(unicode.ToTitle(r)) + res[i:]
+
+		rets.Append(VMString(res))
 		return nil
 	}))
 
@@ -151,7 +321,7 @@ func Import(env *Env) *Env {
 	}))
 
 	env.DefineS("типзнч", VMFuncNParams(1, func(args VMSlice, rets *VMSlice) error {
-		if args[0] == nil || args[0] == VMNil || args[0] == VMNullVar {
+		if args[0] == nil || args[0] == VMNil {
 			rets.Append(VMString("Неопределено"))
 			return nil
 		}
@@ -210,6 +380,7 @@ func Import(env *Env) *Env {
 	}))
 
 	// при изменении состава типов не забывать изменять их и в lexer.go
+	env.DefineTypeS(ReflectVMNul)
 	env.DefineTypeS(ReflectVMInt)
 	env.DefineTypeS(ReflectVMDecNum)
 	env.DefineTypeS(ReflectVMBool)
