@@ -46,6 +46,6 @@ changelog:
       - "^chore:"
 release:
   github:
-    owner: mcap-2020
+    owner: bbslipers
     name: gonec
   prerelease: auto
