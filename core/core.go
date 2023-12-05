@@ -168,13 +168,22 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
-	env.DefineS("округлить", VMFuncTwoParams(func(f VMDecNum, n VMInt, rets *VMSlice) error {
+	env.DefineS("округлить", VMFuncTwoParams(func(f VMValue, n VMInt, rets *VMSlice) error {
+		number, ok := f.(VMInt)
+		if ok {
+			rets.Append(number)
+			return nil
+		}
+		decNum, ok := f.(VMDecNum)
+		if !ok {
+			return VMErrorNeedDecNum
+		}
 		if n == 0 {
-			rets.Append(VMDecNum{num: f.num.RoundWithMode(int32(n), decnum.RoundDown)})
+			rets.Append(VMDecNum{num: decNum.num.RoundWithMode(int32(n), decnum.RoundDown)})
 		} else if n < 0 {
-			rets.Append(VMDecNum{num: f.num.RoundWithMode(int32(n)*(-1), decnum.RoundHalfDown)})
+			rets.Append(VMDecNum{num: decNum.num.RoundWithMode(int32(n)*(-1), decnum.RoundHalfDown)})
 		} else {
-			rets.Append(VMDecNum{num: f.num.RoundWithMode(int32(n), decnum.RoundHalfUp)})
+			rets.Append(VMDecNum{num: decNum.num.RoundWithMode(int32(n), decnum.RoundHalfUp)})
 		}
 		return nil
 	}))
