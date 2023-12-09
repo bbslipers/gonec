@@ -424,6 +424,9 @@ func Import(env *Env) *Env {
 	env.DefineTypeStruct(&EmailProfile{})
 	env.DefineTypeStruct(&EmailData{})
 
+	env.DefineTypeStruct(&XMLDoc{})
+	env.DefineTypeStruct(&XMLElem{})
+
 	ImportStrings(env)
 
 	//////////////////

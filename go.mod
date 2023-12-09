@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/Kelwing/mc-rcon v0.0.0-20220214194105-bec8dcbccc3f
+	github.com/beevik/etree v1.2.0
 	github.com/boltdb/bolt v1.3.1
 	github.com/boombuler/barcode v1.0.1
 	github.com/covrom/decnum v0.0.0-20181120130125-279518e708a6
