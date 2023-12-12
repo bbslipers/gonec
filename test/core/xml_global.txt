@@ -1,0 +1,7 @@
+СтрокаXML = '<persons><person name="Алексей">Тайный Санта</person></persons>'
+Сообщить(СтрокаXML)
+
+XML = Структура(ЧтениеИзСтрокиXML(СтрокаXML))
+Сообщить(XML)
+XML = Структура(ЧтениеИзФайлаXML("C:/Users/Vladimir/Desktop/test.xml"))
+Сообщить(XML)

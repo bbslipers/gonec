@@ -2,6 +2,7 @@
 package core
 
 import (
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"github.com/covrom/decnum"
@@ -60,6 +61,21 @@ func intToWords(num int) string {
 	// Собираем строку обратно
 	resultString := strings.Join(words, " ")
 	return resultString
+}
+
+func XmlToJson(xmlString string) (string, error) {
+	node := &XMLNode{}
+
+	if err := xml.Unmarshal([]byte(xmlString), node); err != nil {
+		return "", VMErrorIncorrectFieldType
+	}
+
+	json, err := node.MarshalJSON()
+	if err != nil {
+		return "", VMErrorIncorrectFieldType
+	}
+
+	return string(json), nil
 }
 
 // LoadAllBuiltins is a convenience function that loads all defineSd builtins.
@@ -345,6 +361,43 @@ func Import(env *Env) *Env {
 		}
 		as := args.Args()
 		env.Println(as...)
+		return nil
+	}))
+
+	env.DefineS("чтениеизстрокиxml", VMFunc(func(args VMSlice, rets *VMSlice) error {
+		if len(args) != 1 {
+			env.Println()
+			return nil
+		}
+
+		json, err := XmlToJson(string(args[0].(VMString)))
+		if err != nil {
+			return VMErrorIncorrectFieldType
+		}
+
+		rets.Append(VMString(json))
+
+		return nil
+	}))
+
+	env.DefineS("чтениеизфайлаxml", VMFunc(func(args VMSlice, rets *VMSlice) error {
+		if len(args) != 1 {
+			env.Println()
+			return nil
+		}
+
+		xmlString, err := os.ReadFile(string(args[0].(VMString)))
+		if err != nil {
+			return VMErrorIncorrectFieldType
+		}
+
+		json, err := XmlToJson(string(xmlString))
+		if err != nil {
+			return VMErrorIncorrectFieldType
+		}
+
+		rets.Append(VMString(json))
+
 		return nil
 	}))
 
