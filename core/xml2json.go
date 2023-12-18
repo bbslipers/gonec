@@ -55,7 +55,7 @@ func (n *XMLNode) ToMap() map[string]interface{} {
 	} else {
 		if len(n.Attrs) > 0 && len(n.Nodes) == 0 {
 			if len(n.Content) > 0 {
-				attradd("_content", n.Content)
+				attradd("text", n.Content)
 			}
 			res[n.XMLName.Local] = attrs
 		} else {
