@@ -483,6 +483,10 @@ func (t VMTime) MethodMember(name int) (VMFunc, bool) {
 		return VMFuncZeroParams(t.Локация), true
 	case "влокации":
 		return VMFuncOneParam(t.ВЛокации), true
+	case "началодня":
+		return VMFuncZeroParams(t.НачалоДня), true
+	case "конецдня":
+		return VMFuncZeroParams(t.КонецДня), true
 	}
 
 	return nil, false
@@ -982,6 +986,18 @@ func (t VMTime) ВЛокации(locs VMString, rets *VMSlice) error { //(name s
 		return err
 	}
 	rets.Append(VMTime(time.Time(t).In(loc)))
+	return nil
+}
+
+func (t VMTime) НачалоДня(rets *VMSlice) error { //(name string) VMTime {
+	roundedTime := VMTime(time.Date(int(t.Year()), time.Month(t.Month()), int(t.Day()), 0, 0, 0, 0, time.Time(t).Location()))
+	rets.Append(roundedTime)
+	return nil
+}
+
+func (t VMTime) КонецДня(rets *VMSlice) error { //(name string) VMTime {
+	roundedTime := VMTime(time.Date(int(t.Year()), time.Month(t.Month()), int(t.Day()), 23, 59, 59, 0, time.Time(t).Location()))
+	rets.Append(roundedTime)
 	return nil
 }
 

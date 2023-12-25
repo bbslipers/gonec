@@ -441,6 +441,11 @@ func Import(env *Env) *Env {
 		return nil
 	}))
 
+	env.DefineS("текущаядата", VMFuncZeroParams(func(rets *VMSlice) error {
+		rets.Append(VMTime(time.Now()))
+		return nil
+	}))
+
 	// при изменении состава типов не забывать изменять их и в lexer.go
 	env.DefineTypeS(ReflectVMNul)
 	env.DefineTypeS(ReflectVMInt)
