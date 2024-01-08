@@ -61,6 +61,10 @@ var (
 	VMErrorI2Of5Format = errors.New("I2Of5 состоит из чётного количества цифр")
 
 	VMErrorSaveXML = errors.New("Ошибки при записи XML")
+
+	VMErrorReadXlsxTemplateError = errors.New("Ошибка при чтении шаблона xlsx")
+	VMErrorFillXlsxError         = errors.New("Ошибка при заполнении шаблона xslx данными")
+	VMErrorSaveXlsxError         = errors.New("Ошибка при сохранении заполненного xlsx шаблона")
 )
 
 func VMErrorNeedArgs(n int) error {

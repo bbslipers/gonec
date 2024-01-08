@@ -2,6 +2,7 @@
 package core
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -17,6 +18,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/ivahaev/go-xlsx-templater"
 	"github.com/shinanca/gonec/names"
 	"moul.io/number-to-words"
 )
@@ -361,6 +363,38 @@ func Import(env *Env) *Env {
 		}
 		as := args.Args()
 		env.Println(as...)
+		return nil
+	}))
+
+	env.DefineS("ЗаполнитьМакетXLSX", VMFunc(func(args VMSlice, rets *VMSlice) error {
+		if len(args) != 3 {
+			return VMErrorNeedArgs(3)
+		}
+		doc := xlst.New()
+		err := doc.ReadTemplate(string(args[0].(VMString)))
+		if err != nil {
+			return VMErrorReadXlsxTemplateError
+		}
+
+		data := args[1].(VMStringMap)
+		jsonStr, err := data.MarshalJSON()
+		if err != nil {
+			return VMErrorFillXlsxError
+		}
+
+		var newData map[string]interface{}
+		if err := json.Unmarshal(jsonStr, &newData); err != nil {
+			return VMErrorFillXlsxError
+		}
+		err = doc.Render(newData)
+		if err != nil {
+			return VMErrorFillXlsxError
+		}
+
+		err = doc.Save(string(args[2].(VMString)))
+		if err != nil {
+			return VMErrorSaveXlsxError
+		}
 		return nil
 	}))
 

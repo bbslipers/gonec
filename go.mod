@@ -13,6 +13,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-rootcerts v1.0.2
 	github.com/hashicorp/serf v0.9.8
+	github.com/ivahaev/go-xlsx-templater v0.0.0-20200217104802-1394ee35aab8
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/mattn/go-isatty v0.0.14
 	github.com/satori/go.uuid v1.2.0
@@ -22,12 +23,14 @@ require (
 
 require (
 	github.com/armon/go-metrics v0.4.0 // indirect
+	github.com/aymerick/raymond v2.0.2+incompatible // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
+	github.com/tealeg/xlsx v1.0.5 // indirect
 	golang.org/x/mod v0.8.0 // indirect
 	golang.org/x/sys v0.12.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect

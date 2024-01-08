@@ -1,0 +1,30 @@
+// Запись данных в шаблон XLSX с помощью библиотеки
+// https://github.com/ivahaev/go-xlsx-templater
+
+data = {
+  "name": "Github User",
+  "nameHeader": "Item name",
+  "quantityHeader": "Quantity",
+  "items": [
+      {
+        "name": "Pen",
+        "quantity": 2,
+      },
+      {
+        "name": "Pencil",
+        "quantity": 1,
+      },
+      {
+        "name": "Condom",
+        "quantity": 12,
+      },
+      {
+        "name": "Beer",
+        "quantity": 24,
+      },
+  ],
+}
+
+Сообщить(data)
+// ЗаполнитьМакетXLSX(ПутьКФайлуМакета,СтруктураЗаполнения,ПутьКФайлуРезультата)
+ЗаполнитьМакетXLSX("C:/Users/Vladimir/Desktop/template.xlsx",data,"C:/Users/Vladimir/Desktop/rezultat.xlsx")
