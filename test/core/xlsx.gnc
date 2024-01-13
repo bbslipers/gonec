@@ -2,29 +2,28 @@
 // https://github.com/ivahaev/go-xlsx-templater
 
 data = {
-  "name": "Github User",
-  "nameHeader": "Item name",
-  "quantityHeader": "Quantity",
+  "name": "Алексей",
+  "column1": "Наименование",
+  "column2": "Количество",
   "items": [
       {
-        "name": "Pen",
-        "quantity": 2,
+        "name": "Ручка",
+        "quant": 2,
       },
       {
-        "name": "Pencil",
-        "quantity": 1,
+        "name": "Карандаш",
+        "quant": 1,
       },
       {
-        "name": "Condom",
-        "quantity": 12,
+        "name": "Ластик",
+        "quant": 12,
       },
       {
-        "name": "Beer",
-        "quantity": 24,
+        "name": "Линейка",
+        "quant": 24,
       },
   ],
 }
 
-Сообщить(data)
-// ЗаполнитьМакетXLSX(ПутьКФайлуМакета,СтруктураЗаполнения,ПутьКФайлуРезультата)
-ЗаполнитьМакетXLSX("C:/Users/Vladimir/Desktop/template.xlsx",data,"C:/Users/Vladimir/Desktop/rezultat.xlsx")
+
+ЗаполнитьМакетXLSX("C:/Users/Vladimir/Desktop/en-in.xlsx", data,"C:/Users/Vladimir/Desktop/en-out.xlsx")

@@ -18,7 +18,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/ivahaev/go-xlsx-templater"
+	"github.com/shinanca/gonec/externallibs/go-xlsx-templater"
 	"github.com/shinanca/gonec/names"
 	"moul.io/number-to-words"
 )
@@ -381,7 +381,6 @@ func Import(env *Env) *Env {
 		if err != nil {
 			return VMErrorFillXlsxError
 		}
-
 		var newData map[string]interface{}
 		if err := json.Unmarshal(jsonStr, &newData); err != nil {
 			return VMErrorFillXlsxError
