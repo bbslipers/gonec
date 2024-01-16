@@ -373,26 +373,26 @@ func Import(env *Env) *Env {
 		doc := xlst.New()
 		err := doc.ReadTemplate(string(args[0].(VMString)))
 		if err != nil {
-			return VMErrorReadXlsxTemplateError
+			return VMErrorReadXlsxTemplate
 		}
 
 		data := args[1].(VMStringMap)
 		jsonStr, err := data.MarshalJSON()
 		if err != nil {
-			return VMErrorFillXlsxError
+			return VMErrorFillXlsx
 		}
 		var newData map[string]interface{}
 		if err := json.Unmarshal(jsonStr, &newData); err != nil {
-			return VMErrorFillXlsxError
+			return VMErrorFillXlsx
 		}
 		err = doc.Render(newData)
 		if err != nil {
-			return VMErrorFillXlsxError
+			return VMErrorFillXlsx
 		}
 
 		err = doc.Save(string(args[2].(VMString)))
 		if err != nil {
-			return VMErrorSaveXlsxError
+			return VMErrorSaveXlsx
 		}
 		return nil
 	}))
@@ -517,6 +517,9 @@ func Import(env *Env) *Env {
 
 	env.DefineTypeStruct(&XMLDoc{})
 	env.DefineTypeStruct(&XMLElem{})
+
+	env.DefineTypeStruct(&XLSXReader{})
+	env.DefineTypeStruct(&XLSXWriter{})
 
 	ImportStrings(env)
 

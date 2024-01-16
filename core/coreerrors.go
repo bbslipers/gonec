@@ -62,9 +62,14 @@ var (
 
 	VMErrorSaveXML = errors.New("Ошибки при записи XML")
 
-	VMErrorReadXlsxTemplateError = errors.New("Ошибка при чтении шаблона xlsx")
-	VMErrorFillXlsxError         = errors.New("Ошибка при заполнении шаблона xslx данными")
-	VMErrorSaveXlsxError         = errors.New("Ошибка при сохранении заполненного xlsx шаблона")
+	VMErrorReadXlsxTemplate = errors.New("Ошибка при чтении шаблона xlsx")
+	VMErrorFillXlsx         = errors.New("Ошибка при заполнении шаблона xslx данными")
+	VMErrorSaveXlsx         = errors.New("Ошибка при сохранении заполненного xlsx шаблона")
+
+	VMErrorOpenXlsxFile = errors.New("Ошибка при открытии xlsx файла")
+	VMErrorSetCellValue = errors.New("Ошибка при установки значения ячейки")
+	VMErrorAddSheet     = errors.New("Ошибка при добавлении новой страницы")
+	VMErrorSaveXlsxFile = errors.New("Ошибка при записи xlsx файла")
 )
 
 func VMErrorNeedArgs(n int) error {
