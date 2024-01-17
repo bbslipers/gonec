@@ -8,7 +8,9 @@ import (
 	"fmt"
 	"github.com/covrom/decnum"
 	uuid "github.com/satori/go.uuid"
+	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -394,6 +396,27 @@ func Import(env *Env) *Env {
 		if err != nil {
 			return VMErrorSaveXlsx
 		}
+		return nil
+	}))
+
+	env.DefineS("ВыполнитьКомандуСистемы", VMFunc(func(args VMSlice, rets *VMSlice) error {
+		if len(args) != 2 {
+			env.Println()
+			return nil
+		}
+		cmd := string(args[0].(VMString))
+
+		rv := make([]string, 0)
+		params := args[1].(VMSlice)
+		for i, _ := range params {
+			rv = append(rv, params[i].(VMStringer).String())
+		}
+
+		out, err := exec.Command(cmd, rv...).Output()
+		if err != nil {
+			log.Fatal(err)
+		}
+		rets.Append(VMString(out))
 		return nil
 	}))
 
