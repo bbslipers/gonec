@@ -70,6 +70,8 @@ var (
 	VMErrorSetCellValue = errors.New("Ошибка при установки значения ячейки")
 	VMErrorAddSheet     = errors.New("Ошибка при добавлении новой страницы")
 	VMErrorSaveXlsxFile = errors.New("Ошибка при записи xlsx файла")
+
+	VMErrorEncoding = errors.New("Ошибка при кодировании строки")
 )
 
 func VMErrorNeedArgs(n int) error {

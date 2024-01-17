@@ -33,6 +33,9 @@ github.com/daviddengcn/go-colortext
 # github.com/dchest/siphash v1.2.3
 ## explicit; go 1.16
 github.com/dchest/siphash
+# github.com/djimenez/iconv-go v0.0.0-20160305225143-8960e66bd3da
+## explicit
+github.com/djimenez/iconv-go
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid

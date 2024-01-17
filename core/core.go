@@ -20,6 +20,8 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"C"
+	"github.com/djimenez/iconv-go"
 	"github.com/shinanca/gonec/externallibs/go-xlsx-templater"
 	"github.com/shinanca/gonec/names"
 	"moul.io/number-to-words"
@@ -417,6 +419,20 @@ func Import(env *Env) *Env {
 			log.Fatal(err)
 		}
 		rets.Append(VMString(out))
+		return nil
+	}))
+
+	env.DefineS("ДекодироватьСтроку", VMFunc(func(args VMSlice, rets *VMSlice) error {
+		if len(args) != 3 {
+			env.Println()
+			return nil
+		}
+		cmdResult := string(args[0].(VMString))
+		output, err := iconv.ConvertString(cmdResult, string(args[1].(VMString)), string(args[2].(VMString)))
+		if err != nil {
+			return VMErrorEncoding
+		}
+		rets.Append(VMString(output))
 		return nil
 	}))
 

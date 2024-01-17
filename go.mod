@@ -11,6 +11,7 @@ require (
 	github.com/covrom/decnum v0.0.0-20181120130125-279518e708a6
 	github.com/daviddengcn/go-colortext v1.0.0
 	github.com/dchest/siphash v1.2.3
+	github.com/djimenez/iconv-go v0.0.0-20160305225143-8960e66bd3da
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-rootcerts v1.0.2
 	github.com/hashicorp/serf v0.9.8
